@@ -1,0 +1,51 @@
+# USRBIN plot %%TITLE%%
+Plot: %%PLOTNAME%%
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cbpalette: FLUKA
+	cbround: 0
+        commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "%%PNGFILE%%"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: %%DATAFILE%%
+	det: %%DET%%
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 372651.09752752783
+	lw.0: 0
+	max: 1892.27246
+	min: 1.04387225E-21
+	norm: %%NORM%%
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: %%TITLE%%
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: %%XLABEL%%
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: %%YLABEL%%
+	ylog: True
+	yrebin: 1
+        ymax: %%YMAX%%
+        ymin: %%YMIN%%
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+
