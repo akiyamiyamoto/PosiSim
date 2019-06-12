@@ -1,6 +1,5 @@
-*
-!build-gcc*.sh
-!init_fluka*.sh
-!.gitignore
-!scripts
-!scripts/*
+au-fluka-tools  
+flair-2.3
+orig
+work
+gcc83
