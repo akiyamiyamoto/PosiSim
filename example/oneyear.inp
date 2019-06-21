@@ -1,0 +1,104 @@
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+GLOBAL                                                                OLDFLAIR
+TITLE
+EDriven Source v06 : with geometry built by geobuilder
+#define event 180000
+*
+DEFAULTS                                                              PRECISIO
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+BEAM              3.       0.0       0.0    -0.471    -0.471          ELECTRON
+BEAMPOS          0.0       0.0      -20.
+*
+GEOBEGIN                                                              COMBNAME
+    0    0                  W25Re target
+*
+#include geobuild/body-v0606.inc
+*
+END
+*
+#include geobuild/region-v0606.inc
+*
+END
+GEOEND          500.      500.     1000.     -500.     -500.     -100.DEBUG
+GEOEND           20.       20.      110.                               &
+*
+*
+* ***********************************************
+#include geobuild/material.inc
+*
+#include geobuild/assignmat-v0606.inc
+*
+*
+* **********************************************
+*
+* **********************  PARTICLE TRANSPORT  **************************
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7...
+PHYSICS           3.       0.0       0.0       0.0       0.0       0.0EVAPORAT
+PHYSICS           1.                                                  COALESCE
+*EVENTYPE         0.0       0.0        2.       0.0       0.0       0.0DPMJET
+*
+EMFCUT      -100.E-6    25.E-6        1.    VACUUM  @LASTMAT          PROD-CUT
+* ** EMFCUT      -100.E-6    25.E-6              VACUUM  @LASTMAT          PROD-CUT
+EMFCUT      -100.E-6    25.E-6              BlHole  @LASTREG
+*
+* Transport all ions
+IONTRANS    HEAVYION
+* Switch on low-energy neutron transport     print
+LOW-NEUT        260.       42.      0.02       0.0       31.        1.
+LAM-BIAS         0.0       0.3    TARMAT    PHOTON   NEUTRON       0.0
+LAM-BIAS         0.0       0.3  STAINLES    PHOTON   NEUTRON       0.0
+LAM-BIAS         0.0       0.3  ALUMINUM    PHOTON   NEUTRON       0.0
+LAM-BIAS         0.0       0.3    COPPER    PHOTON   NEUTRON       0.0
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+PHOTONUC          1.       0.0       0.0  HYDROGEN  @LASTMAT        1.
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+* Definition of irradiation pattern
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+*
+#include /group/ilc/users/miyamoto/fluka/scripts/beamOn1Year.inc
+*
+*
+* *************************************************************************
+* Definition of cooling times
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+*             1 sec     1 min    1 hour     1 day    1 week   1 month
+*                 1        60      3600    3600*24 3600*24*7 3600*24*30
+DCYTIMES          1.       60.     3600.    86400.   604800.  2592000.
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+*            3 month     1year   4 year    10year     50year
+*         3600*24*90    *365       *365*4   365*10       *50
+DCYTIMES     776000. 31536000.  1.2614E8  3.1537E8  1.5768E9
+*
+* *************************************************************************
+*
+* Flag to set radioactive decay treatment
+*  WHAT(1) = 1 to simulate radioactive decat for requested cooling time
+*  WHAT(2) > 0 for isomer production "patching treatment"
+*  WHAT(3) = number if replicas of the decay of each individual residuals
+*     =1 for analogue decay, otherwise 3.0
+*  WHAT(4) Switch for applying various biasing features
+*    "111" means biasing of e+-/gamma for prompt but not for radioactive decay
+*  WHAT(5)
+*    "400" means transport energy cut off for e+-/gamma is multiplied by 40 for prompt e+/e- gamma
+*
+*RADDECAY          1.        1.        5.  1000110.  1099999.
+RADDECAY          1.        1.        5.   111000.       400
+*
+#include geobuild/decayscore-v0606.inc
+*
+* ***** Score in each region energy deposition and stars produced by primaries
+*
+SCORE         ENERGY  BEAMPART
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+*
+#include geobuild/scoring-v0606.inc
+*
+*** RANDOMIZ          1.
+#include random.inc
+*
+START         $event
+STOP
