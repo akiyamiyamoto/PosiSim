@@ -36,6 +36,9 @@ mkdir -p ${jobs}
           logfile="${fkey}.log"
           thisinp="${fkey}${jseqstr}.inp"
           ln -s ${curdir}/${fluka_inp} ${thisinp}
+          if [ -e ${curdir}/geobuild ] ; then 
+             ln -s ${curdir}/geobuild . 
+          fi
           # ln -s ${curdir}/beamOn1Year.inc .        
           ranv=`printf "%d%3.3d" ${RANDOM} ${jseq}`
           printf "%-10s%9d.%9d." "RANDOMIZ" 1 ${ranv} > random.inc
