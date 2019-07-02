@@ -1,7 +1,13 @@
 #!/bin/bash 
 
-indir=figs
-outdir=figs-trim
+indir=$1
+
+if [ ! -e ${indir} ] ; then 
+  echo "Input figure directory, ${indir}, does not exist"
+  exit -1
+fi
+
+outdir="${indir}-trim"
 
 if [ ! -e ${outdir} ] ; then 
   mkdir -p ${outdir}

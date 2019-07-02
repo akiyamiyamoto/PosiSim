@@ -26,21 +26,25 @@ def getRegionActivity(runit_in, volregion, resnuclei, atomic_number="1", mass_nu
         period = detname[0:2]
         # regname = detname[2:] if runit_in != 40 else "RF1solc"
         regname = detname[2:] 
-        if regname not in volregion:
-            print regname + " not found in volume data. set to 0"
-            rvol=0
+        if volregion != None:
+            if regname not in volregion:
+                print regname + " not found in volume data. set to 1"
+                rvol=1.0
+            else:
+                rvol = volregion[regname]
         else:
-            rvol = volregion[regname]
+            rvol=1.0
         if "regname" not in activity: 
             activity["regname"] = regname 
             activity["volume"] = rvol
             activity["activity"] = {}
         
         bq_per_vol = 0.0
+        bq = 0.0
         for isotope in resdata["isotopes"]:
             if isotope[1] == atomic_number and isotope[0] == mass_number:
-               bq_per_vol += float(isotope[2])
-        bq = bq_per_vol * rvol
+               bq += float(isotope[2])
+        bq_per_vol = bq/rvol
         activity["activity"][period]= {"bq_per_vol":bq_per_vol, "bq_total":bq }
         
     return activity
@@ -48,7 +52,9 @@ def getRegionActivity(runit_in, volregion, resnuclei, atomic_number="1", mass_nu
 # ============================================================
 def activity_table_csv(version, region_unit):
     # version = "-v0602"
-    volregion = json.load(open("volregion%s.json" % version ))
+    volregion=None
+    if os.path.exists("volregion%s.json" % version):
+        volregion = json.load(open("volregion%s.json" % version ))
     
     resnuclei = json.load(open("resnuclei_data/resnuclei_data.json"))
 
@@ -72,11 +78,11 @@ def activity_table_csv(version, region_unit):
     for runit in region_unit:
         activity = getRegionActivity(runit, volregion, resnuclei)
         # pprint.pprint(activity)
-        lines.append("%s,%8g" % ( activity["regname"], activity["volume"]/1000.0 ))
-        totalvol += activity["volume"]/1000.0
+        lines.append("%s,%8g" % ( activity["regname"], activity["volume"] ))
+        totalvol += activity["volume"]
         actline = []
         for pd in pdata:
-           bq_per_vol = activity["activity"][pd]["bq_per_vol"]*1000.0
+           bq_per_vol = activity["activity"][pd]["bq_per_vol"]
            lines[-1] +=",%8g" % bq_per_vol
            if pd == "1s":
                data_bqrate.append([activity["regname"], bq_per_vol])
@@ -112,7 +118,7 @@ def activity_table_csv(version, region_unit):
     fout.close()
 
     datafile={"bqrate":data_bqrate, "bqtotal":data_bqtotal}
-    glabel={"bqrate":{"ylabel":"Bq/1000cm^3", "title":"Region activity",
+    glabel={"bqrate":{"ylabel":"Bq/cm^3", "title":"Region activity",
                       "verpos":"8.1E10", "legpos":"7E10"}, 
            "bqtotal":{"ylabel":"Bq (region total)", "title":"Total region activity",
                       "verpos":"1.62E13", "legpos":"1.3E13"}}

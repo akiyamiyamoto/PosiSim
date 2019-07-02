@@ -46,6 +46,7 @@ outdir="plot_example"
 header="${FLUKA_SCRIPTS}/myflair.head.in"
 plots="${FLUKA_SCRIPTS}/myflair.plot.in"
 projection="${FLUKA_SCRIPTS}/myflair.1dproj.in"
+geometry="${FLUKA_SCRIPTS}/myflair.geometry.in"
 
 source setting.ini
 
@@ -57,10 +58,13 @@ if [ ! -e ${outdir} ] ; then
       ln -s ../results/*.inc . 
       ln -s ../results/*.inp . 
       ln -s ../results/*.bnn .
+      [ -e ../geobuild ] && ln -s ../geobuild .
     )   
 fi
 
 sed -e "s|%%INPUT%%|${fluka_prefix}001.inp|" ${header} > ${outfile}
+
+cat ${geometry} >> ${outfile}
 
 mydefault ${plots} | sed -e "s/%%DATAFILE%%/${fluka_prefix}001-f81.bnn/g" \
           -e "s/%%PLOTNAME%%/prim_doseeq_all/g" \
@@ -188,5 +192,7 @@ done
           -e "s/%%PNGFILE%%/projdoseeq-primary-${aname}.png/g" \
           >> ${outfile}
 
-
+# ###############################################
+  echo "flair file to plot fluka results was created in ${outfile}"
+  echo "cd to ${outdir}, then run flair to create png files of results"
 

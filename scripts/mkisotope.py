@@ -156,7 +156,7 @@ def mk_plots_isotopes(jdata, thick, fu, rf, xaxis="Z"):
        plots[plname].SetLineWidth(0)
        plots[plname].SetMinimum(ymin)
        plots[plname].SetXTitle(xdata[xaxis]["label"])
-       plots[plname].SetYTitle("Tot. response (Bq/cm^3)")
+       plots[plname].SetYTitle("Total activity (Bq)")
        for adat in jdata[key][isotype]:
            # a = adat[0]
            # z = adat[1]
@@ -199,7 +199,7 @@ def do_plot(jdata, data_units, data_name):
            print key+" "+v["detname"]
            jconv[key]={"isomers": v["isomers"], "isotopes": v["isotopes"], "detname":v["detname"] }
   
-        mk_plots_isotopes(jconv, data_name, fu, rf)
+        # mk_plots_isotopes(jconv, data_name, fu, rf)
         mk_plots_isotopes(jconv, data_name, fu, rf, xaxis="A")
 
     rf.Close()
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     dataname = "resnuclei_data"
     jdata = json.load(open("%s/%s.json" % ( dataname, dataname ) ))
 
-    # do_plot(jdata, _DATA_UNITS, dataname)
+    do_plot(jdata, _DATA_UNITS, dataname)
 
     # Print A and Z of active atoms
 
@@ -235,7 +235,7 @@ if __name__ == "__main__":
            jconv[key]={"isomers": v["isomers"], "isotopes": v["isotopes"], "detname":v["detname"] }
   
         # mk_plots_isotopes(jconv, thick, fu, rf)
-        # mk_plots_isotopes(jconv, thick, fu, rf, xaxis="A")
+        # mk_plots_isotopes(jconv, dataname, fu, rf, xaxis="A")
 
         get_hot_atoms(jconv, dataname, fu, fout, actmin = 1E9)
     

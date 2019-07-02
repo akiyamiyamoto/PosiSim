@@ -3,6 +3,13 @@ add_usrbin.sh 2>&1 | tee add_usrbin.log
 
 # Create data files for gnuploti
 
+if [ ! -e ../geodata ] ; then 
+   mk_flair_data.sh 
+   echo "../geodata does not exist." 
+   echo "Create proper on by plotting geometry data using flair in plot_example."
+   exit
+fi
+
 # vi setting.ini
 
 mkdata_usrbin.sh
@@ -16,9 +23,7 @@ mk_dose_vs_r.sh
 gnuplot44 dose_vs_r.plt
 
 # Create trimmed figures in figs-trim
-trimall.sh
-
-
+trimall.sh  figs
 
 # ###################################################
 # Analysis of residual neucleus
@@ -29,5 +34,8 @@ add_resnucle.py
 # Do isotope plot
 mkisotope.py
 
+mk_activity_table.py
 
+# trim isotopes figure 
+trimall.sh figsisotopes
 

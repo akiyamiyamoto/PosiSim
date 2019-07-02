@@ -1,0 +1,67 @@
+#
+# Geometry plot "GeoViewer red rotation target xy view"
+Plot: red-rottar-xy
+        Format: .eps
+        Type:   Geometry
+        basisu: 1 0 0
+        basisv: 0 1 0
+        boundaries: 1
+        cbcolors: 0
+        cblog: False
+        cbpalette: FLUKA
+        cbround: 0
+        cbtics: 0
+        coord: X-Y
+        cpd: 0
+        extends: 40 40
+        grid: 0
+        index: 0
+        labels: 1
+        layer: Media
+        origin: 22 0 -18
+        subtype: Material
+        title: GeoViewer red rotation target xy view
+        x2log: False
+        x2tics: 0
+        xlog: False
+        y2log: False
+        y2tics: 0
+        ylog: False
+        zlog: False
+        ztics: 0
+End
+
+# Geometry plot "GeoViewer red rotation target zx view"
+Plot: red-rottar-zx
+        Format: .eps
+        Type:   Geometry
+        basisu: 0 0 1
+        basisv: -1 0 0
+        boundaries: 1
+        cbcolors: 0
+        cblog: False
+        cbpalette: FLUKA
+        cbround: 0
+        cbtics: 0
+        coord: Z-X
+        cpd: 0
+        extends: 30 40
+        grid: 0
+        index: 0
+        labels: 1
+        layer: Media
+        origin: 10 0 -20
+        subtype: Material
+        title: GeoViewer red rotation target zx view
+        x2log: False
+        x2tics: 0
+        xlog: False
+        y2log: False
+        y2tics: 0
+        ylog: False
+        zlog: False
+        ztics: 0
+End
+
+
+
