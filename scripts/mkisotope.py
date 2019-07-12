@@ -31,8 +31,11 @@ def get_hot_atoms(jdata, thick, fu, fout, actmin = 1.0):
           "15":["P", "Phosphorous"], "16":["S", "Sulfur"],
           "14":["Si", "Silicon"], "13":["Al", "Aluminum"],
           "12":["Mg", "Magnesium"], "11":["Na", "Sodium"],
-          "8":["O", "Oxygen"], 
-          "1":["H", "Hydrogen"]}
+          "10":["Ne", "Neon"], "9":["F", "Fluorine"],
+          "8":["O", "Oxygen"],"7":["N","Nitrogen"], 
+          "6":["C", "Carbon"], "5":["B","Boron"],
+          "4":["Be","Berylium"], "3":["Li","Lithium"], 
+          "2":["He","Helium"], "1":["H", "Hydrogen"]}
 
 
     isotype="isotopes"
@@ -40,14 +43,13 @@ def get_hot_atoms(jdata, thick, fu, fout, actmin = 1.0):
     
     period=["1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"]
     _PLOT_PERIOD=[1, 6, 8, 10, 11]
-    _PLOT_PERIOD=[4, 5, 6, 8, 9, 10, 11]
+    _PLOT_PERIOD=[1, 2, 4, 5, 6, 8, 9, 10, 11]
     # ind=0
     # colorcode=[0,1,2,3,4,6]
     key="f%d-dn1" % ( int(fu)) 
     header = [ jdata[key]["detname"][2:] ]
 
     atom_index = []
-    ip = -1
     active_atom = {}
     for dtype in _PLOT_PERIOD:
        key="f%d-dn%d" % ( int(fu), int(dtype) )
@@ -132,14 +134,17 @@ def mk_plots_isotopes(jdata, thick, fu, rf, xaxis="Z"):
     xmax = xmax + 1.0
     xdiv = int(( xmax - xmin +1.0) * 5.0)
     detlist=""
-    _PLOT_PERIOD=[1, 6, 8, 10, 11]
+    # Index for _PLOT_PERIOD
+    #         0      1    2     3     4     5     6     7     8     9     10    11
+    period=["pri", "1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"]
+    # _PLOT_PERIOD=[1, 6, 8, 10, 11]
+    _PLOT_PERIOD=[1, 4, 7, 8, 10]
     for dtype in _PLOT_PERIOD:
        key="f%d-dn%d" % ( int(fu), int(dtype) )
        detlist += ":%s" % jdata[key]["detname"][0:2]
-    detlist += ":%s" % jdata["f%d-dn7"%int(fu)]["detname"][0:3]
+    detlist += "| det=%s" % jdata["f%d-dn7"%int(fu)]["detname"]
     
     print "xmin=%f xmax=%f xdiv=%f ymin=%f" % ( xmin, xmax, xdiv, ymin)
-    period=["pri", "1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"]
     ind=0
     colorcode=[0,1,2,3,4,6]
     for dtype in _PLOT_PERIOD:
@@ -213,7 +218,6 @@ if __name__ == "__main__":
 
     dataname = "resnuclei_data"
     jdata = json.load(open("%s/%s.json" % ( dataname, dataname ) ))
-
     do_plot(jdata, _DATA_UNITS, dataname)
 
     # Print A and Z of active atoms
@@ -225,7 +229,8 @@ if __name__ == "__main__":
     resactive = "residual_activity.csv"
     fout=open(resactive,"w")
 
-    for fus in range(30, 33) + [50]:
+    # for fus in range(30, 33) + [50]:
+    for fus in range(30, 52):
         fu = str(fus)
         # print jdata.keys()
         # print jdata[fu].keys()
