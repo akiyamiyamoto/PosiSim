@@ -1,0 +1,17 @@
+# ########################################################
+v0607  2019-07-11
+
+  For comparison with a previous estimation of energy deposit 
+arround rotation target, geometry near rotation axis were modified 
+and vaccum is filled by massive material.
+
+# ########################################################
+v0606  2019-06-20 
+
+ This geometry was prepared from v0604, modifying
+the thickness of the axis for target rotation and its
+cooling pipe based on a suggestion by hardware developper.
+create_target.py was changed as well to fix a bug found by 
+the changes of geometry parameters.
+
+ 
