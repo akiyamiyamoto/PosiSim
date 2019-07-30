@@ -22,6 +22,14 @@ gnuplot44 2dplot.plt
 mk_dose_vs_r.sh
 gnuplot44 dose_vs_r.plt
 
+# neutron and photon flux into liq. seal ( for v0607 )
+add_usrbdx.sh 
+
+sumflux.py
+mk_flux_perE.sh 
+mk_flux_npart.sh 
+mk_flux_nint.sh
+
 # Create trimmed figures in figs-trim
 trimall.sh  figs
 
