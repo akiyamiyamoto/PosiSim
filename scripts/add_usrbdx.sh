@@ -40,28 +40,46 @@ EOF
 }
 
 
-add_usrbdx()
+exec_usrsuw()
 { 
-   tdir=$1
+   srcdir=${PWD}/$1
    outdir=$2
-   mkdir -p ${outdir}
+   fu=$3
+
+   outpref=`( cd ${srcdir}/job001 && /bin/ls *.inp | sed -e "s/\.inp//g" )` 
+  
+#   mkdir -p ${outdir}
    ( 
       cd ${outdir}
-      for fu in 21 22 23 ; do 
-         outname="$2-f${fu}"
-         find ../${tdir}/feopt2-* -name "*_fort.${fu}" -print > ${outname}.usxsuw
-         echo "" >> ${outname}.usxsuw
-         echo "${outname}" >> ${outname}.usxsuw
-         usxsuw < ${outname}.usxsuw 2>&1 | tee  ${outname}.log  
-         tabfile=`/bin/ls ${outname}_tab.lis | head -1`
-         echo "######## tabfile ${tabfile} .... outname ${outname} ############ "
-         devfile ${tabfile} ${outname}
-      done
+      outname="${outpref}-f${fu}"
+      find ${srcdir} -name "*_fort.${fu}" -print > ${outname}.usxsuw
+      echo "" >> ${outname}.usxsuw
+      echo "${outname}" >> ${outname}.usxsuw
+      cat ${outname}.usxsuw
+      usxsuw < ${outname}.usxsuw 2>&1 | tee  ${outname}.log  
+      tabfile=`/bin/ls ${outname}_tab.lis | head -1`
+      echo "######## tabfile ${tabfile} .... outname ${outname} ############ "
+      devfile ${tabfile} ${outname}
    )
 }
 
-add_usrbdx ../thick30  thick30
-# add_usrbdx ../thick35  thick35
-# add_usrbdx ../thick55  thick55
-# add_usrbdx ../thick75  thick75
+rsplit(){
+  instr=$1
+  sep=$2
+  python <<EOF
+instr="${instr}"
+sep="${sep}"
+ostr=instr.rsplit(sep,1)[1]
+print ostr
+EOF
+}
 
+source setting.ini
+
+echo ${usrbdx_unit}
+
+# usrbdx_unit=21
+det=1
+for fu in ${usrbdx_unit} ; do
+  exec_usrsuw jobs results ${fu} 
+done 
