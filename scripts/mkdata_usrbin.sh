@@ -3,6 +3,7 @@
 # Create plot data from bnn files
 #
 
+# #####################################################
 do_gplevbin()
 {
   infile=$1
@@ -51,7 +52,8 @@ rm -f gplevh.lim gplevh.npo gplevh.poi temp.$$.txt
 
 do_doseplot(){
 
-    for detno in `seq 1 11` ; do
+    for detid in `seq 0 ${#RUN_TIME[@]}` ; do
+      detno=$[${detid}+1]
       do_gplevbin ${fluka_prefix}001-f71.bnn ${detno} 800 1000 f71
       do_gplevbin ${fluka_prefix}001-f73.bnn ${detno} 400 500  f73
       do_gplevbin ${fluka_prefix}001-f75.bnn ${detno} 400 500  f75
@@ -66,18 +68,26 @@ do_doseplot(){
 }
 
 do_activityplot(){
-    for detno in `seq 1 11` ; do
+    for detno in `seq 1 ${#RUN_TIME[@]}` ; do
       do_gplevbin ${fluka_prefix}001-f72.bnn ${detno} 800 1000 f72
       do_gplevbin ${fluka_prefix}001-f74.bnn ${detno} 400 500  f74
       do_gplevbin ${fluka_prefix}001-f76.bnn ${detno} 400 500  f76
     done
     detno=1
     do_gplevbin ${fluka_prefix}001-f84.bnn ${detno} 400 500 f84
-    do_gplevbin ${fluka_prefix}001-f85.bnn ${detno} 400 500 f85
     do_gplevbin ${fluka_prefix}001-f90.bnn ${detno} 400 500 f90
-    do_gplevbin ${fluka_prefix}001-f91.bnn ${detno} 400 500 f91
-    do_gplevbin ${fluka_prefix}001-f92.bnn ${detno} 400 500 f92
-
+    if [ ${VERSION_NUMBER} -lt 607 ] ; then 
+      do_gplevbin ${fluka_prefix}001-f85.bnn ${detno} 400 500 f85
+      do_gplevbin ${fluka_prefix}001-f91.bnn ${detno} 400 500 f91
+      do_gplevbin ${fluka_prefix}001-f92.bnn ${detno} 400 500 f92
+    else
+      for detno in `seq 1 ${#RUN_TIME[@]}` ; do
+        do_gplevbin ${fluka_prefix}001-f94.bnn ${detno} 400 500 f94
+      done
+      for detno in `seq 2 4` ; do
+        do_gplevbin ${fluka_prefix}001-f90.bnn ${detno} 400 500 f90
+      done
+    fi
 }
 
 if [ ! -e setting.ini ] ; then 
@@ -85,6 +95,7 @@ if [ ! -e setting.ini ] ; then
   exit
 fi
 source setting.ini
+
 
 if [ ! -e results ] ; then 
   echo "result directory does not exist. Create results and data there by add_usrbin.sh "
