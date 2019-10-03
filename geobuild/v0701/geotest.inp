@@ -2,7 +2,7 @@
 *
 GLOBAL                                                                OLDFLAIR
 TITLE
-EDriven Source v0607: 
+EDriven Source v0701: 
 *
 DEFAULTS                                                              PRECISIO
 *
@@ -13,12 +13,12 @@ BEAMPOS          0.0       0.0     -220.
 GEOBEGIN                                                              COMBNAME
     0    0                  W25Re target
 *
-#include body-v0607.inc
+#include body-v0701.inc
 *
 *
 END
 *
-#include region-v0607.inc
+#include region-v0701.inc
 
 *
 END
@@ -26,5 +26,5 @@ GEOEND
 *
 #include material.inc
 
-#include assignmat-v0607.inc
+#include assignmat-v0701.inc
 

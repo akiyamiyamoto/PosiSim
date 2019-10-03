@@ -39,10 +39,10 @@ def crTargetCollimatorZone(geo, fd):
     region = []
     assignma = []
     
-    gworld = geo["world"]["para"]
-    glbal = geo["global"]["para"]
-    grf = geo["RF"]["para"]
-    gtar = geo["Target"]["para"]
+    gworld = geo["world"]
+    glbal = geo["global"]
+    grf = geo["RF"]
+    gtar = geo["Target"]
 
     # Create body, region, matterial data from outside to the inside.
     body += ["* *************************************",
@@ -64,8 +64,10 @@ def crTargetCollimatorZone(geo, fd):
     assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "TARColim") ]
 
     # Collimator in front of RF
-    zmsk_end = zend - gtar["Collimator_to_RF_gap"]
-    zmsk_len = gtar["FC_to_RF_gap"] - gtar["FC_to_Collimator_gap"] - gtar["Collimator_to_RF_gap"]
+    fc_cp = gtar["Collimator_cooling_pipe"]
+    crgap = gtar["Collimator_to_RF_gap"] if gtar["Collimator_to_RF_gap"] > 0.0 else 0.0 
+    zmsk_end = zend - crgap
+    zmsk_len = gtar["FC_to_RF_gap"] - gtar["FC_to_Collimator_gap"] - crgap
     zmsk_bgn = zmsk_end - zmsk_len
     zmsk_cp_in_bgn = zmsk_bgn + gtar["Collimator_cooling_pipe_offset"]
     zmsk_cp_in_len = zmsk_end - gtar["Collimator_cooling_pipe_offset"] - zmsk_cp_in_bgn
@@ -74,16 +76,21 @@ def crTargetCollimatorZone(geo, fd):
     zmsk_cp_fr_rmin = zmsk_cp_in_rmax
     zmsk_cp_fr_rmax = gtar["Collimator_rmax"] - gtar["Collimator_cooling_pipe_offset"]
 
-    body += ["RCC tmcpio 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, zmsk_cp_in_len, zmsk_cp_in_rmax)]
-    body += ["RCC tmcpii 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, zmsk_cp_in_len, zmsk_cp_in_rmin)]
-    body += ["RCC tmcpfo 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, gtar["Collimator_cooling_pipe_thickness"], zmsk_cp_fr_rmax)]
-    body += ["RCC tmcpfi 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, gtar["Collimator_cooling_pipe_thickness"], zmsk_cp_fr_rmin)]
-    region += ["Tmskcp 6 ( +tmcpio -tmcpii ) | ( +tmcpfo -tmcpfi ) "]
-    assignma += [ "ASSIGNMA %10s%10s" % ("WATER", "Tmskcp") ]
+    if fc_cp:
+        body += ["RCC tmcpio 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, zmsk_cp_in_len, zmsk_cp_in_rmax)]
+        body += ["RCC tmcpii 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, zmsk_cp_in_len, zmsk_cp_in_rmin)]
+        body += ["RCC tmcpfo 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, gtar["Collimator_cooling_pipe_thickness"], zmsk_cp_fr_rmax)]
+        body += ["RCC tmcpfi 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_cp_in_bgn, gtar["Collimator_cooling_pipe_thickness"], zmsk_cp_fr_rmin)]
+        region += ["Tmskcp 6 ( +tmcpio -tmcpii ) | ( +tmcpfo -tmcpfi ) "]
+        assignma += [ "ASSIGNMA %10s%10s" % ("WATER", "Tmskcp") ]
 
     body += ["RCC twmsko 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_bgn, zmsk_len, gtar["Collimator_rmax"])]
     body += ["RCC twmski 0.0 0.0 %f 0.0 0.0 %f %f" % ( zmsk_bgn, zmsk_len, gtar["Collimator_rmin"])]
-    region += ["TARwmsk 6 +twmsko -twmski - ( +tmcpio -tmcpii ) - ( +tmcpfo -tmcpfi ) "]
+    if fc_cp:
+        region += ["TARwmsk 6 +twmsko -twmski - ( +tmcpio -tmcpii ) - ( +tmcpfo -tmcpfi ) "]
+    else:
+        region += ["TARwmsk 6 +twmsko -twmski "]
+
     assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "TARwmsk") ]
 
     # Geometry other than collimator copper and cooling pipe
@@ -119,9 +126,9 @@ def crRotationTarget(geo, fd):
     assignma = []
     envelops = {}
 
-    gworld = geo["world"]["para"]
-    glbal = geo["global"]["para"]
-    gtar = geo["Target"]["para"]
+    gworld = geo["world"]
+    glbal = geo["global"]
+    gtar = geo["Target"]
 
     # Create body, region, matterial data from outside to the inside.
     body += ["* *************************************",
@@ -137,6 +144,7 @@ def crRotationTarget(geo, fd):
     rmax = glbal["CShIn_rmin"]
 
     # Flux Concentrator (Adiabatic Matching Device (AMD))
+    fc_cp = gtar["FC_cooling_pipe"]
     zfc_end = zend - gtar["FC_to_RF_gap"]
     zfc_bgn = zfc_end - gtar["FC_thickness"]
     zfc_cp_bgn = zfc_bgn + gtar["FC_cooling_pipe_offset"]
@@ -145,17 +153,21 @@ def crRotationTarget(geo, fd):
     zfc_cp_rmin = zfc_cp_rmax - gtar["FC_cooling_pipe_thickness"]
     zfc_cp_fr_rmin = gtar["FC_rmin_end"]
 
-    body += ["RCC tfccpo 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, zfc_cp_len, zfc_cp_rmax) ]
-    body += ["RCC tfccpi 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, zfc_cp_len, zfc_cp_rmin) ]
-    body += ["RCC tfccpfo 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, gtar["Collimator_cooling_pipe_thickness"], zfc_cp_rmin) ]
-    body += ["RCC tfccpfi 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, gtar["Collimator_cooling_pipe_thickness"], zfc_cp_fr_rmin) ]
-    region += ["TFCcp 6 ( +tfccpo -tfccpi ) | ( +tfccpfo -tfccpfi ) "]
-    assignma += [ "ASSIGNMA %10s%10s" % ("WATER", "TFCcp") ]
+    if fc_cp:
+        body += ["RCC tfccpo 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, zfc_cp_len, zfc_cp_rmax) ]
+        body += ["RCC tfccpi 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, zfc_cp_len, zfc_cp_rmin) ]
+        body += ["RCC tfccpfo 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, gtar["Collimator_cooling_pipe_thickness"], zfc_cp_rmin) ]
+        body += ["RCC tfccpfi 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_cp_bgn, gtar["Collimator_cooling_pipe_thickness"], zfc_cp_fr_rmin) ]
+        region += ["TFCcp 6 ( +tfccpo -tfccpi ) | ( +tfccpfo -tfccpfi ) "]
+        assignma += [ "ASSIGNMA %10s%10s" % ("WATER", "TFCcp") ]
 
     body += ["RCC tfco 0.0 0.0 %f 0.0 0.0 %f %f" % ( zfc_bgn, gtar["FC_thickness"], gtar["FC_rmax"])]
     body += ["TRC tfci 0.0 0.0 %f 0.0 0.0 %f %f %f" % ( zfc_bgn, gtar["FC_thickness"], 
                       gtar["FC_rmin_begin"], gtar["FC_rmin_end"])]
-    region += ["TFC 6 +tfco -tfci - ( +tfccpo -tfccpi) - ( +tfccpfo -tfccpfi ) "]
+    if fc_cp:
+        region += ["TFC 6 +tfco -tfci - ( +tfccpo -tfccpi) - ( +tfccpfo -tfccpfi ) "]
+    else:
+        region += ["TFC 6 +tfco -tfci "]
     assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "TFC") ]
     region += ["TFCvac 6 +tfci "]
     assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "TFCvac") ]
@@ -227,10 +239,10 @@ def crSupportStructure(geo, fd, envelops):
     region = []
     assignma = []
 
-    gworld = geo["world"]["para"]
-    glbal = geo["global"]["para"]
-    grf = geo["RF"]["para"]
-    gtar = geo["Target"]["para"]
+    gworld = geo["world"]
+    glbal = geo["global"]
+    grf = geo["RF"]
+    gtar = geo["Target"]
 
     # Create body, region, matterial data from outside to the inside.
     body += ["* *************************************",
@@ -305,27 +317,36 @@ def crSupportStructure(geo, fd, envelops):
     assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "TWShield") ]
 
     # Air surrounding target area
-    zmsk_end = zend - gtar["Collimator_to_RF_gap"]
-    zmsk_len = gtar["FC_to_RF_gap"] - gtar["FC_to_Collimator_gap"] - gtar["Collimator_to_RF_gap"]
+    crgap = gtar["Collimator_to_RF_gap"] if gtar["Collimator_to_RF_gap"] > 0.0 else 0.0 
+    zmsk_end = zend - crgap
+    zmsk_len = gtar["FC_to_RF_gap"] - gtar["FC_to_Collimator_gap"] - crgap
     zmsk_bgn = zmsk_end - zmsk_len
     air_zlen = zmsk_bgn - zbegin
     air_rmax = glbal["CShIn_rmin"] - glbal["FeSh_thick"] 
 
     # Additional W shield to fill gap between TWShield and Solenoid
-    zmsk2_bgn  = zmsk_bgn - gtar["WShield_thickness"]
-    zmsk2_rmax = shb_rmax + gtar["WShield_thickness"]
-    body += ["RCC tshb2o 0.0 0.0 %f 0.0 0.0 %f %f " % ( zmsk2_bgn, gtar["WShield_thickness"], zmsk2_rmax)]
-    body += ["RCC tshb2i 0.0 0.0 %f 0.0 0.0 %f %f " % ( zmsk2_bgn, gtar["WShield_thickness"], shb_rmax)]
+    # zmsk2_bgn  = zmsk_bgn - gtar["WShield_thickness"] - 10.0
+    zmsk2_bgn = sh_zbgn + shr_zlen
+    zmsk2_len = zmsk_bgn - zmsk2_bgn
+    # zmsk2_rmax = shb_rmax + gtar["WShield_thickness"] 
+    zmsk2_rmax = vcb_rmin + vc_thick + gtar["WShield_thickness"] 
+    body += ["RCC tshb2o 0.0 0.0 %f 0.0 0.0 %f %f " % ( zmsk2_bgn, zmsk2_len, zmsk2_rmax)]
+    # body += ["RCC tshb2i 0.0 0.0 %f 0.0 0.0 %f %f " % ( zmsk2_bgn, zmsk2_len, shb_rmax)]
+    body += ["RCC tshb2i 0.0 0.0 %f 0.0 0.0 %f %f " % ( zmsk2_bgn, zmsk2_len, vcb_rmin + vc_thick)]
     body += ["RCC tshr2o %f 0.0 %f 0.0 0.0 %f %f " % ( axis_x_offset, zfc_end, gtar["FC_to_Collimator_gap"], shr_rmax)]
     body += ["RCC tshr2i %f 0.0 %f 0.0 0.0 %f %f " % ( axis_x_offset, zfc_end, gtar["FC_to_Collimator_gap"], 
                   gtar["vacuum_chamber_R_r_max"] )]
-    region += ["TWShld2 6 ( +tshb2o | +tshr2o ) -tshb2i -tshro - tshr2i -tvcro "]
+    # region += ["TWShld2 6 ( +tshb2o | +tshr2o ) -tshb2i -tshro - tshr2i -tvcro "]
+    # region += ["TWShld2 6 ( +tshr2o | +tshr2o ) -tvcbo "]
+    # region += ["TWShld2 6 ( +tshb2o -tvcro | +tshr2o -tshr2i ) "]
+    region += ["TWShld2 6 ( +tshb2o -tvcbo -tshr2i ) | ( +tshr2o -tshr2i -tshb2o ) "]
     assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "TWShld2") ]     
 
     # Air body, region, assignma
     body += ["RCC tarair 0.0 0.0 %f 0.0 0.0 %f %f " % ( zbegin, air_zlen,  air_rmax)]
     # region += ["TARair 6 +tarair -tvcbpo -tshbo -tshro -tshb2o -tshr2o -( +tvcro | +tvcbo ) "]
     region += ["TARair 6 +tarair -tbpshld -tshbo -tshro -tshb2o -tshr2o -trotbody "]
+    # region += ["TARair 6 +tarair -tbpshld -tshbo -tshro -tshr2o -trotbody "]
     region += ["TARair2 6 ( +tshb2i -tvcbo -tshbo ) | (+tshr2i -tvcbo -tvcro) "]
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair") ]  
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair2") ]  

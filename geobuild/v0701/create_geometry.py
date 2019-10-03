@@ -7,6 +7,8 @@ import pprint
 from FLUdata import *
 from create_target import *
 
+# Since v0701, Z=0cm is the Target downstream surface.
+
 # Fluka body data is described by free format 
 # This is defined by a presence of COMBNAME in GEOBEGIN card.
 # In free format, body is described by 
@@ -30,9 +32,9 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     _region=[]
     _assignma = []
     
-    gworld = geo["world"]["para"]
-    glbal = geo["global"]["para"]    
-    grf = geo["RF"]["para"]    
+    gworld = geo["world"]
+    glbal = geo["global"]
+    grf = geo["RF"]
 
     # Create body, region, matterial data from outside to the inside.
     _body += ["* *************************************",
@@ -145,6 +147,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
 
     cav_region = {"front":["+" + vacname], "back":["+" + vacname ]}
     pipe_region = {"front":[], "back":[]}
+    cav_cp = grf["cavity_cooling_pipe"]
 
     # Water pipe inside the in-let of RF structure
     rf_rmax = grf["r_cavity_outer_wall"]
@@ -153,22 +156,24 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                   grf["cavity_cooling_pipe_thickness"] ) * 0.5 
     cp_rmax1 = cp_rmax0 + grf["cavity_cooling_pipe_thickness"]
     cp_zbgn0 = zbegin + ( grf["start_thick"] - grf["cavity_cooling_pipe_thickness"] ) * 0.5
-    water_pipe_name_i = "rf%dcwi0" % (nrf)
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_i, cp_zbgn0, 
+    if cav_cp:
+        water_pipe_name_i = "rf%dcwi0" % (nrf)
+        _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_i, cp_zbgn0, 
                  grf["cavity_cooling_pipe_thickness"], cp_rmin ) )
-    water_pipe_name_o = "rf%dcwo0" % (nrf)
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_o, cp_zbgn0, 
+        water_pipe_name_o = "rf%dcwo0" % (nrf)
+        _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_o, cp_zbgn0, 
                  grf["cavity_cooling_pipe_thickness"], cp_rmax0 ) )
-    pipe_region["front"].append(" +%s -%s " % ( water_pipe_name_o, water_pipe_name_i) )
+        pipe_region["front"].append(" +%s -%s " % ( water_pipe_name_o, water_pipe_name_i) )
     # pipe_region["back"].append(" +%s -%s " % ( water_pipe_name_o, water_pipe_name_i) )
 
     zlen_cwx = zlen_rf - ( grf["start_thick"] - grf["cavity_cooling_pipe_thickness"] )
-    water_pipe_name_ix = "rf%dcwix" % (nrf)
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_ix, cp_zbgn0, zlen_cwx, cp_rmax0 ) )
-    water_pipe_name_ox = "rf%dcwox" % (nrf)
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_ox, cp_zbgn0, zlen_cwx, cp_rmax1 ) ) 
-    pipe_region["front"].append(" +%s -%s +rf%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
-    pipe_region["back"].append(" +%s -%s -rf%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
+    if cav_cp:
+        water_pipe_name_ix = "rf%dcwix" % (nrf)
+        _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_ix, cp_zbgn0, zlen_cwx, cp_rmax0 ) )
+        water_pipe_name_ox = "rf%dcwox" % (nrf)
+        _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_ox, cp_zbgn0, zlen_cwx, cp_rmax1 ) ) 
+        pipe_region["front"].append(" +%s -%s +rf%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
+        pipe_region["back"].append(" +%s -%s -rf%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
 
     cp_zoffset = grf["deltaZ_per_cavity"] + ( grf["deltaZ_per_cavity_structure"] -
                  grf["deltaZ_per_cavity"] - grf["cavity_cooling_pipe_thickness"] ) *0.5   
@@ -188,14 +193,15 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         cav_region[fwdbck].append("+" + cavname)           
 
         cp_zpos = zcav + cp_zoffset
-        water_pipe_name_i = "rf%dcwi%d" % ( nrf, nc )
-        _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_i, cp_zpos, 
+        if cav_cp:
+            water_pipe_name_i = "rf%dcwi%d" % ( nrf, nc )
+            _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_i, cp_zpos, 
                      grf["cavity_cooling_pipe_thickness"], cp_rmin ) )
-        water_pipe_name_o = "rf%dcwo%d" % ( nrf, nc )
-        _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_o, cp_zpos, 
+            water_pipe_name_o = "rf%dcwo%d" % ( nrf, nc )
+            _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_o, cp_zpos, 
                      grf["cavity_cooling_pipe_thickness"], cp_rmax0 ))
-        # if fwdbck == "front":
-        pipe_region[fwdbck].append(" +%s -%s " % ( water_pipe_name_o, water_pipe_name_i) )
+            # if fwdbck == "front":
+            pipe_region[fwdbck].append(" +%s -%s " % ( water_pipe_name_o, water_pipe_name_i) )
 
 
         zcav += grf["deltaZ_per_cavity_structure"]
@@ -207,10 +213,11 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     _assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", vacreg) ]
 
     # Cooling pipe in RF structure
-    cpreg = "RF%dcp" % nrf 
-    cpregion = "%s 6 " % cpreg + " | ".join(pipe_region["front"] + pipe_region["back"])
-    _region += join2FixedLength(cpregion.split())
-    _assignma += [ "ASSIGNMA %10s%10s" % ("WATER", cpreg) ]
+    if cav_cp:
+        cpreg = "RF%dcp" % nrf 
+        cpregion = "%s 6 " % cpreg + " | ".join(pipe_region["front"] + pipe_region["back"])
+        _region += join2FixedLength(cpregion.split())
+        _assignma += [ "ASSIGNMA %10s%10s" % ("WATER", cpreg) ]
     
     centsign= {"front":"+", "back":"-"}
     # RF structure 
@@ -222,8 +229,9 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         for cav in cav_region[fb]:
             rfstructure += cav.replace("+"," -") 
 
-        for pipe in pipe_region[fb]:
-            rfstructure += " - ( " + pipe + " )"
+        if cav_cp:
+            for pipe in pipe_region[fb]:
+                rfstructure += " - ( " + pipe + " )"
         
         _region += join2FixedLength(rfstructure.split())
         _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", rfstr) ]
@@ -270,9 +278,9 @@ def crRFZone(geo, fd):
  
     # global _body, _region, _assignma
 
-    gworld = geo["world"]["para"]
-    glbal = geo["global"]["para"]    
-    grf = geo["RF"]["para"]    
+    gworld = geo["world"]
+    glbal = geo["global"]
+    grf = geo["RF"]
 
     zbegin = gworld["zbound3"]
     nb_structure = grf["Nb_structure"]
@@ -290,9 +298,9 @@ def crWorld(geo, fd):
     _region = []
     _assignma = []
 
-    geop = geo["world"]["para"]
-    glp = geo["global"]["para"]    
-    gtar = geo["Target"]["para"]    
+    geop = geo["world"]
+    glp = geo["global"]
+    gtar = geo["Target"]
 
     zmax = geop["blkRPP1"]
     _body.append("ZCC blkRPP1 0.0 0.0 %f" % zmax )
@@ -380,9 +388,9 @@ def crZone1(geo, fd):
 
     
 
-    zb2 = geo["front"]["para"]["CSh_up_pos"]
-    zb1 = zb2 - geo["global"]["para"]["CSh_up_thick"]
-    zb3 = zb2 + geo["global"]["para"]["FeSh_thick"]
+    zb2 = geo["front"]["CSh_up_pos"]
+    zb1 = zb2 - geo["global"]["CSh_up_thick"]
+    zb3 = zb2 + geo["global"]["FeSh_thick"]
 
     body = ["*  Body for Zone1",
          "XYP z1pln1 %f" % zb1, 
@@ -436,10 +444,10 @@ def crZone3(geo, fd):
     region = []
     assignma = []
 
-    gworld = geo["world"]["para"]
-    glbal = geo["global"]["para"]
-    grf = geo["RF"]["para"]
-    gtar = geo["Target"]["para"]
+    gworld = geo["world"]
+    glbal = geo["global"]
+    grf = geo["RF"]
+    gtar = geo["Target"]
 
     # Create body, region, matterial data from outside to the inside.
     body += ["* *************************************",

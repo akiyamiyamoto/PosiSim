@@ -21,15 +21,65 @@ from create_geometry import *
 #    boolean zone expression 
 #   132 character max
 
+# ========================================
+def getGeant4Parameter(debug=False):
+    ''' Returns cavity parameters used by Fukuda's Geant4 simulation '''
+
+    c_light = 2.99792458e10  # cm unit
+    freq = 1300.0e6
+    tanban_thick = 1.0 # cm
+
+    xlam = c_light/freq
+    num_cell = 11
+    kasokukan_length = 5.5 * xlam + 2*tanban_thick
+    kasokukan_gap = 1.5 * xlam - 2*tanban_thick
+    fAccPipeLength = 1.5 * xlam
+
+    acc_oneunit = kasokukan_length + kasokukan_gap
+    one_cell_length = 0.5*xlam
+
+    one_cell_length = 11.53048
+    acc_oneunit = 161.426708
+
+    
+    if debug:
+        print "All unit is cm"
+        print "lambda=%15.10f" % xlam
+        print "tanban_thick (fAccEndPlateLength)=%15.10f" % tanban_thick
+        print "Kasokukan Cho (fAccLength) =%15.10f" % kasokukan_length
+        print "(fAccPipeLength = 1.5 lambda )=%15.10f" % fAccPipeLength
+        print "Kasokukan Gap (Kasokukan no Kankaku) =%15.10f" % kasokukan_gap
+        print "Kasokukan One_unit Cho  =%15.10f" % acc_oneunit
+        print "One cell length (fAccCellLength) =%15.10f" % one_cell_length
+
+    ret = {"acc_oneunit":acc_oneunit,
+           "tanban_thick":tanban_thick,
+           "one_cell_length": one_cell_length,
+           "number_of_cell": num_cell}
+    return ret
+
 
 # ========================================
 def createGeoParam():
     ''' Use ### to completely ignore line for comment analysis. '''
     geo = {}
+
+    g4p = getGeant4Parameter(debug=True)
+
+    #@ basic parameter to determine global Z coordinate
+    geo["bases"] = {"FC_to_RF_gap":23.4, # Distance from the FC end to the RF entrance 
+                 "Target_to_FC_gap": 0.5,  # Target to FC gap
+                 "FC_thickness" : 10.0} # Thickness(z length) of FC(AMD)
+    zbound3 = geo["bases"]["Target_to_FC_gap"] + geo["bases"]["FC_thickness"] + geo["bases"]["FC_to_RF_gap"]
+
+    #@ front
+    geo["front"] = {"CSh_up_pos":-150} # Z position of concrete sheild closest to the target 
+
     #@ global
-    geo["global"] = {"para":
-       {"zmin":-500.0, # zmin of whole area
-        "zmax": 1200.0, # zmax of whole area
+    # zmax is determined as the end of RF + 1.0 cm
+    geo["global"] = {
+        "zmin":-400.0, # zmin of whole area
+    #     "zmax":1.3E3, # zmax of whole area
         "rmax":810.0,  # rmax of whole area
         "Mount_water_thickness":10.0, # Thickness of water layer out side of outer concrete tunnel
         "CShOut_thick":200.0, # Thickness of tunnel concrete, outer
@@ -39,37 +89,33 @@ def createGeoParam():
         "CSh_down_thick":150.0, # Thickness of downsream concrete sheield coverging target area
         "FeSh_thick": 30.0, # Thickness of Iron sheild inside of concrete sheild
         "BPrin":3.2, # Beam pipe inner radius 
-        "BPthick":0.2}} # Beam pipe thickness
+        "BPthick":0.2} # Beam pipe thickness
 
 
-    glp = geo["global"]["para"]
+    glp = geo["global"]
     #@ world
-    geo["world"] = {"para":
-                           {"zbound1":glp["zmin"], 
-			    "zbound2":-100.0, # Boundary between front(upstream) part and target & RF area
-                            "zbound3":17.53, # First RF cavity Z begin coordinate
-                            "zbound5":glp["zmax"],
-                            "rbound2":glp["rmax"] - glp["Mount_water_thickness"], 
-                            "rbound3":glp["rmax"],
-                            "blkRPP1":5000000.0}}
-    gwp = geo["world"]["para"]
+    geo["world"] = {"zbound1":glp["zmin"], 
+		     "zbound2":-100.0, # Boundary between front(upstream) part and target & RF area
+                     "zbound3":zbound3, # First RF cavity Z begin coordinate
+    #                  "zbound5":glp["zmax"],
+                     "rbound2":glp["rmax"] - glp["Mount_water_thickness"], 
+                     "rbound3":glp["rmax"],
+                     "blkRPP1":5000000.0}
+    gwp = geo["world"]
 
-    #@ front
-    geo["front"] = {"para":{
-          "CSh_up_pos":-170}} # Z position of concrete sheild closest to the target 
     #@ RF
-    geo["RF"] = {"para":
-                {"Nb_structure":6, # Number of RF structure
+    geo["RF"] = {"cavity_cooling_pipe": True, #  True to include cavity cooling pipe
+                 "Nb_structure":6, # Number of RF structure
                  ### "zlen_rf_unit": 146.43, # length in Z of 1 RF unit. 
-                 "zlen_rf_unit": 163.4, # length in Z of 1 RF unit. 
-                 "Nb_cavity":11, # Nb of cavities per RF structure
-                 "start_thick":3.6,  # Thickness of upstream structure wall
-                 "deltaZ_per_cavity_structure":11.53, # Z increment per each cavity.
-                 "deltaZ_per_cavity":7.93, # The size of cavity vacuum in Z direction.
-                 "r_cavity_inner_wall":9.0, # Radius of cavity inner wall.
-                 "r_cavity_outer_wall":11.0, # Radius of cavity outer wall
+                 "zlen_rf_unit": g4p["acc_oneunit"], # length in Z of 1 RF unit. 
+                 "Nb_cavity":g4p["number_of_cell"], # Nb of cavities per RF structure
+                 "start_thick":2.0,  # Thickness of upstream structure wall
+                 "deltaZ_per_cavity_structure":g4p["one_cell_length"], # Z increment per each cavity.
+                 "deltaZ_per_cavity":g4p["one_cell_length"] - 2*g4p["tanban_thick"], # The size of cavity vacuum in Z direction.
+                 "r_cavity_inner_wall":7.0, # Radius of cavity inner wall.
+                 "r_cavity_outer_wall":9.0, # Radius of cavity outer wall
                  "r_cavity_beam_pipe":3.0,   # Radius of cavity beam pipe 
-                 "cavity_cooling_pipe_thickness":1.0,  # Thickness(diameter) of cavity cooling pipe. 
+                 "cavity_cooling_pipe_thickness":0.5,  # Thickness(diameter) of cavity cooling pipe. 
                  "solenoid_return_yoke_thick" : 4.0,   # Outer radius of solenoid
                  "solenoid_outer_radius" : 55.0,   # Outer radius of solenoid
                  "solenoid_thickness":34.0,    # Total Thickness (r direction ) of solenoid
@@ -85,25 +131,28 @@ def createGeoParam():
                  "wmask_thick":5.0, # W mask ( at the end ) thickness
                  "wmask_z_distance":5.0, # W mask Z position ( distance from the end of RF structure )
                  "wmask_rmin": 3.5, # W mask rmin
-                 "wmask_rmax": 11.0}}  # W mask rmax 
+                 "wmask_rmax": 11.0}  # W mask rmax 
 
-    grfp=geo["RF"]["para"]
+    grfp=geo["RF"]
     grfp["cooling_pipe_rmin"] = grfp["r_cavity_beam_pipe"] + grfp["cavity_cooling_pipe_thickness"]
     grfp["vacuum_chamber_rmax"] = grfp["vacuum_chamber_rmin"] + grfp["vacuum_chamber_thick"]
 
     gwp["rbound1"] = grfp["solenoid_return_yoke_thick"] + grfp["solenoid_outer_radius"]
     gwp["zbound4"] = gwp["zbound3"] + grfp["zlen_rf_unit"] * grfp["Nb_structure"] + grfp["vacuum_chamber_thick"]
-    gwp["zbound5"] = math.ceil(gwp["zbound4"] + 0.1)
-
+    gwp["zbound5"] = math.ceil(gwp["zbound4"] + 1.0)
+    geo["global"]["zmax"] = gwp["zbound5"]
+   
 
     glp["FeSh_zone3_z_length"] = grfp["zlen_rf_unit"]*2  # Fe Shied length in zone 3. ( to the Fe Shield upstream surface )
 
     #@ Target
-    geo["Target"] = {"para": 
-                 { "FC_to_RF_gap":20.0, # Distance from the FC end to the RF entrance 
-                 "FC_to_Collimator_gap":4.0, # Distance from the FC to the start of collimator
-                 "Collimator_to_RF_gap":4.0, # Distance from the collimator to the RF
-                 "Target_to_FC_gap": 0.5, # Target to FC gap
+
+    geo["Target"] = {"FC_cooling_pipe": False, # True to Include FC cooling pipe
+                 "Collimator_cooling_pipe": False, # True to include Collimator cooling pipe
+                 "FC_to_RF_gap":geo["bases"]["FC_to_RF_gap"], # Distance from the FC end to the RF entrance 
+                 "FC_to_Collimator_gap":11.4, # Distance from the FC to the start of collimator
+                 "Collimator_to_RF_gap":-1.0, # Distance from the collimator to the RF. Negative for not include
+                 "Target_to_FC_gap": geo["bases"]["Target_to_FC_gap"], # Target to FC gap
                  "Target_thickness" : 1.6, # Target thickness
                  "WShield_thickness": 10.0, # W shield surrounding target system
 
@@ -126,7 +175,7 @@ def createGeoParam():
                  "BP_shield_thickness":7.0, # Thickness of beam pipe shield in upstream of target region
               # Enf of update in v0607                                          
 
-                 "FC_thickness" : 10.0, # Thickness(z length) of FC(AMD)
+                 "FC_thickness" : geo["bases"]["FC_thickness"], # Thickness(z length) of FC(AMD)
                  "FC_rmin_begin" : 0.8,  # FC upstream inner radius
                  "FC_rmin_end"  : 3.5,   # FC downstream inner radius
                  "FC_cooling_pipe_thickness":0.7, # Collimator cooling pipe thickness
@@ -134,9 +183,9 @@ def createGeoParam():
                                           # distance from the FC outer surface to the cooling pipe 
                                           # and the distance fron the FC front and back surface. 
                  "Collimator_cooling_pipe_thickness": 0.7, # Collimator cooling pipe thickness
-                 "Collimator_cooling_pipe_offset": 1.0 }} # Collimator cooling pipe 
+                 "Collimator_cooling_pipe_offset": 1.0 } # Collimator cooling pipe 
                                           # distance fron front, back, and inner surface.
-    gtar = geo["Target"]["para"]
+    gtar = geo["Target"]
     gtar["Collimator_rmax"] = grfp["r_cavity_outer_wall"]
     gtar["Collimator_rmin"] = grfp["r_cavity_beam_pipe"]
     gtar["FC_rmax"] = grfp["r_cavity_outer_wall"]

@@ -92,10 +92,10 @@ if __name__ == "__main__":
 
     geo = json.load(open("geodata.json"))
     
-    rmax_all = geo["world"]["para"]["rbound3"]
-    zmin_all = geo["world"]["para"]["zbound1"]
-    zmax_all = geo["world"]["para"]["zbound5"]
-    rinshield = geo["global"]["para"]["CShIn_rmin"] + geo["global"]["para"]["CShIn_thick"]
+    rmax_all = geo["world"]["rbound3"]
+    zmin_all = geo["world"]["zbound1"]
+    zmax_all = geo["world"]["zbound5"]
+    rinshield = geo["global"]["CShIn_rmin"] + geo["global"]["CShIn_thick"]
     nbinZ = 1000.0
     nbinR = rmax_all
     par_all = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
