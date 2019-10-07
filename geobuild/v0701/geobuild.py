@@ -104,7 +104,7 @@ def createGeoParam():
     gwp = geo["world"]
 
     #@ RF
-    geo["RF"] = {"cavity_cooling_pipe": True, #  True to include cavity cooling pipe
+    geo["RF"] = {"cavity_cooling_pipe": False, #  True to include cavity cooling pipe
                  "Nb_structure":6, # Number of RF structure
                  ### "zlen_rf_unit": 146.43, # length in Z of 1 RF unit. 
                  "zlen_rf_unit": g4p["acc_oneunit"], # length in Z of 1 RF unit. 

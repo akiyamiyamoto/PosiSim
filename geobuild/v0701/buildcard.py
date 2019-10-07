@@ -201,10 +201,14 @@ if __name__ == "__main__":
     dcyscore_fmt = "%-10s%10.1f%10s%10s%10s%10s%10.1f%s"
     res = ["*", "* Residual nuclei","*"]
     reg_volume = 1.0  # region volume in cm^3
+    # regname = ["TWdisk", "TFC", "TARwmsk", "TRDiskcp", "TRAxiscp", "TCOLIR4", 
+    #           "Tmskcp", "TFCcp", "RF1cp", "RF1solc", "RF2cp", 
+    #           "RF2solc", "RF3cp","RF3solc", "RF4cp", "RF4solc",
+    #           "RF5cp",  "RF5solc", "RF6cp","RF6solc", "zone2c", "RockW"]
     regname = ["TWdisk", "TFC", "TARwmsk", "TRDiskcp", "TRAxiscp", "TCOLIR4", 
-               "Tmskcp", "TFCcp", "RF1cp", "RF1solc", "RF2cp", 
-               "RF2solc", "RF3cp","RF3solc", "RF4cp", "RF4solc",
-               "RF5cp",  "RF5solc", "RF6cp","RF6solc", "zone2c", "RockW"]
+               "RF1solc", 
+               "RF2solc", "RF3solc", "RF4solc",
+               "RF5solc", "RF6solc", "zone2c", "RockW"]
     for ind in range(0, len(decaytimes)): 
         iu0 = 30
         res.append("* for decay time of %s" % decaytimes[ind])
