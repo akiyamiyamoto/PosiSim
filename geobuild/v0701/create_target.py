@@ -183,7 +183,7 @@ def crRotationTarget(geo, fd):
     body += ["RCC twdski %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, wdisk_zbgn, gtar["Target_thickness"], wdisk_rmin)]
     region += ["TWdisk 6 +twdsko -twdski "]
     region += ["TCudisk 6 +twdski"]
-    assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "TWdisk") ]
+    assignma += [ "ASSIGNMA %10s%10s" % ("TARMAT", "TWdisk") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "TCudisk") ]
     envelops["wdisk"] = " -twdsko "
 
