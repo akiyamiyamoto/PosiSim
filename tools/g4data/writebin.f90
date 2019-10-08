@@ -1,6 +1,6 @@
 subroutine write(unit, evtid, pdgid, x, p)
   integer, intent(in) :: evtid, pdgid, unit
-  real*4 , intent(in) :: x(4), p(4)
+  real*8 , intent(in) :: x(4), p(4)
  
   write(unit) evtid, pdgid, x, p
 

@@ -7,15 +7,16 @@
 *
       IMPLICIT NONE
       INTEGER*4  IDPDG, NUMDAT
-      PARAMETER ( NUMDAT = 14 )      
+      PARAMETER ( NUMDAT = 28 )      
       INTEGER*4 PDGIDS(NUMDAT)
       INTEGER*4 I, K
-      INTEGER*4 PDGIDS2(2, 2)
 
-      DATA PDGIDS/ 2212, -2212, 11, -11, 12, -12, 22, 
-     >             2112, -2112, -13, 13, 130, 211, -211/
-      DATA (PDGIDS2(K,1), K=1, 2)/14, 27/
-      DATA (PDGIDS2(K,2), K=1, 2)/-14, 28/
+      DATA PDGIDS/ 2212, -2212,   11,   -11,   12, 
+     >              -12,    22, 2112, -2112,  -13, 
+     >               13,   130,  211,  -211,  321,
+     >             -321,  3122,-3122,   310, 3112,
+     >             3222,  3212,  111,   311, -311,
+     >           -10000,    14,  -14/
 
       DO 100 I=1, NUMDAT
          IF ( PDGIDS(I).EQ.IDPDG) THEN 
@@ -23,13 +24,6 @@
             RETURN 
          ENDIF
 100   CONTINUE
-C
-      DO 200 I=1, 2
-         IF( PDGIDS2(1, I) .EQ. IDPDG) THEN 
-            IDPDG2FLUKA = PDGIDS2(2,I)
-            RETURN 
-         ENDIF
-200   CONTINUE
 C
       PRINT *,'Error in PDG2FLUKA : PDGID=',IDPDG,
      > ' is not found in the table. ',
@@ -90,11 +84,13 @@ C
       INTEGER*4 NPEVNT/1/
 * Read-in data buffer
       INTEGER*4 IDEVT, IDPDG
-      REAL*4    XREAD(0:3), PREAD(0:3)
+      REAL*8    XREAD(0:3), PREAD(0:3), r_in_vac
       INTEGER*4 I
 * Variable for initialization.
       CHARACTER*128 SDATADIR, fpref, filedata
       character*240 filepath
+      INTEGER*4     IDPDG2FLUKA
+      EXTERNAL      IDPDG2FLUKA
 *======================================================================*
 *                                                                      *
 *                 BASIC VERSION                                        *
@@ -217,6 +213,14 @@ C
 *
 * Convert unit.
 *  Fluka: cm, GeV, s or nsec   Fukuda's Geant4: mm, MeV, nsec
+      r_in_vac = sqrt( xread(1)**2 + xread(2)**2 )
+      if ( xread(3) .gt. 150.0d0 .and. xread(3) .lt. 50000.0d0 
+     >    .and. r_in_vac < 3.0d0 ) then 
+         print *,'%% Warning %% Found part. in vaccum R=',r_in_vac
+         print *,'This part. is .. KREAD=',KREAD,' NTOTREAD=',NTOTREAD,
+     >  ' Evt=',IDEVT,' PDG=',IDPDG,' X=',XREAD, ' P=',PREAD
+      endif
+
       DO 3000 I=0, 3
          PREAD(I)=PREAD(I)*0.001
          XREAD(I)=XREAD(I)*0.1
@@ -229,23 +233,44 @@ C
 *  Particle type (1=proton.....). Ijbeam is the type set by the BEAM
 *  card
 *  +-------------------------------------------------------------------*
-*
-* Generate particle as normal hadron
-*
+*  |  (Radioactive) isotope:
+      IF ( IJBEAM .EQ. -2 .AND. LRDBEA ) THEN
+         IARES  = IPROA
+         IZRES  = IPROZ
+         IISRES = IPROM
+         CALL STISBM ( IARES, IZRES, IISRES )
+         IJHION = IPROZ  * 1000 + IPROA
+         IJHION = IJHION * 100 + KXHEAV
+         IONID  = IJHION
+         CALL DCDION ( IONID )
+         CALL SETION ( IONID )
+*  |
+*  +-------------------------------------------------------------------*
+*  |  Heavy ion:
+      ELSE IF ( IJBEAM .EQ. -2 ) THEN
+         IJHION = IPROZ  * 1000 + IPROA
+         IJHION = IJHION * 100 + KXHEAV
+         IONID  = IJHION
+         CALL DCDION ( IONID )
+         CALL SETION ( IONID )
+         ILOFLK (NPFLKA) = IJHION
+*  |  Flag this is prompt radiation
+         LRADDC (NPFLKA) = .FALSE.
+*  |  Group number for "low" energy neutrons, set to 0 anyway
+         IGROUP (NPFLKA) = 0
+*  |
+*  +-------------------------------------------------------------------*
 *  |  Normal hadron:
-      IF( IJBEAM .NE. -2 ) THEN 
+      ELSE
          IONID = IDPDG2FLUKA(IDPDG)
          ILOFLK (NPFLKA) = IONID
 *  |  Flag this is prompt radiation
          LRADDC (NPFLKA) = .FALSE.
 *  |  Group number for "low" energy neutrons, set to 0 anyway
          IGROUP (NPFLKA) = 0
-*
-      ELSE
-         print *,'In source, IJBEAM=-2. May be wrong BEAM card'
-         STOP
       END IF
 *  |
+*  +-------------------------------------------------------------------*
 *  +-------------------------------------------------------------------*
 *  From this point .....
 *  Particle generation (1 for primaries)
@@ -277,15 +302,15 @@ C
 *       TKEFLK (NPFLKA) = SQRT ( PBEAM**2 + AM (IONID)**2 ) - AM (IONID)
       TKEFLK (NPFLKA) = PREAD(0)
 *  Particle momentum
-      PMOFLK (NPFLKA) = SQRT(PREAD(1)**2 + PREAD(2)**2 + PREAD(3)**2)
-*     PMOFLK (NPFLKA) = SQRT ( TKEFLK (NPFLKA) * ( TKEFLK (NPFLKA)
-*    &                       + TWOTWO * AM (IONID) ) )
+*      PMOFLK (NPFLKA) = SQRT(PREAD(1)**2 + PREAD(2)**2 + PREAD(3)**2)
+      PMOFLK (NPFLKA) = SQRT ( TKEFLK (NPFLKA) * ( TKEFLK (NPFLKA)
+     >                       + TWOTWO * AM (IONID) ) )
 *  Cosines (tx,ty,tz)
       TXFLK  (NPFLKA) = PREAD(1)/PMOFLK(NPFLKA)
       TYFLK  (NPFLKA) = PREAD(2)/PMOFLK(NPFLKA)
-      TZFLK  (NPFLKA) = PREAD(3)/PMOFLK(NPFLKA)
-*     TZFLK  (NPFLKA) = SQRT ( ONEONE - TXFLK (NPFLKA)**2
-*    &                       - TYFLK (NPFLKA)**2 )
+*      TZFLK  (NPFLKA) = PREAD(3)/PMOFLK(NPFLKA)
+      TZFLK  (NPFLKA) = SQRT ( ONEONE - TXFLK (NPFLKA)**2
+     &                       - TYFLK (NPFLKA)**2 )
 *  Polarization cosines:
       TXPOL  (NPFLKA) = -TWOTWO
       TYPOL  (NPFLKA) = +ZERZER

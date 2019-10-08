@@ -51,6 +51,11 @@ if __name__ == "__main__":
     myunit=45
     nread = 0
     nototal = 0
+
+    stats = {"zin":{"esum":0.0, "entries":0L}, 
+             "zout":{"esum":0.0, "entries":0L},
+             "vaccum":{"entries":0L} }
+
     if nout_per_file == 0:
         writebin.open(myunit, g4out )
         print "Opened %s for output data" % g4out
@@ -67,8 +72,12 @@ if __name__ == "__main__":
        nt.GetEntry(nread)
        nread += 1L
        if nt.z > zmax:
+           stats["zout"]["esum"] += nt.e
+           stats["zout"]["entries"] += 1L
            continue
        # r = math.sqrt(nt.x*nt.x + nt.y*nt.y)
+       stats["zin"]["esum"] += nt.e
+       stats["zin"]["entries"] += 1L
        nout += 1L
        nototal += 1L
        if nout_per_file != 0 and nout > nout_per_file:
@@ -87,8 +96,15 @@ if __name__ == "__main__":
        evtID = long(nt.evnID)
        pdgID = long(nt.pdgID)
        x = [nt.t, nt.x, nt.y, nt.z]
-       y = [nt.e, nt.px, nt.py, nt.pz]
-       writebin.write(myunit, evtID, pdgID, x, y)
+       p = [nt.e, nt.px, nt.py, nt.pz]
+       r = math.sqrt(nt.x*nt.x + nt.y*nt.y)
+       if nt.z > 150.0 and nt.z < 50000.0 and r < 3.0:
+          print("Warning ---Particle position is in vaccum of RF cavity regions. ")
+          print("Entry is %d, %d ID=%d (t,x,y,z)=(%g, %g, %g, %g) (e,px,py,pz)=(%g, %g, %g, %g)" % (nototal, nt.evnID, nt.pdgID, 
+                   nt.t, nt.x, nt.y, nt.z, nt.e, nt.px, nt.py, nt.pz) )
+          stats["vaccum"]["entries"] += 1L
+                     
+       writebin.write(myunit, evtID, pdgID, x, p)
     
        if pdgID in pidfound:
            pidfound[pdgID] += 1
@@ -111,5 +127,12 @@ if __name__ == "__main__":
     print "Particle ID found and number of particles."
     for k in pidfound.keys():
         print str(k) + ":" + str(pidfound[k])
+
+    print ""
+    print "Zin  particle: Total kinetic energy sum=%g, Nb. entries=%d" % (stats["zin"]["esum"], stats["zin"]["entries"] )
+    print "Zout particle: Total kinetic energy sum=%g, Nb. entries=%d" % (stats["zout"]["esum"], stats["zout"]["entries"] )
+    print ""
+    print "# of particles in cavity vaccum region=%d" % stats["vaccum"]["entries"]
+    
 
 
