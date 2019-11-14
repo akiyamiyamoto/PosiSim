@@ -91,6 +91,8 @@ C
       character*240 filepath
       INTEGER*4     IDPDG2FLUKA
       EXTERNAL      IDPDG2FLUKA
+* Temporary variables
+      REAL*8 TZFLKSQ, PMOFLKSQ
 *======================================================================*
 *                                                                      *
 *                 BASIC VERSION                                        *
@@ -121,9 +123,9 @@ C
             fpref = SDUSOU
          endif   
          if ( IWHASOU1.EQ. 0 ) THEN 
-            write(filedata,'(A,''.dat'')') fpref(1:len_trim(fpref))
+            write(filedata,'(A,''.bin'')') fpref(1:len_trim(fpref))
          ELSE
-            write(filedata,'(A,''.'',I0.1,''.dat'')') 
+            write(filedata,'(A,''.'',I0.1,''.bin'')') 
      >           fpref(1:len_trim(fpref)), IWHASOU1
          endif
 
@@ -301,16 +303,28 @@ C
 *  Kinetic energy of the particle (GeV)
 *       TKEFLK (NPFLKA) = SQRT ( PBEAM**2 + AM (IONID)**2 ) - AM (IONID)
       TKEFLK (NPFLKA) = PREAD(0)
-*  Particle momentum
+*  Particle momentum : Momentum consistent with mass assigned.
+*  E_k = E-m, P^2 = E^2 - m^2 = E_k*(E_k + 2*m)
 *      PMOFLK (NPFLKA) = SQRT(PREAD(1)**2 + PREAD(2)**2 + PREAD(3)**2)
-      PMOFLK (NPFLKA) = SQRT ( TKEFLK (NPFLKA) * ( TKEFLK (NPFLKA)
-     >                       + TWOTWO * AM (IONID) ) )
+      PMOFLKSQ = PREAD(0) * ( PREAD(0) + 2.0D0 * DBLE(AM(IONID)))
+      PMOFLK (NPFLKA) = SQRT( PMOFLKSQ ) 
+*      PMOFLK (NPFLKA) = SQRT ( TKEFLK (NPFLKA) * ( TKEFLK (NPFLKA)
+*     >                       + TWOTWO * AM (IONID) ) )
 *  Cosines (tx,ty,tz)
-      TXFLK  (NPFLKA) = PREAD(1)/PMOFLK(NPFLKA)
-      TYFLK  (NPFLKA) = PREAD(2)/PMOFLK(NPFLKA)
+      TXFLK  (NPFLKA) = PREAD(1)/SQRT(PMOFLKSQ)
+      TYFLK  (NPFLKA) = PREAD(2)/SQRT(PMOFLKSQ)
 *      TZFLK  (NPFLKA) = PREAD(3)/PMOFLK(NPFLKA)
-      TZFLK  (NPFLKA) = SQRT ( ONEONE - TXFLK (NPFLKA)**2
-     &                       - TYFLK (NPFLKA)**2 )
+*      TZFLK  (NPFLKA) = SQRT ( ONEONE - TXFLK (NPFLKA)**2
+*     &                       - TYFLK (NPFLKA)**2 )
+      TZFLKSQ = 1.0D0 - PREAD(1)*PREAD(1)/PMOFLKSQ 
+     &                - PREAD(2)*PREAD(2)/PMOFLKSQ
+      IF ( TZFLKSQ .GE. 0.0) THEN 
+           TZFLK(NPFLKA) = SQRT(TZFLKSQ)
+      ELSE
+           print *,"TZFLKSQ<0.0 in source.f. Considered to be 0.0"
+           TZFLK(NPFLKA) = 0.0
+      ENDIF
+
 *  Polarization cosines:
       TXPOL  (NPFLKA) = -TWOTWO
       TYPOL  (NPFLKA) = +ZERZER

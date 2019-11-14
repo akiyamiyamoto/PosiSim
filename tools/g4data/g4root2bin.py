@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", help="Output fortran binary file name", dest="g4out", 
                               action="store", default="g4data.dat")
     parser.add_argument("--zmax", help="Maximum Z position (mm unit)of particles for output.",
-                              dest="zmax", action="store", default="10000.0")
+                              dest="zmax", action="store", default="1000000.0")
     parser.add_argument("--nout_per_file", help="Number of events per output file. 0 for no limit",
                               dest="nout_per_file", action="store", default="0")
     parser.add_argument("--nout_max", help="Max number of output particles. 0 for no limit",
@@ -98,11 +98,11 @@ if __name__ == "__main__":
        x = [nt.t, nt.x, nt.y, nt.z]
        p = [nt.e, nt.px, nt.py, nt.pz]
        r = math.sqrt(nt.x*nt.x + nt.y*nt.y)
-       if nt.z > 150.0 and nt.z < 50000.0 and r < 3.0:
-          print("Warning ---Particle position is in vaccum of RF cavity regions. ")
-          print("Entry is %d, %d ID=%d (t,x,y,z)=(%g, %g, %g, %g) (e,px,py,pz)=(%g, %g, %g, %g)" % (nototal, nt.evnID, nt.pdgID, 
-                   nt.t, nt.x, nt.y, nt.z, nt.e, nt.px, nt.py, nt.pz) )
-          stats["vaccum"]["entries"] += 1L
+       #if nt.z > 150.0 and nt.z < 50000.0 and r < 3.0:
+       #   print("Warning ---Particle position is in vaccum of RF cavity regions. ")
+       #   print("Entry is %d, %d ID=%d (t,x,y,z)=(%g, %g, %g, %g) (e,px,py,pz)=(%g, %g, %g, %g)" % (nototal, nt.evnID, nt.pdgID, 
+       #            nt.t, nt.x, nt.y, nt.z, nt.e, nt.px, nt.py, nt.pz) )
+       #   stats["vaccum"]["entries"] += 1L
                      
        writebin.write(myunit, evtID, pdgID, x, p)
     
@@ -131,8 +131,8 @@ if __name__ == "__main__":
     print ""
     print "Zin  particle: Total kinetic energy sum=%g, Nb. entries=%d" % (stats["zin"]["esum"], stats["zin"]["entries"] )
     print "Zout particle: Total kinetic energy sum=%g, Nb. entries=%d" % (stats["zout"]["esum"], stats["zout"]["entries"] )
-    print ""
-    print "# of particles in cavity vaccum region=%d" % stats["vaccum"]["entries"]
+    #print ""
+    #print "# of particles in cavity vaccum region=%d" % stats["vaccum"]["entries"]
     
 
 
