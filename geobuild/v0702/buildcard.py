@@ -142,7 +142,8 @@ def usrbdx_for_liquidseal():
 def decay_score(geodata):
 
     # decaytimes = ["1s", "1M", "1h","1d","1w","1m","3m","1y","4y","Xy","Zy"]
-    decaytimes = ["1s", "1h","1d","1m","3m","1y","4y","Xy","Zy"]
+    # decaytimes = ["1s", "1h","1d","1m","3m","1y","4y","Xy","Zy"]
+    decaytimes = ["1h","1m","1y","Xy","Zy"]
 
     par_all = geodata["par_all"]
     par_mid = geodata["par_mid"]
@@ -206,9 +207,19 @@ def primary_score(geodata):
     geo = geodata["geo"]
     rinshield = geo["global"]["CShIn_rmin"] + geo["global"]["CShIn_thick"]
 
+#    rmax_all = geo["world"]["rbound3"]
+#    zmin_all = geo["world"]["zbound1"]
+#    zmax_all = geo["world"]["zbound5"]
+#    nbinZ = 1000.0
+#    nbinR = rmax_all
+#    par_all = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
+
+#    par_mid = [120.0, 400.0, -100.0, 400.0, 500.0]
+#    par_tar = [30.0, 0.0, -40.0, 150.0, 200.0]
+
     cards = []
     cards += Primary_Score("priAll", "DOSE-EQ", 81, 
-                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, par_all[4])
+                par_all[0], 5900.0 , -400.0, par_all[3], 1.0,1260)
 
     cards += Primary_Score("primid", "DOSE-EQ", 82, 
                 par_mid[0], par_mid[1], par_mid[2], par_mid[3], 1.0, par_mid[4])
@@ -216,20 +227,20 @@ def primary_score(geodata):
 #    cards += Primary_Score("pritar", "DOSE-EQ", 83, 
 #                par_tar[0], par_tar[1], par_tar[2], par_tar[3], 1.0, par_tar[4])
 
-    cards += Primary_Score("tdose",     "DOSE", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
-    cards += Primary_Score("tdEMd","DOSE-EM", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
-    cards += Primary_Score("tdNiel", "NIEL-DEP", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+#    cards += Primary_Score("tdose",     "DOSE", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+#    cards += Primary_Score("tdEMd","DOSE-EM", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+#    cards += Primary_Score("tdNiel", "NIEL-DEP", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
 
 # 
 # def Primary_Score(name, stype, unit, rmax, zmax, zmin, nbinR, nbinF, nbinZ, rmin=0.0):
 # Primary Energy deposit to Target
-    cards += Primary_Score("rfdose1",     "DOSE", 86, 10.0, 80.0, 0.0, 100, 1, 800 )    
-    cards += Primary_Score("rfEMd1",   "DOSE-EM", 86, 10.0, 80.0, 0.0, 100, 1, 800 )    
-    cards += Primary_Score("rfNiel1", "NIEL-DEP", 86, 10.0, 80.0, 0.0, 100, 1, 800 )    
+    cards += Primary_Score("rfdose1",     "DOSE", 86, 10.0,100.0, 0.0, 100, 1,1000 )    
+    cards += Primary_Score("rfEMd1",   "DOSE-EM", 86, 10.0,100.0, 0.0, 100, 1,1000 )    
+    cards += Primary_Score("rfNiel1", "NIEL-DEP", 86, 10.0,100.0, 0.0, 100, 1,1000 )    
 
-#    cards += Primary_Score("rfdose2",     "DOSE", 87, 10.0,1000.0, 0.0, 100, 1, 500 )  
-#    cards += Primary_Score("rfEMd2",   "DOSE-EM", 87, 10.0,1000.0, 0.0, 100, 1, 500 )  
-#    cards += Primary_Score("rfNiel2", "NIEL-DEP", 87, 10.0,1000.0, 0.0, 100, 1, 500 )  
+    cards += Primary_Score("rfdose2",     "DOSE", 87, 10.0,5900.0, 5400.0, 100, 1, 1000 )  
+    cards += Primary_Score("rfEMd2",   "DOSE-EM", 87, 10.0,5900.0, 5400.0, 100, 1, 1000 )  
+    cards += Primary_Score("rfNiel2", "NIEL-DEP", 87, 10.0,5900.0, 5400.0, 100, 1, 1000 )  
 
 
 # 
@@ -242,7 +253,7 @@ def set_geodata(geo):
     rmax_all = geo["world"]["rbound3"]
     zmin_all = geo["world"]["zbound1"]
     zmax_all = geo["world"]["zbound5"]
-    nbinZ = 1000.0
+    nbinZ = 610.0
     nbinR = rmax_all
     par_all = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
 
@@ -264,7 +275,7 @@ if __name__ == "__main__":
 
     cards = primary_score(geodata)
 
-#    cards += decay_score(geodata)
+#     cards += decay_score(geodata)
 #     cards += usrbdx_for_liquidseal()
 
 

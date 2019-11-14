@@ -61,83 +61,83 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     # print grf["solenoid_thickness"], grf["solenoid_cooling_pipe_thickness"] 
     # print sol_rmax, sol_rmin, sol_cp_rmax, sol_cp_rmin
 
-    solout = "rf%dBsolo" % nrf 
+    solout = "r%dBsolo" % nrf 
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solout, zbegin, zlen_rf, sol_rmax ) )
-    solcpo = "rf%dBscpo" % nrf 
+    solcpo = "r%dBscpo" % nrf 
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpo, zbegin, zlen_rf, sol_cp_rmax ) )
-    solcpi = "rf%dBscpi" % nrf 
+    solcpi = "r%dBscpi" % nrf 
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpi, zbegin, zlen_rf, sol_cp_rmin ) )
-    solin = "rf%dBsoli" % nrf 
+    solin = "r%dBsoli" % nrf 
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solin, zbegin, zlen_rf, sol_rmin ) )
 
     _region += ["*", "* **** Created by crOneRFStructure  nrf=%d ************************ " % nrf,
-                "RF%dsolo 6 +rf%dBsolo -rf%dBscpo" % (nrf, nrf, nrf),
-                "RF%dsolc 6 +rf%dBscpo -rf%dBscpi" % (nrf, nrf, nrf),
-                "RF%dsoli 6 +rf%dBscpi -rf%dBsoli" % (nrf, nrf, nrf)]
+                "R%dsolo 6 +r%dBsolo -r%dBscpo" % (nrf, nrf, nrf),
+                "R%dsolc 6 +r%dBscpo -r%dBscpi" % (nrf, nrf, nrf),
+                "R%dsoli 6 +r%dBscpi -r%dBsoli" % (nrf, nrf, nrf)]
 
     matdata = {"solo":"Copper", "solc":"WATER", "soli":"Copper"}
     for reg, mat in matdata.iteritems():
-        regname = "RF%d%s" % (nrf, reg)
+        regname = "R%d%s" % (nrf, reg)
         _assignma += [ "ASSIGNMA %10s%10s" % (mat, regname)]
 
     # Beam pipe after RF structure
     vcthick = grf["vacuum_chamber_thick"]
     vc_len = zlen_rf_unit + vcthick if nrf == grf["Nb_structure"] else zlen_rf_unit
 
-    vacname = "rf%dcvb" % nrf
+    vacname = "r%dcvb" % nrf
     r_beam_pipe = grf["r_cavity_beam_pipe"]
     bp_len0 = zlen_rf_unit - zlen_rf + vcthick if nrf == grf["Nb_structure"] else zlen_rf_unit - zlen_rf
     bp_len = zlen_rf_unit - zlen_rf 
 
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % (vacname, zbegin, vc_len, r_beam_pipe) )
-    _body.append("RCC rf%dbpw 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin + zlen_rf, 
+    _body.append("RCC r%dbpw 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin + zlen_rf, 
           bp_len0, r_beam_pipe + glbal["BPthick"] ) )                
-    _region += [ "RF%dbpw 6 +rf%dbpw -rf%dcvb " % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "RF%dbpw" % nrf) ]
+    _region += [ "R%dbpw 6 +r%dbpw -r%dcvb " % (nrf, nrf, nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dbpw" % nrf) ]
 
     # Vacuum chamber and surrounding vacuum
-    _body.append("RCC rf%dvcho 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len, 
+    _body.append("RCC r%dvcho 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len, 
                   grf["vacuum_chamber_rmax"] ) )
-    _body.append("RCC rf%dvchi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, zlen_rf_unit, 
+    _body.append("RCC r%dvchi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, zlen_rf_unit, 
                   grf["vacuum_chamber_rmin"] ) )
-    _region += [ "RF%dvch 6 +rf%dvcho -rf%dvchi" % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "RF%dvch" % nrf) ]
+    _region += [ "R%dvch 6 +r%dvcho -r%dvchi" % (nrf, nrf, nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dvch" % nrf) ]
     if nrf == grf["Nb_structure"]:
-        _region[-1] += " -rf%dbpw " % nrf
+        _region[-1] += " -r%dbpw " % nrf
 
     # W mask at the end of RF structure
     mask_start_z = zbegin + zlen_rf_unit - grf["wmask_z_distance"] - grf["wmask_thick"]
-    _body.append("RCC rf%dmsko 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
+    _body.append("RCC r%dmsko 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
                  grf["wmask_thick"], grf["wmask_rmax"]) )
-    _body.append("RCC rf%dmski 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
+    _body.append("RCC r%dmski 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
                  grf["wmask_thick"], grf["wmask_rmin"]))
-    _region += [ "RF%dmsk 6 +rf%dmsko -rf%dmski " % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "RF%dmsk" % nrf) ]
+    _region += [ "R%dmsk 6 +r%dmsko -r%dmski " % (nrf, nrf, nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "R%dmsk" % nrf) ]
 
     # Return yoke out side of solenoid
-    _body += ["RCC rf%dryo 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len,
+    _body += ["RCC r%dryo 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len,
                   grf["solenoid_outer_radius"] + grf["solenoid_return_yoke_thick"] ) ]
-    _body += ["RCC rf%dryi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len,
+    _body += ["RCC r%dryi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len,
                   grf["solenoid_outer_radius"] )]
-    _region += [ "RF%dyoke 6 +rf%dryo  -rf%dryi" % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "RF%dyoke" % nrf) ]
+    _region += [ "R%dyoke 6 +r%dryo  -r%dryi" % (nrf, nrf, nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) ]
 
     # Air outside of vacuum chamber and shield beween solenoid
-    _body.append("RCC rf%dairo 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + zlen_rf,
+    _body.append("RCC r%dairo 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + zlen_rf,
                 vc_len - zlen_rf, sol_rmax) )
 
     gapfiller_zbgn = zlen_rf + grf["solenoid_gap_shield_z_gapsize"]
     gapfiller_zlen = grf["zlen_rf_unit"] - gapfiller_zbgn - grf["solenoid_gap_shield_z_gapsize"]
 
-    _body.append("RCC rf%dsolsi 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + gapfiller_zbgn,
+    _body.append("RCC r%dsolsi 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + gapfiller_zbgn,
                 gapfiller_zlen, sol_rmax - grf["solenoid_gap_shield_r_thickness"]) )
-    _body.append("RCC rf%dsolso 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + gapfiller_zbgn,
+    _body.append("RCC r%dsolso 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + gapfiller_zbgn,
                 gapfiller_zlen, sol_rmax ) )
 
-    _region += ["RF%dsols 6 +rf%dsolso -rf%dsolsi" % (nrf, nrf, nrf) ]
-    _region += ["RF%dair 6 ( +rf%dBsoli -rf%dvcho ) " % (nrf, nrf, nrf) + " | +rf%dairo -rf%dvcho - (+rf%dsolso -rf%dsolsi) " % (nrf, nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "RF%dair" % nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "RF%dsols" % nrf) ]
+    _region += ["R%dsols 6 +r%dsolso -r%dsolsi" % (nrf, nrf, nrf) ]
+    _region += ["R%dair 6 ( +r%dBsoli -r%dvcho ) " % (nrf, nrf, nrf) + " | +r%dairo -r%dvcho - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "R%dair" % nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "R%dsols" % nrf) ]
  
 
     ################################################################### 
@@ -157,10 +157,10 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     cp_rmax1 = cp_rmax0 + grf["cavity_cooling_pipe_thickness"]
     cp_zbgn0 = zbegin + ( grf["start_thick"] - grf["cavity_cooling_pipe_thickness"] ) * 0.5
     if cav_cp:
-        water_pipe_name_i = "rf%dcwi0" % (nrf)
+        water_pipe_name_i = "r%dcwi0" % (nrf)
         _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_i, cp_zbgn0, 
                  grf["cavity_cooling_pipe_thickness"], cp_rmin ) )
-        water_pipe_name_o = "rf%dcwo0" % (nrf)
+        water_pipe_name_o = "r%dcwo0" % (nrf)
         _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_o, cp_zbgn0, 
                  grf["cavity_cooling_pipe_thickness"], cp_rmax0 ) )
         pipe_region["front"].append(" +%s -%s " % ( water_pipe_name_o, water_pipe_name_i) )
@@ -168,12 +168,12 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
 
     zlen_cwx = zlen_rf - ( grf["start_thick"] - grf["cavity_cooling_pipe_thickness"] )
     if cav_cp:
-        water_pipe_name_ix = "rf%dcwix" % (nrf)
+        water_pipe_name_ix = "r%dcwix" % (nrf)
         _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_ix, cp_zbgn0, zlen_cwx, cp_rmax0 ) )
-        water_pipe_name_ox = "rf%dcwox" % (nrf)
+        water_pipe_name_ox = "r%dcwox" % (nrf)
         _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_ox, cp_zbgn0, zlen_cwx, cp_rmax1 ) ) 
-        pipe_region["front"].append(" +%s -%s +rf%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
-        pipe_region["back"].append(" +%s -%s -rf%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
+        pipe_region["front"].append(" +%s -%s +r%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
+        pipe_region["back"].append(" +%s -%s -r%dcent" % ( water_pipe_name_ox, water_pipe_name_ix, nrf) )
 
     cp_zoffset = grf["deltaZ_per_cavity"] + ( grf["deltaZ_per_cavity_structure"] -
                  grf["deltaZ_per_cavity"] - grf["cavity_cooling_pipe_thickness"] ) *0.5   
@@ -184,20 +184,20 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     fwdbck = "front"
     for nc in range(1, grf["Nb_cavity"]+1):
         if nc == centcav:
-           centpln = "rf%dcent" % nrf
+           centpln = "r%dcent" % nrf
            _body.append("XYP %s %f " % ( centpln, zcav )) 
            fwdbck = "back"
 
-        cavname="rf%dcav%d" % ( nrf, nc )
+        cavname="r%dcav%d" % ( nrf, nc )
         _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( cavname, zcav, zlen, rcavin))
         cav_region[fwdbck].append("+" + cavname)           
 
         cp_zpos = zcav + cp_zoffset
         if cav_cp:
-            water_pipe_name_i = "rf%dcwi%d" % ( nrf, nc )
+            water_pipe_name_i = "r%dcwi%d" % ( nrf, nc )
             _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_i, cp_zpos, 
                      grf["cavity_cooling_pipe_thickness"], cp_rmin ) )
-            water_pipe_name_o = "rf%dcwo%d" % ( nrf, nc )
+            water_pipe_name_o = "r%dcwo%d" % ( nrf, nc )
             _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( water_pipe_name_o, cp_zpos, 
                      grf["cavity_cooling_pipe_thickness"], cp_rmax0 ))
             # if fwdbck == "front":
@@ -207,25 +207,25 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         zcav += grf["deltaZ_per_cavity_structure"]
 
     # Cavity and beam pipe vacuum
-    vacreg = "RF%dvac" % nrf 
+    vacreg = "R%dvac" % nrf 
     vacregion = "%s 6 " % vacreg + " | ".join(cav_region["front"]+cav_region["back"])
     _region += join2FixedLength(vacregion.split())
     _assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", vacreg) ]
 
     # Cooling pipe in RF structure
     if cav_cp:
-        cpreg = "RF%dcp" % nrf 
+        cpreg = "R%dcp" % nrf 
         cpregion = "%s 6 " % cpreg + " | ".join(pipe_region["front"] + pipe_region["back"])
         _region += join2FixedLength(cpregion.split())
         _assignma += [ "ASSIGNMA %10s%10s" % ("WATER", cpreg) ]
     
     centsign= {"front":"+", "back":"-"}
     # RF structure 
-    rfstro = "rf%dstro" % nrf
+    rfstro = "r%dstro" % nrf
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % (rfstro, zbegin, zlen_rf, rf_rmax))
     for fb in ["front", "back"]:
-        rfstr = "RF%dstr%s" % (nrf, fb[0:1])
-        rfstructure = "%s 6 +%s " % ( rfstr, rfstro ) +  " %srf%dcent " % (centsign[fb], nrf)
+        rfstr = "R%dstr%s" % (nrf, fb[0:1])
+        rfstructure = "%s 6 +%s " % ( rfstr, rfstro ) +  " %sr%dcent " % (centsign[fb], nrf)
         for cav in cav_region[fb]:
             rfstructure += cav.replace("+"," -") 
 
@@ -237,11 +237,11 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", rfstr) ]
 
     # Vacuum out size of RF structure
-    vac1 = "RF%dvaco 6 " % nrf 
-    vac1 += " +rf%dvchi -rf%dstro -rf%dbpw " % (nrf, nrf, nrf) 
-    vac1 += " - ( +rf%dmsko -rf%dmski ) " % (nrf, nrf) 
+    vac1 = "R%dvaco 6 " % nrf 
+    vac1 += " +r%dvchi -r%dstro -r%dbpw " % (nrf, nrf, nrf) 
+    vac1 += " - ( +r%dmsko -r%dmski ) " % (nrf, nrf) 
     _region += join2FixedLength(vac1.split())
-    rfvac = "RF%dvaco" % nrf
+    rfvac = "R%dvaco" % nrf
     _assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", rfvac) ]
     
     zlast = zbegin + zlen_rf_unit

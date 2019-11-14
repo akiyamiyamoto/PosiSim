@@ -105,7 +105,7 @@ def createGeoParam():
 
     #@ RF
     geo["RF"] = {"cavity_cooling_pipe": False, #  True to include cavity cooling pipe
-                 "Nb_structure":6, # Number of RF structure
+                 "Nb_structure":36, # Number of RF structure
                  ### "zlen_rf_unit": 146.43, # length in Z of 1 RF unit. 
                  "zlen_rf_unit": g4p["acc_oneunit"], # length in Z of 1 RF unit. 
                  "Nb_cavity":g4p["number_of_cell"], # Nb of cavities per RF structure
