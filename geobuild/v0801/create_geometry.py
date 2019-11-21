@@ -53,6 +53,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     rcavin = grf["r_cavity_inner_wall"]
     zlen_rf_unit = grf["zlen_rf_unit"]
 
+
     zlen_rf = grf["start_thick"] + grf["deltaZ_per_cavity_structure"]*float(grf["Nb_cavity"])
     sol_rmax = grf["solenoid_outer_radius"]
     sol_rmin = sol_rmax - grf["solenoid_thickness"]
@@ -62,14 +63,18 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     # print grf["solenoid_thickness"], grf["solenoid_cooling_pipe_thickness"] 
     # print sol_rmax, sol_rmin, sol_cp_rmax, sol_cp_rmin
 
+    
     solout = "r%dBsolo" % nrf 
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solout, zbegin, zlen_rf, sol_rmax ) )
     solcpo = "r%dBscpo" % nrf 
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpo, zbegin, zlen_rf, sol_cp_rmax ) )
     solcpi = "r%dBscpi" % nrf 
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpi, zbegin, zlen_rf, sol_cp_rmin ) )
     solin = "r%dBsoli" % nrf 
-    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solin, zbegin, zlen_rf, sol_rmin ) )
+   
+    zbegins = zbegin - geo["bases"]["Collimator_thickness"] if nrf == 1 else zbegin
+    zlen_rfs = zlen_rf + geo["bases"]["Collimator_thickness"] if nrf == 1 else zlen_rf
+    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solout, zbegins, zlen_rfs, sol_rmax ) )
+    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpo, zbegins, zlen_rfs, sol_cp_rmax ) )
+    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpi, zbegins, zlen_rfs, sol_cp_rmin ) )
+    _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solin, zbegins, zlen_rfs, sol_rmin ) )
 
     _region += ["*", "* **** Created by crOneRFStructure  nrf=%d ************************ " % nrf,
                 "R%dsolo 6 +r%dBsolo -r%dBscpo" % (nrf, nrf, nrf),
@@ -89,6 +94,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     # Beam pipe after RF structure
     vcthick = grf["vacuum_chamber_thick"]
     vc_len = zlen_rf_unit + vcthick if nrf == grf["Nb_structure"] else zlen_rf_unit
+    yoke_len = vc_len + geo["bases"]["Collimator_thickness"] if nrf == 1 else vc_len
 
     vacname = "r%dcvb" % nrf
     r_beam_pipe = grf["r_cavity_beam_pipe"]
@@ -121,12 +127,20 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     _assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "R%dmsk" % nrf) ]
 
     # Return yoke out side of solenoid
-    _body += ["RCC r%dryo 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len,
+    _body += ["RCC r%dryo 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegins, yoke_len,
                   grf["solenoid_outer_radius"] + grf["solenoid_return_yoke_thick"] ) ]
-    _body += ["RCC r%dryi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len,
+    _body += ["RCC r%dryi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegins, yoke_len,
                   grf["solenoid_outer_radius"] )]
     _region += [ "R%dyoke 6 +r%dryo  -r%dryi" % (nrf, nrf, nrf) ]
     _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) ]
+
+    # Collimator mask for the first cavity
+    if nrf == 1:
+        zmsk_len = geo["bases"]["Collimator_thickness"]
+        _body += ["RCC colmsko 0.0 0.0 %f 0.0 0.0 %f %f" % ( zbegins, zmsk_len, grf["Collimator_rmax"])]
+        _body += ["RCC colmski 0.0 0.0 %f 0.0 0.0 %f %f" % ( zbegins, zmsk_len, grf["Collimator_rmin"])]
+        _region += ["Colmsk 6 +colmsko -colmski "]
+        _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "Colmsk") ]
 
     # Air outside of vacuum chamber and shield beween solenoid
     _body.append("RCC r%dairo 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + zlen_rf,
@@ -142,12 +156,26 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
 
     _region += ["R%dsols 6 +r%dsolso -r%dsolsi" % (nrf, nrf, nrf) ]
     # _region += ["R%dair 6 ( +r%dBsoli -r%dvcho ) " % (nrf, nrf, nrf) + " | +r%dairo -r%dvcho - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf) ]
-    _region += ["R%dair 6 ( +r%dBsoli -r%dstro ) " % (nrf, nrf, nrf) + 
-                " | +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
-                " - (r%dmsko - r%dmski )" % (nrf, nrf ) ]
+    # _region += ["R%dair 6 ( +r%dBsoli -r%dstro ) " % (nrf, nrf, nrf) + 
+    #             " | +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
+    #             " - (r%dmsko - r%dmski )" % (nrf, nrf ) ]
+    _region += ["R%dair 6 " % nrf + 
+                " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
+                " - (r%dmsko - r%dmski )" % (nrf, nrf ) + 
+                " | ( +r%dBsoli -r%dstro ) " % (nrf, nrf) ] 
+    if nrf == 1:
+       _region[-1] += " -colmsko "
+       _region += ["Colvac 6 +colmski"]
+       _assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "Colvac" ) ]
+
+
     _assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "R%dair" % nrf) ]
     _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "R%dsols" % nrf) ]
  
+
+
+
+
 
     ################################################################### 
     ## RF Structure it self
@@ -291,7 +319,7 @@ def crRFZone(geo, fd):
     glbal = geo["global"]
     grf = geo["RF"]
 
-    zbegin = gworld["zbound3"]
+    zbegin = grf["z_rf_begin"]
     nb_structure = grf["Nb_structure"]
 
     for nrf in range(1, nb_structure+1):
@@ -337,63 +365,32 @@ def crWorld(geo, fd):
     _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylbpso", glp["BPrin"]+glp["BPthick"]+gtar["BP_shield_thickness"]))
             
 
+    region = []
+    assignma = []
+
     # create  region data
     _region += ["*", "* black hole", 
        "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rbound3 ) ",
-       "RockW   6 +rbound3 -rbound2 +zbound5 -zbound1 "] 
-    #   "*","* upstream zone ", 
-    #   "Zone1 6 +zbound2 - zbound1 + rbound2 ",
-    #   "*","* target zone", 
-    #   "ZoneT 6 +zbound3 - zbound2 + rbound1"]
-    #   "*","* rf zone", 
-    #   "ZoneRF 6 +zbound4 - zbound3 + rbound1", 
-    #   "*","* out side of target zone"] 
-    #   "Zone2 6 +zbound3 - zbound2 + rbound2 - rbound1", 
-    #   "*","* out side of RF zone", 
-    #   "Zone3 6 +zbound4 - zbound3 + rbound2 - rbound1", 
-    #   "*","* downstream zone", 
-    #   "Zone4 6 +zbound5 - zbound4 + rbound2"] 
+       "RockW   6 +rbound3 -rbound2 +zbound5 -zbound1 ", 
+       "OutShld 6 +zbound5 -zbound1 +rbound2 -rcylout ", 
+       "MidAir  6 +zbound5 -zbound1 +rcylout -rcylmed ",
+       "InShld  6 +zbound5 -zbound1 +rcylmed -rcylin " ]
 
     # Assign material to each region
     _assignma += ["*","* Assign material ","*",
        "*********1*********2*********3*********4*********5*********6*********7*********8",
        "*","ASSIGNMA   BLCKHOLE  BlHole",
-       "*","ASSIGNMA      WATER   RockW"]
-    #   "*","ASSIGNMA     VACUUM    ZoneT     ZoneRF"]   
-    #   "*","ASSIGNMA     VACUUM    Zone1      Zone4"]   
+       "*","ASSIGNMA      WATER   RockW",
+           "ASSIGNMA %10s%10s" % ("CONCRETE", "OutShld"), 
+           "ASSIGNMA %10s%10s" % ("AIR", "MidAir"), 
+           "ASSIGNMA %10s%10s" % ("CONCRETE", "InShld") ]
 
     fd.Add(_body, _region, _assignma)
 
     return
 
 # ========================================
-def crTunnelShield(geo, zone_no, fd):
-    ''' Create regions of Concrete sheild for zone of given zone_no ( 1 to 4 ) '''
-    
-    # global _body, _region, _assignma
-
-    zbound_min = "zbound%d" % zone_no
-    zbound_max = "zbound%d" % (zone_no+1)
-    region_name_pref = "zone%d" % zone_no
-    rbound = {"a":["rbound2", "rcylout"], "b":["rcylout", "rcylmed"], 
-              "c":["rcylmed", "rcylin"] }
-
-    body = []
-    region = []
-    assignma = []
-    for rn in ["a", "b", "c"]:
-        region += ["*","* Concrete shield of tunnel for zone %d" % zone_no, 
-                region_name_pref + rn +  " 6 +%s -%s +%s -%s" % ( zbound_max, zbound_min, rbound[rn][0], rbound[rn][1] )]
-
-        material = "AIR" if rn == "b" else "CONCRETE"
-        assignma += ["ASSIGNMA %10s%10s" % (material, region_name_pref+rn)]
-
-    fd.Add(body, region, assignma)
-
-# ========================================
 def crZone1(geo, fd):
-
-    # global _body, _region, _assignma
 
     
 
@@ -403,51 +400,32 @@ def crZone1(geo, fd):
 
     body = ["*  Body for Zone1",
          "XYP z1pln1 %f" % zb1, 
-         "XYP z1pln2 %f" % zb2, 
-         "XYP z1pln3 %f" % zb3 ]
+         "XYP z1pln2 %f" % zb2] 
+#         "XYP z1pln3 %f" % zb3 ]
 
 
     region = ["*", "* **** Created by crZone1 ************************ ",
                 "*", "* Beam pipe",
                 "BPvac1   6 +zbound2 -zbound1 +rcylbpin",
                 "BPpipe1  6 +zbound2 -zbound1 +rcylbpou  -rcylbpin",
-                "BPShld1  6 +zbound2 -z1pln3 +rcylbpso  -rcylbpou",
                 "Z1upair  6 +z1pln1 -zbound1 +rcylin - rcylbpou", 
-                "Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou", 
-                "Z1FeSha  6 +z1pln3 -z1pln2 +rcylin -rcylbpou", 
-                "Z1FeShb  6 +zbound2 -z1pln3 +rcylin -rcylfein", 
-                "Z1dwnair 6 +zbound2 -z1pln3 +rcylfein -rcylbpso"]
+                "Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou",
+                "Z1FeSha  6 +zbound2 -z1pln2 +rcylin -rcylbpou",]
 
     assignma = ["*", "* **** Created by crZone1 ************************ ",
                   "ASSIGNMA %10s%10s" % ("VACUUM", "BPvac1"), 
                   "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe1"), 
-                  "ASSIGNMA %10s%10s" % ("AIR", "BPShld1"), 
  
                   "ASSIGNMA %10s%10s" % ("AIR", "Z1upair"), 
-                  "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh"), 
-                  "ASSIGNMA %10s%10s%10s" % ("CASTIRON", "Z1FeSha", "Z1FeShb"), 
-                  "ASSIGNMA %10s%10s" % ("AIR", "Z1dwnair")] 
+                  "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh"),  
+                  "ASSIGNMA %10s%10s" % ("CASTIRON", "Z1FeSha")] 
 
     fd.Add(body, region, assignma)
-
-    crTunnelShield(geo, 1, fd)
 
     fd.Add([], ["***** End of crZone1 region. ****","*"],  ["**** End of crZone1 assignmat. ****", "*"] )
 
 # ========================================
-def crZone2(geo, fd):
-
-    fd.AddRegion(["*", "* **** Created by crZone4 ************************ ",
-                "*** zone2in 6 +zbound3 -zbound2 +rcylin - rbound1"])
-    # fd.AddAssignmat(["ASSIGNMA %10s%10s" % ("AIR", "zone2in")])
-    crTunnelShield(geo, 2, fd)
-
-# ========================================
 def crZone3(geo, fd):
-
-    # fd.AddRegion(["*", "* **** Created by crZone4 ************************ ",
-    #            "zone3in 6 +zbound4 -zbound3 +rcylin - rbound1"])
-    # fd.AddAssignmat(["ASSIGNMA %10s%10s" % ("AIR", "zone3in")])
 
     body = []
     region = []
@@ -466,10 +444,6 @@ def crZone3(geo, fd):
               "* Region data of zone3in " ,
               "* *************************************"]
 
-    fesh_zbgn = gworld["zbound3"]
-    fesh_zlen = glbal["FeSh_zone3_z_length"]
-    fesh_rmin = glbal["CShIn_rmin"] - glbal["FeSh_thick"]
-
     zb1 = gworld["zbound3"] + glbal["FeSh_zone3_z_length"]
     zb2 = zb1 + glbal["FeSh_thick"]
     zb3 = zb2 + glbal["CSh_down_thick"]
@@ -479,8 +453,6 @@ def crZone3(geo, fd):
                "XYP z3inpln2 %f" % zb2, 
                "XYP z3inpln3 %f" % zb3 ]
 
-    # body += ["RCC z3air1o 0.0 0.0 %f 0.0 0.0 %f %f" % (fesh_zbgn, fesh_zlen, gworld["zbound3"], fesh_rmin) ]
-#    body += ["RCC fesh1o 0.0 0.0 %f 0.0 0.0 %f %f " % (fesh_zbgn, fesh_zlen,  
     region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1"]
     region += ["Z3inFeS1 6 +z3inpln1 -zbound3 +rcylin -rcylfein"]
     region += ["Z3inFeS2 6 +z3inpln2 -z3inpln1 +rcylin -rbound1"]
@@ -494,8 +466,6 @@ def crZone3(geo, fd):
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir2") ]
 
     fd.Add(body, region, assignma)
-
-    crTunnelShield(geo, 3, fd)
 
 # ========================================
 def crZone4(geo, fd):
@@ -513,8 +483,6 @@ def crZone4(geo, fd):
                   "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe4"),
                   "ASSIGNMA %10s%10s" % ("AIR", "Z4air")])
 
-    crTunnelShield(geo, 4, fd)
-
     fd.AddRegion(["***** End of crZone4 region. ****","*"])
     fd.AddAssignmat( ["**** End of crZone4 assignmat. ****", "*"])
 
@@ -525,9 +493,10 @@ def crGeoInput(geo, fd):
     crWorld(geo, fd)
 
     crZone1(geo, fd)
-    crZone2(geo, fd)
     crZone3(geo, fd)
     crZone4(geo, fd)
+
+    
 
     crRFZone(geo, fd)
 

@@ -76,16 +76,21 @@ def createGeoParam():
     geo["G4Param"] = g4p
     # Unit: length=cm
     #@ basic parameter to determine global Z coordinate
-    geo["bases"] = {"FC_to_RF_gap":23.4, # Distance from the FC end to the RF entrance 
-                 "Target_to_FC_gap": 0.5,  # Target to FC gap
+    geo["bases"] = {"Target_to_FC_gap": 0.5,  # Target to FC gap
                  "FC_thickness" : 10.0, # Thickness(z length) of FC(AMD)
+                 "Collimator_thickness" : 12.0, # Thickness(z length) of Collimator in front of cavity
+                 "FC_to_Collimator_gap" : 11.4, #  Distance from the FC to the start of collimator
                  "zmin":-400.0, # zmin of whole area
                  "zmax":1000.0, # zmax of whole area
                  "rmax":810.0,  # rmax of whole area
                  "shield_rin": 120.0 } # Inner radius of inner concrete shield
 
 
-    zbound3 = geo["bases"]["Target_to_FC_gap"] + geo["bases"]["FC_thickness"] + geo["bases"]["FC_to_RF_gap"]
+    geo["bases"]["FC_to_RF_gap"] = geo["bases"]["FC_to_Collimator_gap"] + geo["bases"]["Collimator_thickness"]
+    # zbound3 = geo["bases"]["Target_to_FC_gap"] + geo["bases"]["FC_thickness"] + geo["bases"]["FC_to_RF_gap"]
+    zbound3 = geo["bases"]["Target_to_FC_gap"] + geo["bases"]["FC_thickness"] + geo["bases"]["FC_to_Collimator_gap"]
+
+    print "zbound3="+str(zbound3)
 
     #@ front
     geo["front"] = {"CSh_up_pos":-76} # Z position of concrete sheild closest to the target 
@@ -110,7 +115,7 @@ def createGeoParam():
     glp = geo["global"]
     #@ world
     geo["world"] = {"zbound1":glp["zmin"], 
-		     "zbound2":-45.0, # Boundary between front(upstream) part and target & RF area
+		     "zbound2":-55.0, # Boundary between front(upstream) part and target & RF area
                      "zbound3":zbound3, # First RF cavity Z begin coordinate
     #                  "zbound5":glp["zmax"],
                      "rbound2":glp["rmax"] - glp["Mount_water_thickness"], 
@@ -119,7 +124,8 @@ def createGeoParam():
     gwp = geo["world"]
 
     #@ RF
-    geo["RF"] = {"cavity_cooling_pipe": False, #  True to include cavity cooling pipe
+    geo["RF"] = {"z_rf_begin": zbound3 + geo["bases"]["Collimator_thickness"], # Z_begin of 1st cavity
+                 "cavity_cooling_pipe": False, #  True to include cavity cooling pipe
                  # "Nb_structure":36, # Number of RF structure for G4data simulation
                  "Nb_structure":6, # Number of RF structure
                  ### "zlen_rf_unit": 146.43, # length in Z of 1 RF unit. 
@@ -154,19 +160,19 @@ def createGeoParam():
     grfp["vacuum_chamber_rmax"] = grfp["vacuum_chamber_rmin"] + grfp["vacuum_chamber_thick"]
 
     gwp["rbound1"] = grfp["solenoid_return_yoke_thick"] + grfp["solenoid_outer_radius"]
-    gwp["zbound4"] = gwp["zbound3"] + grfp["zlen_rf_unit"] * grfp["Nb_structure"] + grfp["vacuum_chamber_thick"]
+    gwp["zbound4"] = gwp["zbound3"]  + geo["bases"]["Collimator_thickness"] + grfp["zlen_rf_unit"] * grfp["Nb_structure"] + grfp["vacuum_chamber_thick"]
     gwp["zbound5"] = math.ceil(gwp["zbound4"] + 1.0)
     geo["global"]["zmax"] = gwp["zbound5"]
    
 
-    glp["FeSh_zone3_z_length"] = grfp["zlen_rf_unit"]  # Fe Shied length in zone 3. ( to the Fe Shield upstream surface )
+    glp["FeSh_zone3_z_length"] = grfp["zlen_rf_unit"]  + geo["bases"]["Collimator_thickness"]  # Fe Shied length in zone 3. ( to the Fe Shield upstream surface )
 
     #@ Target
 
     geo["Target"] = {"FC_cooling_pipe": False, # True to Include FC cooling pipe
                  "Collimator_cooling_pipe": False, # True to include Collimator cooling pipe
                  "FC_to_RF_gap":geo["bases"]["FC_to_RF_gap"], # Distance from the FC end to the RF entrance 
-                 "FC_to_Collimator_gap":11.4, # Distance from the FC to the start of collimator
+                 "FC_to_Collimator_gap":geo["bases"]["FC_to_Collimator_gap"], # Distance from the FC to the start of collimator
                  "Collimator_to_RF_gap":-1.0, # Distance from the collimator to the RF. Negative for not include
                  "Target_to_FC_gap": geo["bases"]["Target_to_FC_gap"], # Target to FC gap
                  "Target_thickness" : 1.6, # Target thickness
@@ -174,7 +180,8 @@ def createGeoParam():
 
                  "Wdisk_rmax" : 25.0, # Max radius of Rotating W disk
                  "Wdisk_hight" : 8.0,  # height in r-direction ( width ) of W disk
-                 "Wdisk_axis_offset" : 22.0, # off set of rotation axis ( in x direction )
+                 "Wdisk_axis_offset" : -22.0, # off set of rotation axis ( in x(?y) direction )
+                 # "Wdisk_axis_offset" : 22.0, # off set of rotation axis ( in x direction )
                  "Rotator_disk_rmax" : 19.0, # rmax of rotator(cu) disk attached to the cudisk
                  "Rotator_cooling_pipe_thickness" : 1.5, # Thickness ( diameter like ) of cooling pipe inside rotator
                  "Rotator_cooling_pipe_rmax" : 17.0, # Radius of the cooling pipe inside rotator 
@@ -202,11 +209,12 @@ def createGeoParam():
                  "Collimator_cooling_pipe_offset": 1.0 } # Collimator cooling pipe 
                                           # distance fron front, back, and inner surface.
     gtar = geo["Target"]
-    gtar["Collimator_rmax"] = grfp["r_cavity_outer_wall"]
-    gtar["Collimator_rmin"] = grfp["r_cavity_beam_pipe"]
+    grfp["Collimator_rmax"] = grfp["r_cavity_outer_wall"]
+    grfp["Collimator_rmin"] = grfp["r_cavity_beam_pipe"]
     gtar["FC_rmax"] = grfp["r_cavity_outer_wall"]
 
-    gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_RF_gap"] + gtar["FC_thickness"] + 
+    # gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_RF_gap"] + gtar["FC_thickness"] + 
+    gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_Collimator_gap"] +gtar["FC_thickness"] + 
                     gtar["Target_to_FC_gap"] + gtar["Target_thickness"] )
     gtar["vacuum_chamber_R_z_begin"] = gtar["Target_wdisk_z_begin"] - ( gtar["Rotator_disk_thickness"] +
                     gtar["Rotator_disk_to_vacuum_chamber_gap"] + 
