@@ -205,20 +205,26 @@ def createGeoParam():
                  "FC_cooling_pipe_offset" : 1.0, # FC cooling pipe offset
                                           # distance from the FC outer surface to the cooling pipe 
                                           # and the distance fron the FC front and back surface. 
+                 "FC_ellipse_major": 10.0,  # major axis of FC ellipse 
+                 "FC_ellipse_minor": 7.0,  # minor axis of FC ellipse 
+                 "FC_ellipse_offset": 3.0, # Offset of center of ellipse                  
+
                  "Collimator_cooling_pipe_thickness": 0.7, # Collimator cooling pipe thickness
                  "Collimator_cooling_pipe_offset": 1.0 } # Collimator cooling pipe 
                                           # distance fron front, back, and inner surface.
     gtar = geo["Target"]
     grfp["Collimator_rmax"] = grfp["r_cavity_outer_wall"]
     grfp["Collimator_rmin"] = grfp["r_cavity_beam_pipe"]
-    gtar["FC_rmax"] = grfp["r_cavity_outer_wall"]
+    # gtar["FC_rmax"] = grfp["r_cavity_outer_wall"]
+    gtar["FC_rmax"] = 6.0
 
     # gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_RF_gap"] + gtar["FC_thickness"] + 
     gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_Collimator_gap"] +gtar["FC_thickness"] + 
                     gtar["Target_to_FC_gap"] + gtar["Target_thickness"] )
     gtar["vacuum_chamber_R_z_begin"] = gtar["Target_wdisk_z_begin"] - ( gtar["Rotator_disk_thickness"] +
-                    gtar["Rotator_disk_to_vacuum_chamber_gap"] + 
-                    grfp["vacuum_chamber_thick"] )
+                   gtar["Rotator_disk_to_vacuum_chamber_gap"] + 
+                   grfp["vacuum_chamber_thick"] )
+    # gtar["vacuum_chamber_R_z_begin"] = 15.0
     gtar["vacuum_chamber_R_r_max"] = gtar["Wdisk_rmax"] + ( gtar["Rotator_disk_to_vacuum_chamber_gap"] +
                     grfp["vacuum_chamber_thick"] )
     # gtar["Rotator_axis_length"] = ( gtar["Rotator_disk_to_vacuum_chamber_gap"] +
