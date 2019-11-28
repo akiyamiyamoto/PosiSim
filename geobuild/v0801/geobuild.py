@@ -194,7 +194,8 @@ def createGeoParam():
                  "Rotator_structure_total_length": 39.5, # Length from rotating copper disk, including vacuum gap and thickness of vacuum chamber 
                  "LiquidSeal_thickness_in_r_direction": 1.5, # LiquidSeal thickness in r direction
                  "LiquidSeal_total_length": 6.0, # Total length of LiquidSeal
-                 "LiquidSeal_distance_from_vacuum_chamber": 1.0, # Distance in Z from vacuum chamber
+                 # "LiquidSeal_distance_from_vacuum_chamber": 1.0, # Distance in Z from vacuum chamber
+                 "LiquidSeal_distance_from_rotator_disk": 1.0, # Z-distance from rotator disk 
                  "BP_shield_thickness":7.0, # Thickness of beam pipe shield in upstream of target region
               # Enf of update in v0607                                          
 
@@ -208,6 +209,11 @@ def createGeoParam():
                  "FC_ellipse_major": 10.0,  # major axis of FC ellipse 
                  "FC_ellipse_minor": 7.0,  # minor axis of FC ellipse 
                  "FC_ellipse_offset": 3.0, # Offset of center of ellipse                  
+                 "FCC_Wdisk_gap": 1.0, # Distance in R direction in the central part of FC.
+                 "FC_total_length": 20.0, # Total length of FC, including FC downstream part and upstream part
+                 "FC_to_vacuum_chamber_zgap": 5.0, # Z distance between vacuum chamber to FC upstream surface
+                 "FCU_rspace": 0.5, # DeltaR in upstream part relative to FC central part 
+                 "FCU_slope": 15.0, # Angle of FC upstream part of plane   
 
                  "Collimator_cooling_pipe_thickness": 0.7, # Collimator cooling pipe thickness
                  "Collimator_cooling_pipe_offset": 1.0 } # Collimator cooling pipe 
@@ -221,9 +227,13 @@ def createGeoParam():
     # gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_RF_gap"] + gtar["FC_thickness"] + 
     gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_Collimator_gap"] +gtar["FC_thickness"] + 
                     gtar["Target_to_FC_gap"] + gtar["Target_thickness"] )
-    gtar["vacuum_chamber_R_z_begin"] = gtar["Target_wdisk_z_begin"] - ( gtar["Rotator_disk_thickness"] +
-                   gtar["Rotator_disk_to_vacuum_chamber_gap"] + 
-                   grfp["vacuum_chamber_thick"] )
+#    gtar["vacuum_chamber_R_z_begin"] = gtar["Target_wdisk_z_begin"] - ( gtar["Rotator_disk_thickness"] +
+#                   gtar["Rotator_disk_to_vacuum_chamber_gap"] + 
+#                   grfp["vacuum_chamber_thick"] )
+    gtar["vacuum_chamber_R_z_begin"] = gtar["Target_wdisk_z_begin"] \
+           - ( gtar["FC_total_length"] - gtar["FC_thickness"] - gtar["Target_to_FC_gap"] - gtar["Target_thickness"] ) \
+           -   gtar["FC_to_vacuum_chamber_zgap"] 
+
     # gtar["vacuum_chamber_R_z_begin"] = 15.0
     gtar["vacuum_chamber_R_r_max"] = gtar["Wdisk_rmax"] + ( gtar["Rotator_disk_to_vacuum_chamber_gap"] +
                     grfp["vacuum_chamber_thick"] )

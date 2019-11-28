@@ -4,6 +4,7 @@ import os
 import json
 import pprint
 import sys
+import math
 
 from FLUdata import *
 
@@ -30,7 +31,7 @@ def crTargetZone(geo, fd):
     envelops=crRotationTarget(geo, fd)
 
     # Geometry other than rotation target and FC
-    ## crSupportStructure(geo, fd, envelops)
+    crSupportStructure(geo, fd, envelops)
   
     return
 
@@ -101,6 +102,17 @@ def crRotationTarget(geo, fd):
     zfc_end = zend - gtar["FC_to_RF_gap"]
     zfc_bgn = zfc_end - gtar["FC_thickness"]
 
+    wdisk_zbgn = gtar["Target_wdisk_z_begin"]
+    wdisk_rmin = gtar["Wdisk_rmax"] - gtar["Wdisk_hight"]
+    axis_x_offset = gtar["Wdisk_axis_offset"]
+
+    fcc_length = gtar["Target_to_FC_gap"] + gtar["Target_thickness"]
+    zfcc_bgn = wdisk_zbgn
+
+    fcu_length = gtar["FC_total_length"] - ( fcc_length + gtar["FC_thickness"] )
+    zfcu_bgn = zfcc_bgn - fcu_length
+
+    # FCC, downstream part.
     #                  Vx,Vy,Vz  Hx,Hy,Hz  R1x,R1y,R1z,  R2x,R2y, R2z
     body += ["REC tfco %f 0.0 %f 0.0 0.0 %f %f 0.0 0.0 0.0 %f 0.0 " % \
            ( gtar["FC_ellipse_offset"], zfc_bgn, gtar["FC_thickness"], \
@@ -108,17 +120,43 @@ def crRotationTarget(geo, fd):
 
     body += ["TRC tfci 0.0 0.0 %f 0.0 0.0 %f %f %f" % ( zfc_bgn, gtar["FC_thickness"], 
                       gtar["FC_rmin_begin"], gtar["FC_rmin_end"])]
+
     region += ["TFC 6 +tfco -tfci "]
     assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "TFC") ]
     region += ["TFCvac 6 +tfci "]
     assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "TFCvac") ]
     envelops["TFC"] = " -tfco "
+
+    # Downstream part of FC
+    body += ["REC tfcco %f 0.0 %f 0.0 0.0 %f %f 0.0 0.0 0.0 %f 0.0 " % \
+           ( gtar["FC_ellipse_offset"], zfcc_bgn, fcc_length, \
+             gtar["FC_ellipse_major"], gtar["FC_ellipse_minor"] ) ]
+
+    body += ["RCC tfcci %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, zfcc_bgn, fcc_length, 
+                     gtar["Wdisk_rmax"] + gtar["FCC_Wdisk_gap"])]
+    region += ["TFCC 6 +tfcco -tfcci "]
+    assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "TFCC") ]
+    envelops["TFCC"] = " -( +tfcco -tfcci ) "
+    
+    # FCC upstream part
+    body += ["REC tfcuo %f 0.0 %f 0.0 0.0 %f %f 0.0 0.0 0.0 %f 0.0 " % \
+           ( gtar["FC_ellipse_offset"], zfcu_bgn, fcu_length, \
+             gtar["FC_ellipse_major"], gtar["FC_ellipse_minor"] ) ]
+
+    fcu_vz = zfcc_bgn
+    fcu_vx = gtar["Wdisk_axis_offset"] + gtar["Wdisk_rmax"] + gtar["FCC_Wdisk_gap"] + gtar["FCU_rspace"]
+    fcu_hx = math.cos(gtar["FCU_slope"]/180.0*math.pi )
+    fcu_hz = math.sin(gtar["FCU_slope"]/180.0*math.pi )
+
+    body += ["PLA tfcui %f 0.0 %f %f 0.0 %f" % (fcu_hx, fcu_hz, fcu_vx, fcu_vz )]
+
+    region += ["TFCU 6 +tfcuo -tfcui "]
+    assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "TFCU") ]
+    envelops["TFCU"] = " -( +tfcuo -tfcui ) "
+    
             
     # CastIron outside
 
-    wdisk_zbgn = gtar["Target_wdisk_z_begin"]
-    wdisk_rmin = gtar["Wdisk_rmax"] - gtar["Wdisk_hight"]
-    axis_x_offset = gtar["Wdisk_axis_offset"]
 
     body += ["RCC twdsko %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, wdisk_zbgn, gtar["Target_thickness"], gtar["Wdisk_rmax"])]
     body += ["RCC twdski %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, wdisk_zbgn, gtar["Target_thickness"], wdisk_rmin)]
@@ -134,8 +172,9 @@ def crRotationTarget(geo, fd):
     rdaxis_zbgn = rdisk_zbgn - gtar["Rotator_axis_length"]
     rdaxis_cp_zlen = rdisk_cp_zbgn - rdaxis_zbgn
 
-    fsmask_zbgn = gtar["vacuum_chamber_R_z_begin"] - gtar["LiquidSeal_distance_from_vacuum_chamber"]
-    fs_zbgn = fsmask_zbgn - gtar["LiquidSeal_total_length"]
+    # fsmask_zbgn = gtar["vacuum_chamber_R_z_begin"] - gtar["LiquidSeal_distance_from_vacuum_chamber"]
+    # fs_zbgn = fsmask_zbgn - gtar["LiquidSeal_total_length"]
+    fs_zbgn = rdisk_zbgn - gtar["LiquidSeal_total_length"] - gtar["LiquidSeal_distance_from_rotator_disk"]
     fs_rmax = gtar["Rotator_axis_rmax"] + gtar["LiquidSeal_thickness_in_r_direction"]    
 
     body += ["RCC trdisk %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, rdisk_zbgn, gtar["Rotator_disk_thickness"], 
