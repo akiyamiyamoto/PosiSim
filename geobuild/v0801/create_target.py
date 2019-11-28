@@ -83,6 +83,7 @@ def crRotationTarget(geo, fd):
     gworld = geo["world"]
     glbal = geo["global"]
     gtar = geo["Target"]
+    grf = geo["RF"]
 
     # Create body, region, matterial data from outside to the inside.
     body += ["* *************************************",
@@ -189,6 +190,10 @@ def crRotationTarget(geo, fd):
                        gtar["Rotator_structure_rmax"]) ]
     body += ["RCC liqseal %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, fs_zbgn, gtar["LiquidSeal_total_length"],
                        fs_rmax) ]
+    trotsup_zbgn = gtar["vacuum_chamber_R_z_begin"] + grf["vacuum_chamber_thick"]
+    trotsup_zlen = rdisk_zbgn - trotsup_zbgn - gtar["Rotator_disk_to_vacuum_chamber_gap"]
+    body += ["RCC trotsup %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, trotsup_zbgn, trotsup_zlen, 
+                         gtar["Rotator_support_rthick"] + gtar["Rotator_structure_rmax"] ) ]
 
     region += ["TRDiskcp  6 +trdiskcp"]
     region += ["TRAxiscp  6 +traxiscp"]
@@ -200,11 +205,14 @@ def crRotationTarget(geo, fd):
     region += ["TRAxis 6 +traxis -traxiscp "]
     region += ["TRotBody 6 +trotbody -traxis -liqseal"]
     region += ["LiqSeal 6 +liqseal -traxis"]
+    region += ["TRotSup 6 +trotsup -trotbody"]
     assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "TRAxis") ]
+    assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "TRotSup") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("LIGHTSUS", "TRotBody") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("LIQSEAL", "LiqSeal") ]
     # envelops["rotation_axis"] = " -traxis "
     envelops["rotation_body"] = " -trotbody "
+    envelops["rotation_support"] = " -trotsup "
     envelops["trdisk"] = " -trdisk "
 
     # Add geometry data
@@ -328,9 +336,7 @@ def crSupportStructure(geo, fd, envelops):
 
     # Air body, region, assignma
     body += ["RCC tarair 0.0 0.0 %f 0.0 0.0 %f %f " % ( zbegin, air_zlen,  air_rmax)]
-    # region += ["TARair 6 +tarair -tvcbpo -tshbo -tshro -tshb2o -tshr2o -( +tvcro | +tvcbo ) "]
     region += ["TARair 6 +tarair -tvcbpo -tshbo -tshro -tshb2o -tshr2o -trotbody "]
-    # region += ["TARair 6 +tarair -tbpshld -tshbo -tshro -tshr2o -trotbody "]
     region += ["TARair2 6 ( +tshb2i -tvcbo -tshbo ) | (+tshr2i -tvcbo -tvcro) "]
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair") ]  
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair2") ]  

@@ -69,8 +69,15 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     solcpi = "r%dBscpi" % nrf 
     solin = "r%dBsoli" % nrf 
    
-    zbegins = zbegin - geo["bases"]["Collimator_thickness"] if nrf == 1 else zbegin
-    zlen_rfs = zlen_rf + geo["bases"]["Collimator_thickness"] if nrf == 1 else zlen_rf
+    zbegins = zbegin
+    zlen_rfs = zlen_rf
+    if nrf == 1:
+        zbegins -= geo["bases"]["Collimator_thickness"]
+        zlen_rfs += geo["bases"]["Collimator_thickness"]
+        _body.append("RCC r1Bfrg 0.0 0.0 %f 0.0 0.0 %f %f" % (zbegins, grf["collimator_frange_thickness"],
+                     grf["vacuum_chamber_rmin"] +grf["vacuum_chamber_thick"] ) )
+
+         
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solout, zbegins, zlen_rfs, sol_rmax ) )
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpo, zbegins, zlen_rfs, sol_cp_rmax ) )
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solcpi, zbegins, zlen_rfs, sol_cp_rmin ) )
@@ -112,20 +119,31 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                   grf["vacuum_chamber_rmax"] ) )
     _body.append("RCC r%dvchi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, zlen_rf_unit, 
                   grf["vacuum_chamber_rmin"] ) )
-    # _region += [ "R%dvch 6 +r%dvcho -r%dvchi" % (nrf, nrf, nrf) ]
-    # _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dvch" % nrf) ]
-    # if nrf == grf["Nb_structure"]:
-    #    _region[-1] += " -r%dbpw " % nrf
 
+
+     
     # W mask at the end of RF structure
-    mask_start_z = zbegin + zlen_rf_unit - grf["wmask_z_distance"] - grf["wmask_thick"]
-    _body.append("RCC r%dmsko 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
-                 grf["wmask_thick"], grf["wmask_rmax"]) )
-    _body.append("RCC r%dmski 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
-                 grf["wmask_thick"], grf["wmask_rmin"]))
-    _region += [ "R%dmsk 6 +r%dmsko -r%dmski " % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "R%dmsk" % nrf) ]
-
+    # mask_start_z = zbegin + zlen_rf_unit - grf["wmask_z_distance"] - grf["wmask_thick"]
+    # _body.append("RCC r%dmsko 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
+    #             grf["wmask_thick"], grf["wmask_rmax"]) )
+    #_body.append("RCC r%dmski 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
+    #             grf["wmask_thick"], grf["wmask_rmin"]))
+    #_region += [ "R%dmsk 6 +r%dmsko -r%dmski " % (nrf, nrf, nrf) ]
+    #_assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "R%dmsk" % nrf) ]
+     
+    # Frange for pilo seal, placed at the end of RF cavity
+    bpfrange_zbgn = zbegin + zlen_rf + grf["BPfrange_z_distance_from_cavity"]
+    bp_frange_rmax = r_beam_pipe + glbal["BPthick"] + grf["BPfrange_r_width"]
+    _body += ["RCC r%dbpfr1 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, bpfrange_zbgn, 
+                      grf["BPfrange_thickness"], bp_frange_rmax) ]
+    _body += ["RCC r%dbpfr2 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, 
+                      bpfrange_zbgn+grf["BPfrange_thickness"]+grf["BPfrange_distance"], 
+                      grf["BPfrange_thickness"], bp_frange_rmax) ]
+    _region += ["R%dBPFr1 6 +r%dbpfr1 -r%dbpw" % (nrf, nrf, nrf) ]
+    _region += ["R%dBPFr2 6 +r%dbpfr2 -r%dbpw" % (nrf, nrf, nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dBPFr1" % nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dBPFr2" % nrf) ]
+ 
     # Return yoke out side of solenoid
     _body += ["RCC r%dryo 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegins, yoke_len,
                   grf["solenoid_outer_radius"] + grf["solenoid_return_yoke_thick"] ) ]
@@ -155,18 +173,21 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 gapfiller_zlen, sol_rmax ) )
 
     _region += ["R%dsols 6 +r%dsolso -r%dsolsi" % (nrf, nrf, nrf) ]
-    # _region += ["R%dair 6 ( +r%dBsoli -r%dvcho ) " % (nrf, nrf, nrf) + " | +r%dairo -r%dvcho - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf) ]
-    # _region += ["R%dair 6 ( +r%dBsoli -r%dstro ) " % (nrf, nrf, nrf) + 
-    #             " | +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
-    #             " - (r%dmsko - r%dmski )" % (nrf, nrf ) ]
-    _region += ["R%dair 6 " % nrf + 
-                " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
-                " - (r%dmsko - r%dmski )" % (nrf, nrf ) + 
-                " | ( +r%dBsoli -r%dstro ) " % (nrf, nrf) ] 
     if nrf == 1:
        _region[-1] += " -colmsko "
        _region += ["Colvac 6 +colmski"]
        _assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "Colvac" ) ]
+       _region += ["R%dair 6 " % nrf + 
+                " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
+                " -r%dbpfr1 -r%dbpfr2 " % (nrf, nrf ) + 
+                " | ( +r1Bsoli -r1stro -r1Bfrg -colmsko ) "  ] 
+       _region += ["R1frg 6 +r1Bfrg -colmsko"]
+       _assignma +=   [ "ASSIGNMA %10s%10s" % ("STAINLES", "R1frg") ]
+    else:
+       _region += ["R%dair 6 " % nrf + 
+                " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
+                " -r%dbpfr1 -r%dbpfr2 " % (nrf, nrf ) + 
+                " | ( +r%dBsoli -r%dstro ) " % (nrf, nrf) ] 
 
 
     _assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "R%dair" % nrf) ]

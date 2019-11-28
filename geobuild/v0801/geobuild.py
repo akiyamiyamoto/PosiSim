@@ -109,7 +109,7 @@ def createGeoParam():
         "CSh_down_thick":150.0, # Thickness of downsream concrete sheield coverging target area
         "FeSh_thick": 30.0, # Thickness of Iron sheild inside of concrete sheild
         "BPrin":3.2, # Beam pipe inner radius 
-        "BPthick":0.2} # Beam pipe thickness
+        "BPthick":0.5} # Beam pipe thickness
 
 
     glp = geo["global"]
@@ -149,7 +149,11 @@ def createGeoParam():
                  "vacuum_chamber_rmin":15.0, # Inner radius of vacuum chamber
                  "solenoid_gap_shield_z_gapsize": 5.0,  # shield to fill gap between solenoid, z gap ( both upstream and down stream )
                  "solenoid_gap_shield_r_thickness": 10.0, # shield to fill gap betwnn solenoid, thickness in R
-            
+                 "collimator_frange_thickness": 2.0, # Thickness of frange for collimator"
+                 "BPfrange_thickness": 2.0, # Thickness in Z direction for beam pipe frange at the end of cavity
+                 "BPfrange_r_width": 3.0, # beam pipe frange, thickness in r direction
+                 "BPfrange_z_distance_from_cavity": 10.0, # beam pipe frange z distance from the end of RF cavity
+                 "BPfrange_distance": 10.0, # Z distance between 1st and 2nd beam pipe frange  
                  "wmask_thick":5.0, # W mask ( at the end ) thickness
                  "wmask_z_distance":5.0, # W mask Z position ( distance from the end of RF structure )
                  "wmask_rmin": 3.5, # W mask rmin
@@ -191,7 +195,8 @@ def createGeoParam():
                  "Rotator_axis_cooling_pipe_diameter" : 1.1, # Diameter of cooling pipe inside the rotation axis
                  "Rotator_disk_to_vacuum_chamber_gap" : 0.5, # Rotator disk to VC gap in z and R
                  "Rotator_structure_rmax": 8.50, # Radius of target rotator ( pump, etc. fixed part )
-                 "Rotator_structure_total_length": 39.5, # Length from rotating copper disk, including vacuum gap and thickness of vacuum chamber 
+                 "Rotator_structure_total_length": 39.5, # Length from rotating copper disk, including vacuum gap and thickness of vacuum chamber
+                 "Rotator_support_rthick": 5.0, # R-thickness of rotator support body 
                  "LiquidSeal_thickness_in_r_direction": 1.5, # LiquidSeal thickness in r direction
                  "LiquidSeal_total_length": 6.0, # Total length of LiquidSeal
                  # "LiquidSeal_distance_from_vacuum_chamber": 1.0, # Distance in Z from vacuum chamber
