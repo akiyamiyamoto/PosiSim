@@ -14,7 +14,7 @@ F77dline: False
 # Run information
 Run: <default>
 	Prev:     0
-	Last:     5
+	Last:     2
 	Status:   0
 	Pid:      0
 	StartRun: 0
@@ -23,7 +23,7 @@ End
 # Material
 Material: Copper
 	alpha: 0
-	color: #203030
+	color: #f1ce30
 	fuzz: 0.0
 	ior: 1.0
 	shine: 10.0
@@ -53,7 +53,7 @@ End
 # Material
 Material: TARMAT
 	alpha: 0
-	color: #201090
+	color: #f81090
 	fuzz: 0.0
 	ior: 1.0
 	shine: 10.0
@@ -83,7 +83,7 @@ End
 # Material
 Material: CASTIRON
 	alpha: 0
-	color: #20B050
+	color: #bea6c0
 	fuzz: 0.0
 	ior: 1.0
 	shine: 10.0
@@ -99,6 +99,50 @@ Material: MANGANES
 	shine: 10.0
 	specular: 0.0
 End
+
+
+# Material
+Material: AIR
+        alpha: 0
+        color: #74d6db
+        fuzz: 0.0
+        ior: 1.0
+        shine: 10.0
+        specular: 0.0
+End
+
+# Material
+Material: WATER
+        alpha: 0
+        color: #00ff8b
+        fuzz: 0.0
+        ior: 1.0
+        shine: 10.0
+        specular: 0.0
+End
+
+# Material
+Material: LIGHTSUS
+        alpha: 0
+        color: #4050B0
+        fuzz: 0.0
+        ior: 1.0
+        shine: 10.0
+        specular: 0.0
+End
+
+# Material
+Material: LIQSEAL
+        alpha: 0
+        color: #f9acfe
+        fuzz: 0.0
+        ior: 1.0
+        shine: 10.0
+        specular: 0.0
+End
+
+
+
 
 # Geometry Information
 Geometry:
