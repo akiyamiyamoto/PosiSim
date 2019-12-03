@@ -184,7 +184,8 @@ def decay_score(geodata):
     usrbin_fmt2="%-10s%10.1f%10.1f%10.1f%10.1f%10.1f%10.1f %s"
     xoffset = 22.0
     rmax = par_tar[0]
-    phibin= 72.0 
+    # phibin= 72.0 
+    phibin= 1.0 
     cards.append(usrbin_fmt1 % ("USRBIN", 11.0, "DOSE-EQ", -90, rmax, 0.0, par_tar[1], "pAdoseEQ")) 
     cards.append(usrbin_fmt2 % ("USRBIN", 0.0, xoffset, par_tar[2], par_tar[3], phibin, par_tar[4], " &"))
     cards.append(usrbin_fmt1 % ("USRBIN", 11.0, "DOSE", -90, rmax, 0.0, par_tar[1], "pAdose")) 
@@ -220,17 +221,17 @@ def primary_score(geodata):
 
     cards = []
     cards += Primary_Score("priAll", "DOSE-EQ", 81, 
-                par_all[0], 5900.0 , -400.0, par_all[3], 1.0,1260)
+                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, 1405.0)
 
     cards += Primary_Score("primid", "DOSE-EQ", 82, 
                 par_mid[0], par_mid[1], par_mid[2], par_mid[3], 1.0, par_mid[4])
 
-#    cards += Primary_Score("pritar", "DOSE-EQ", 83, 
-#                par_tar[0], par_tar[1], par_tar[2], par_tar[3], 1.0, par_tar[4])
+    cards += Primary_Score("pritar", "DOSE-EQ", 83, 
+                par_tar[0], par_tar[1], par_tar[2], par_tar[3], 1.0, par_tar[4])
 
-#    cards += Primary_Score("tdose",     "DOSE", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
-#    cards += Primary_Score("tdEMd","DOSE-EM", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
-#    cards += Primary_Score("tdNiel", "NIEL-DEP", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+    cards += Primary_Score("tdose",     "DOSE", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+    cards += Primary_Score("tdEMd",  "DOSE-EM", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+    cards += Primary_Score("tdNiel", "NIEL-DEP", 85,5.0, 0.1, -1.9, 500, 1, 200 )
 
 # 
 # def Primary_Score(name, stype, unit, rmax, zmax, zmin, nbinR, nbinF, nbinZ, rmin=0.0):
@@ -245,10 +246,10 @@ def primary_score(geodata):
 
 # def Primary_Score(name, stype, unit, rmax, zmax, zmin, nbinR, nbinF, nbinZ, rmin=0.0):
 # Primary Energy deposit to Target
-    cards += Primary_Score("rfdose1",     "DOSE", 86, 10.0,95.0, -5.0, 100, 1,1000 )
-    cards += Primary_Score("rfEMd1",   "DOSE-EM", 86, 10.0,95.0, -5.0, 100, 1,1000 )
-    cards += Primary_Score("rfNiel1", "NIEL-DEP", 86, 10.0,95.0, -5.0, 100, 1,1000 )
-    cards += Primary_Score("rfDPA",    "DPA-SCO", 86, 10.0,95.0, -5.0, 100, 1,1000 )
+    cards += Primary_Score("rfdose1",     "DOSE", 86, 10.0,95.0, -10.0, 100, 1,1000 )
+    cards += Primary_Score("rfEMd1",   "DOSE-EM", 86, 10.0,95.0, -10.0, 100, 1,1000 )
+    cards += Primary_Score("rfNiel1", "NIEL-DEP", 86, 10.0,95.0, -10.0, 100, 1,1000 )
+    cards += Primary_Score("rfDPA",    "DPA-SCO", 86, 10.0,95.0, -10.0, 100, 1,1000 )
 
 
 
@@ -266,8 +267,8 @@ def set_geodata(geo):
     nbinR = rmax_all
     par_all = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
 
-    par_mid = [120.0, 400.0, -100.0, 400.0, 500.0]
-    par_tar = [30.0, 0.0, -40.0, 150.0, 200.0]
+    par_mid = [120.0, 200.0, -100.0, 200.0, 300.0]
+    par_tar = [30.0, 25.0, -15.0, 150.0, 200.0]
 
     ret = {"geo":geo, "par_all":par_all, "par_mid":par_mid, "par_tar":par_tar}
 
@@ -289,7 +290,7 @@ if __name__ == "__main__":
 
     cards = primary_score(geodata)
 
-#     cards += decay_score(geodata)
+    cards += decay_score(geodata)
 #     cards += usrbdx_for_liquidseal()
 
 

@@ -10,7 +10,7 @@ MATERIAL                            19.7                              TARMAT
 MATERIAL                            7.98                              STAINLES
 MATERIAL                             6.4                              LIGHTSUS
 MATERIAL                            7.15                              CASTIRON
-MATERIAL         0.0       0.0        1.                              WATER
+MATERIAL         0.0       0.0        1.                              WATER1
 MATERIAL                              1.                              LIQSEAL
 MATERIAL                            2.43                              CONCRETE
 MATERIAL                            8.94                              Copper
@@ -58,6 +58,8 @@ COMPOUND         -1.    COPPER    -5E-05    COBALT                    Copper
 MATERIAL         27.                 8.9                              COBALT
 MAT-PROP                            297.    COBALT
 MAT-PROP         40.                        COBALT                    DPA-ENER
+MAT-PROP         40.                        Copper                    DPA-ENER
+MAT-PROP         40.                        TARMAT                    DPA-ENER
 STERNHEI      4.2601   -0.0187     3.179   0.14474    2.9502      0.12COBALT
 *
 LOW-MAT     ALUMINUM       13.       27.      296.       0.0       0.0ALUMINUM
