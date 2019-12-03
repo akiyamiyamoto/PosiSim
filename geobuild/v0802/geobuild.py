@@ -76,21 +76,21 @@ def createGeoParam():
     geo["G4Param"] = g4p
     # Unit: length=cm
     #@ basic parameter to determine global Z coordinate
-    geo["bases"] = {"Target_to_FC_gap": 0.5,  # Target to FC gap
+    geo["bases"] = {"Target_to_FC_gap": 0.2,  # Target to FC gap
                  "FC_thickness" : 10.0, # Thickness(z length) of FC(AMD)
                  "Collimator_thickness" : 12.0, # Thickness(z length) of Collimator in front of cavity
                  "FC_to_Collimator_gap" : 11.4, #  Distance from the FC to the start of collimator
                  "zmin":-400.0, # zmin of whole area
                  "zmax":1000.0, # zmax of whole area
-                 "rmax":810.0,  # rmax of whole area
-                 "shield_rin": 120.0 } # Inner radius of inner concrete shield
+                 "rmax":810.0 } # rmax of whole area
+    
+#                 "shield_rin": 120.0 } # Inner radius of inner concrete shield
 
 
     geo["bases"]["FC_to_RF_gap"] = geo["bases"]["FC_to_Collimator_gap"] + geo["bases"]["Collimator_thickness"]
-    # zbound3 = geo["bases"]["Target_to_FC_gap"] + geo["bases"]["FC_thickness"] + geo["bases"]["FC_to_RF_gap"]
     zbound3 = geo["bases"]["Target_to_FC_gap"] + geo["bases"]["FC_thickness"] + geo["bases"]["FC_to_Collimator_gap"]
 
-    print "zbound3="+str(zbound3)
+    print( "zbound3="+str(zbound3) )
 
     #@ front
     geo["front"] = {"CSh_up_pos":-76} # Z position of concrete sheild closest to the target 
@@ -104,7 +104,7 @@ def createGeoParam():
         "Mount_water_thickness":10.0, # Thickness of water layer out side of outer concrete tunnel
         "CShOut_thick":200.0, # Thickness of tunnel concrete, outer
         "CShIn_thick":200, # Thickness of tunnel concrete, inner
-        "CShIn_rmin":95.0,  # inner radius of smaller concrete sheild
+        "CShIn_rmin":120.0,  # inner radius of smaller concrete sheild
         "CSh_up_thick":100.0, # Thickness of upstream concrete shield covering target area
         "CSh_down_thick":150.0, # Thickness of downsream concrete sheield coverging target area
         "FeSh_thick": 30.0, # Thickness of Iron sheild inside of concrete sheild
@@ -117,7 +117,6 @@ def createGeoParam():
     geo["world"] = {"zbound1":glp["zmin"], 
 		     "zbound2":-55.0, # Boundary between front(upstream) part and target & RF area
                      "zbound3":zbound3, # First RF cavity Z begin coordinate
-    #                  "zbound5":glp["zmax"],
                      "rbound2":glp["rmax"] - glp["Mount_water_thickness"], 
                      "rbound3":glp["rmax"],
                      "blkRPP1":5000000.0}
@@ -184,8 +183,7 @@ def createGeoParam():
 
                  "Wdisk_rmax" : 25.0, # Max radius of Rotating W disk
                  "Wdisk_hight" : 8.0,  # height in r-direction ( width ) of W disk
-                 "Wdisk_axis_offset" : -22.0, # off set of rotation axis ( in x(?y) direction )
-                 # "Wdisk_axis_offset" : 22.0, # off set of rotation axis ( in x direction )
+                 "Wdisk_axis_offset" : 22.0, # off set of rotation axis ( in x(?y) direction )
                  "Rotator_disk_rmax" : 19.0, # rmax of rotator(cu) disk attached to the cudisk
                  "Rotator_cooling_pipe_thickness" : 1.5, # Thickness ( diameter like ) of cooling pipe inside rotator
                  "Rotator_cooling_pipe_rmax" : 17.0, # Radius of the cooling pipe inside rotator 
@@ -202,7 +200,7 @@ def createGeoParam():
                  # "LiquidSeal_distance_from_vacuum_chamber": 1.0, # Distance in Z from vacuum chamber
                  "LiquidSeal_distance_from_rotator_disk": 1.0, # Z-distance from rotator disk 
                  "BP_shield_thickness":7.0, # Thickness of beam pipe shield in upstream of target region
-              # Enf of update in v0607                                          
+              # End of update in v0607                                          
 
                  "FC_thickness" : geo["bases"]["FC_thickness"], # Thickness(z length) of FC(AMD)
                  "FC_rmin_begin" : 0.8,  # FC upstream inner radius
@@ -213,7 +211,7 @@ def createGeoParam():
                                           # and the distance fron the FC front and back surface. 
                  "FC_ellipse_major": 10.0,  # major axis of FC ellipse 
                  "FC_ellipse_minor": 7.0,  # minor axis of FC ellipse 
-                 "FC_ellipse_offset": 3.0, # Offset of center of ellipse                  
+                 "FC_ellipse_offset": -3.0, # Offset of center of ellipse                  
                  "FCC_Wdisk_gap": 1.0, # Distance in R direction in the central part of FC.
                  "FC_total_length": 20.0, # Total length of FC, including FC downstream part and upstream part
                  "FC_to_vacuum_chamber_zgap": 5.0, # Z distance between vacuum chamber to FC upstream surface

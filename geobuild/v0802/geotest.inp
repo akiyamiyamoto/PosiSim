@@ -1,5 +1,6 @@
 * ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
 *
+*
 GLOBAL                                                                OLDFLAIR
 TITLE
 EDriven Source v0802: 
@@ -26,5 +27,6 @@ GEOEND
 *
 #include material.inc
 
-#include assignmat-v0802.inc
+***  #include assignmat-v0802.inc
+#include assignmat-decay.inc
 

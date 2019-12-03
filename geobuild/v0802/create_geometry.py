@@ -120,17 +120,6 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     _body.append("RCC r%dvchi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, zlen_rf_unit, 
                   grf["vacuum_chamber_rmin"] ) )
 
-
-     
-    # W mask at the end of RF structure
-    # mask_start_z = zbegin + zlen_rf_unit - grf["wmask_z_distance"] - grf["wmask_thick"]
-    # _body.append("RCC r%dmsko 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
-    #             grf["wmask_thick"], grf["wmask_rmax"]) )
-    #_body.append("RCC r%dmski 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, mask_start_z, 
-    #             grf["wmask_thick"], grf["wmask_rmin"]))
-    #_region += [ "R%dmsk 6 +r%dmsko -r%dmski " % (nrf, nrf, nrf) ]
-    #_assignma += [ "ASSIGNMA %10s%10s" % ("WShield", "R%dmsk" % nrf) ]
-     
     # Frange for pilo seal, placed at the end of RF cavity
     bpfrange_zbgn = zbegin + zlen_rf + grf["BPfrange_z_distance_from_cavity"]
     bp_frange_rmax = r_beam_pipe + glbal["BPthick"] + grf["BPfrange_r_width"]
@@ -158,7 +147,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         _body += ["RCC colmsko 0.0 0.0 %f 0.0 0.0 %f %f" % ( zbegins, zmsk_len, grf["Collimator_rmax"])]
         _body += ["RCC colmski 0.0 0.0 %f 0.0 0.0 %f %f" % ( zbegins, zmsk_len, grf["Collimator_rmin"])]
         _region += ["Colmsk 6 +colmsko -colmski "]
-        _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "Colmsk") ]
+#        _assignma += [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("Copper", "Colmsk","","VACUUM","beamoff3") ]
+        _assignma += [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("Copper", "Colmsk","","","") ]
 
     # Air outside of vacuum chamber and shield beween solenoid
     _body.append("RCC r%dairo 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + zlen_rf,
@@ -182,7 +172,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 " -r%dbpfr1 -r%dbpfr2 " % (nrf, nrf ) + 
                 " | ( +r1Bsoli -r1stro -r1Bfrg -colmsko ) "  ] 
        _region += ["R1frg 6 +r1Bfrg -colmsko"]
-       _assignma +=   [ "ASSIGNMA %10s%10s" % ("STAINLES", "R1frg") ]
+#       _assignma +=   [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("STAINLES", "R1frg","","VACUUM","beamoff3") ]
+       _assignma +=   [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("STAINLES", "R1frg","","","") ]
     else:
        _region += ["R%dair 6 " % nrf + 
                 " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
