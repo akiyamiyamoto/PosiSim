@@ -8,7 +8,7 @@ import json
 import sys
 
 # ====================================================
-def DCYSCORE_DOSE(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, nbinZ, rmin=0.0 ):
+def DCYSCORE_DOSE(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, nbinZ, rmin=0.0, scoretype="DOSE-EQ" ):
 
     name = "Sv"+dcyname+postname
     zero = 0.0
@@ -18,7 +18,7 @@ def DCYSCORE_DOSE(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, nbin
 
     card0 = "* Userbin DOES-EQ for decay period of " + name
     
-    card1 = "USRBIN".ljust(10)+"11.".rjust(10) + "DOSE-EQ".rjust(10)
+    card1 = "USRBIN".ljust(10)+"11.".rjust(10) + scoretype.rjust(10)
     card1 += str(-unit).rjust(10)
     card1 += "%10.1f%10.1f%10.1f%s" % ( rmax, zero, zmax, name)
 
@@ -156,20 +156,20 @@ def decay_score(geodata):
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_DOSE(decaytimes[ind], "All", ind+1, 71, 
                 par_all[0], par_all[1], par_all[2], par_all[3], par_all[4])
-       cards += DCYSCORE_DOSE(decaytimes[ind], "Sout", ind+1, 77, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4], rmin=rinshield)
+    #   cards += DCYSCORE_DOSE(decaytimes[ind], "Sout", ind+1, 77, 
+    #            par_all[0], par_all[1], par_all[2], par_all[3], par_all[4], rmin=rinshield)
       
-    for ind in range(0, len(decaytimes)):
-       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "All", ind+1, 72, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4])
+    #for ind in range(0, len(decaytimes)):
+    #   cards += DCYSCORE_ACTIVITY(decaytimes[ind], "All", ind+1, 72, 
+    #            par_all[0], par_all[1], par_all[2], par_all[3], par_all[4])
 
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_DOSE(decaytimes[ind], "Allm", ind+1, 73, 
                 par_mid[0], par_mid[1], par_mid[2], par_mid[3], par_mid[4])
        
-    for ind in range(0, len(decaytimes)):
-       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "Allm", ind+1, 74, 
-                par_mid[0], par_mid[1], par_mid[2], par_mid[3], par_mid[4])
+    #for ind in range(0, len(decaytimes)):
+    #   cards += DCYSCORE_ACTIVITY(decaytimes[ind], "Allm", ind+1, 74, 
+    #            par_mid[0], par_mid[1], par_mid[2], par_mid[3], par_mid[4])
        
     par_tar = [30.0, 40.0, -40.0, 400.0, 500.0]
     for ind in range(0, len(decaytimes)):
@@ -177,8 +177,12 @@ def decay_score(geodata):
                 par_tar[0], par_tar[1], par_tar[2], par_tar[3], par_tar[4])
 
     for ind in range(0, len(decaytimes)):
-       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "Allt", ind+1, 76, 
-                par_tar[0], par_tar[1], par_tar[2], par_tar[3], par_tar[4])
+       cards += DCYSCORE_DOSE(decaytimes[ind], "edep", ind+1, 78, 
+                20.0, 69.8, -10.2, 200, 800, scoretype="DOSE")
+
+    #for ind in range(0, len(decaytimes)):
+    #   cards += DCYSCORE_ACTIVITY(decaytimes[ind], "Allt", ind+1, 76, 
+    #            par_tar[0], par_tar[1], par_tar[2], par_tar[3], par_tar[4])
 
     usrbin_fmt1="%-10s%10.1f%10s%10.1f%10.1f%10.1f%10.1f%s"
     usrbin_fmt2="%-10s%10.1f%10.1f%10.1f%10.1f%10.1f%10.1f %s"
@@ -229,9 +233,9 @@ def primary_score(geodata):
     cards += Primary_Score("pritar", "DOSE-EQ", 83, 
                 par_tar[0], par_tar[1], par_tar[2], par_tar[3], 1.0, par_tar[4])
 
-    cards += Primary_Score("tdose",     "DOSE", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
-    cards += Primary_Score("tdEMd",  "DOSE-EM", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
-    cards += Primary_Score("tdNiel", "NIEL-DEP", 85,5.0, 0.1, -1.9, 500, 1, 200 )
+#    cards += Primary_Score("tdose",     "DOSE", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+#    cards += Primary_Score("tdEMd",  "DOSE-EM", 85, 5.0, 0.1, -1.9, 500, 1, 200 )
+#    cards += Primary_Score("tdNiel", "NIEL-DEP", 85,5.0, 0.1, -1.9, 500, 1, 200 )
 
 # 
 # def Primary_Score(name, stype, unit, rmax, zmax, zmin, nbinR, nbinF, nbinZ, rmin=0.0):
@@ -246,11 +250,12 @@ def primary_score(geodata):
 
 # def Primary_Score(name, stype, unit, rmax, zmax, zmin, nbinR, nbinF, nbinZ, rmin=0.0):
 # Primary Energy deposit to Target
-    cards += Primary_Score("rfdose1",     "DOSE", 86, 10.0,95.0, -10.0, 100, 1,1000 )
-    cards += Primary_Score("rfEMd1",   "DOSE-EM", 86, 10.0,95.0, -10.0, 100, 1,1000 )
-    cards += Primary_Score("rfNiel1", "NIEL-DEP", 86, 10.0,95.0, -10.0, 100, 1,1000 )
-    cards += Primary_Score("rfDPA",    "DPA-SCO", 86, 10.0,95.0, -10.0, 100, 1,1000 )
-
+    cards += Primary_Score("rfdose1",     "DOSE", 86, 20.0,69.8, -10.2, 200, 1,800 )
+#    cards += Primary_Score("rfEMd1",   "DOSE-EM", 86, 10.0,70.2, -10.2, 100, 1,800 )
+#    cards += Primary_Score("rfNiel1", "NIEL-DEP", 86, 10.0,70.2, -10.2, 100, 1,800 )
+    cards += Primary_Score("rfDPA",    "DPA-SCO", 86, 20.0,69.8, -10.2, 200, 1,800 )
+#
+# Does and DPA to Frange
 
 
 # 
@@ -267,7 +272,7 @@ def set_geodata(geo):
     nbinR = rmax_all
     par_all = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
 
-    par_mid = [120.0, 200.0, -100.0, 200.0, 300.0]
+    par_mid = [120.0, 200.0, -200.0, 200.0, 300.0]
     par_tar = [30.0, 25.0, -15.0, 150.0, 200.0]
 
     ret = {"geo":geo, "par_all":par_all, "par_mid":par_mid, "par_tar":par_tar}

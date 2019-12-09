@@ -11,6 +11,6 @@ sed -e "/beamoff2/s/VACUUM/      /g" assignmat${verstr}.inc | cut -c1-80 > assig
 
 cut -c1-80 assignmat${verstr}.inc > assignmat-decay2.inc
 
-cut -c1-70 assignmat${verstr}.inc > assignmat-nodecay.inc
+cut -c1-60 assignmat${verstr}.inc > assignmat-nodecay.inc
 
 

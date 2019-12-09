@@ -148,7 +148,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         _body += ["RCC colmski 0.0 0.0 %f 0.0 0.0 %f %f" % ( zbegins, zmsk_len, grf["Collimator_rmin"])]
         _region += ["Colmsk 6 +colmsko -colmski "]
 #        _assignma += [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("Copper", "Colmsk","","VACUUM","beamoff3") ]
-        _assignma += [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("Copper", "Colmsk","","","") ]
+        _assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("Copper", "Colmsk","","","") ]
 
     # Air outside of vacuum chamber and shield beween solenoid
     _body.append("RCC r%dairo 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + zlen_rf,
@@ -173,7 +173,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 " | ( +r1Bsoli -r1stro -r1Bfrg -colmsko ) "  ] 
        _region += ["R1frg 6 +r1Bfrg -colmsko"]
 #       _assignma +=   [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("STAINLES", "R1frg","","VACUUM","beamoff3") ]
-       _assignma +=   [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("STAINLES", "R1frg","","","") ]
+       _assignma +=   [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("STAINLES", "R1frg","","","") ]
     else:
        _region += ["R%dair 6 " % nrf + 
                 " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 

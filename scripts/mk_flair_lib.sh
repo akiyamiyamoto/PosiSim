@@ -42,8 +42,10 @@ mydefault_activity()
       -e "s/%%DET%%/${det}/g" ${infile}
 }
 
+# ##############################################################################
 # Primary dose plot main
-Primary_Dose_Main()
+# ##############################################################################
+Primary_Doseeq_unit81to83()
 {
   plots=$1
   fluka_prefix=$2
@@ -53,7 +55,7 @@ Primary_Dose_Main()
           -e "s/%%PLOTNAME%%/prim_doseeq_all/g" \
           -e "s/%%TITLE%%/Primary beam does-eq, All (2625Bx, 5Hz)/g" \
           -e "s/%%NORM%%/1.968E14*1E-12*3600/g" \
-          -e "s/%%PNGFILE%%/primary-doseeq-all.png/g" \
+          -e "s|%%PNGFILE%%|figs/primary-doseeq-all.png|g" \
           -e "s/%%CBLABEL%%/Dose rate (Sv\/hour)/g" \
           >> ${outfile}
 
@@ -62,7 +64,7 @@ Primary_Dose_Main()
           -e "s/%%TITLE%%/Primary beam does-eq, middle (2625Bx, 5Hz)/g" \
           -e "s/%%NORM%%/1.968E14*1E-12*3600/g" \
           -e "s/%%CBLABEL%%/Dose rate (Sv\/hour)/g" \
-          -e "s/%%PNGFILE%%/primary-doseeq-middle.png/g" \
+          -e "s|%%PNGFILE%%|figs/primary-doseeq-middle.png|g" \
           >> ${outfile}
 
   mydefault ${plots} | sed -e "s/%%DATAFILE%%/${fluka_prefix}001-f83.bnn/g" \
@@ -70,9 +72,134 @@ Primary_Dose_Main()
           -e "s/%%TITLE%%/Primary beam does-eq, target (2625Bx, 5Hz)/g" \
           -e "s/%%CBLABEL%%/Dose rate (Sv\/hour)/g" \
           -e "s/%%NORM%%/1.968E14*1E-12*3600/g" \
-          -e "s/%%PNGFILE%%/primary-doseeq-target.png/g" \
+          -e "s|%%PNGFILE%%|figs/primary-doseeq-target.png|g" \
           >> ${outfile}
 
+}
+
+# ############################################################################
+# Decay doseeq
+# ############################################################################
+Decay_Doseeq_717375()
+{
+   plots=$1
+   fluka_prefix=$2
+   outfile=$3
+
+
+    declare -a runtime=("${RUN_TIME[@]}")
+    declare -a decayname=("${DECAY_NAME[@]}")
+    declare -a decay_doseeq_unit=("${DECAY_DOSEEQ_UNIT[@]}")
+    declare -a decay_doseeq_name=("${DECAY_DOSEEQ_NAME[@]}")
+    
+    
+    echo ${runtime[@]}
+    echo ${decayname[@]}
+    
+    for iuind in `seq 1 ${#decay_doseeq_unit[@]} ` ; do
+      iu=$[${iuind}-1]
+      aunit=${decay_doseeq_unit[${iu}]}
+      aname=${decay_doseeq_name[${iu}]}
+      echo "aunit, aname=${aunit} ${aname}"
+    
+      for detind in `seq 1 ${#runtime[@]} ` ; do
+        det=$[${detind}-1]
+        rt=${runtime[${det}]}
+        dname=${decayname[${det}]}
+        # echo "rt, dname= ${rt} ${dname}"
+        mydefault_doseeq ${plots} ${detind}| sed -e "s/%%DATAFILE%%/${fluka_prefix}001-f${aunit}.bnn/g" \
+              -e "s/%%PLOTNAME%%/doseeq-after-${rt}-${aname}/g" \
+              -e "s/%%TITLE%%/DOSE-EQ beam ${beamyear} year, ${dname} cooling (2625Bx, 5Hz)/g" \
+              -e "s/%%CBLABEL%%/DOSE-EQ (Sv\/hour)/g" \
+              -e "s/%%NORM%%/1E-12*3600/g" \
+              -e "s|%%PNGFILE%%|figs/doseeq-after-${rt}cooling-${aname}.png|g" \
+              >> ${outfile}
+      done
+    done
+    
+    
+}
+
+# ############################################################################
+# Decay activity
+# ############################################################################
+Decay_Activity_727476()
+{
+   plots=$1
+   fluka_prefix=$2
+   outfile=$3
+
+
+    declare -a runtime=("${RUN_TIME[@]}")
+    declare -a decayname=("${DECAY_NAME[@]}")
+    declare -a decay_activity_unit=("${DECAY_ACTIVITY_UNIT[@]}")
+    declare -a decay_activity_name=("${DECAY_ACTIVITY_NAME[@]}")
+    
+    
+    echo ${runtime[@]}
+    echo ${decayname[@]}
+    
+    for iuind in `seq 1 ${#decay_activity_unit[@]} ` ; do
+      iu=$[${iuind}-1]
+      aunit=${decay_activity_unit[${iu}]}
+      aname=${decay_activity_name[${iu}]}
+      echo "aunit, aname=${aunit} ${aname}"
+    
+      for detind in `seq 1 ${#runtime[@]} ` ; do
+        det=$[${detind}-1]
+        rt=${runtime[${det}]}
+        dname=${decayname[${det}]}
+        # echo "rt, dname= ${rt} ${dname}"
+
+        mydefault_activity ${plots} ${detind}| sed -e "s/%%DATAFILE%%/${fluka_prefix}001-f${aunit}.bnn/g" \
+              -e "s/%%PLOTNAME%%/activity-after-${rt}-${aname}/g" \
+              -e "s/%%TITLE%%/Activity beam ${beamyear} year, ${dname} cooling (2625Bx, 5Hz)/g" \
+              -e "s/%%CBLABEL%%/Activity (MBq\/cm^3)/g" \
+              -e "s/%%NORM%%/1E-6/g" \
+              -e "s|%%PNGFILE%%|figs/activity-after-${rt}cooling-${aname}.png|g" \
+              >> ${outfile}
+
+      done
+    done
+    
+}
+
+# ############################################################################
+# Doseeq R Projection 
+# ############################################################################
+Doseeq_R_Projection()
+{
+   plots=$1
+   fluka_prefix=$2
+   outfile=$3
+
+   declare -a runtime=("${RUN_TIME[@]}")
+   declare -a decayname=("${DECAY_NAME[@]}")
+
+
+   aunit=71
+   aname="projall"
+ 
+   for detid in `seq 1 ${#runtime[@]} ` ; do
+     det=$[${detid}-1]
+     rt=${runtime[${det}]}
+     dname=${decayname[${det}]}
+     project_doseeq ${projection} ${detid}| sed -e "s/%%DATAFILE%%/${fluka_prefix}001-f${aunit}.bnn/g" \
+           -e "s/%%PLOTNAME%%/projdoseeq-${rt}-${aname}/g" \
+           -e "s/%%TITLE%%/DOSE-EQ beam ${beamyear} year, ${dname} cooling (2625Bx, 5Hz)/g" \
+           -e "s/%%NORM%%/1E-12*3600/g" \
+           -e "s|%%PNGFILE%%|figs/projdoseeq-after-${rt}cooling-${aname}.png|g" \
+           >> ${outfile}
+   done
+ 
+   detid=1
+   project_doseeq ${projection} ${detid} | sed -e "s/%%DATAFILE%%/${fluka_prefix}001-f81.bnn/g" \
+           -e "s/%%PLOTNAME%%/projdoseeq-primary-${aname}/g" \
+           -e "s/%%TITLE%%/DOSE-EQ primary projection (2625Bx, 5Hz)/g" \
+           -e "s/%%NORM%%/1.968E14*1E-12*3600/g" \
+           -e "s|%%PNGFILE%%|projdoseeq-primary-${aname}.png|g" \
+           >> ${outfile}
+ 
 }
 
 # ###### Primary Dose plot options upto v0606

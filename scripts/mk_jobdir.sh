@@ -15,7 +15,7 @@ jobname_key="${version:4:2}J${fluka_inp:0:2}"
 fkey=`basename ${fluka_inp} .inp`
 nrun_begin=0
 nrun_end=2
-sourcedir="${FLUKA}/init_fluka83.sh"
+sourcedir="${FLUKA}/init_fluka92.sh"
 
 if [ -e ${jobs} ] ; then 
    echo "Error: ${jobs} directory exist. Remove it before re-create."

@@ -28,5 +28,5 @@ GEOEND
 #include material.inc
 
 ***  #include assignmat-v0802.inc
-#include assignmat-decay.inc
+#include assignmat-decaygeo.inc
 
