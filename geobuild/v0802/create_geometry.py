@@ -68,7 +68,11 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     solcpo = "r%dBscpo" % nrf 
     solcpi = "r%dBscpi" % nrf 
     solin = "r%dBsoli" % nrf 
-   
+
+    beamoff3 = ""
+    beamoff4 = ""
+    beamoff5 = ""
+
     zbegins = zbegin
     zlen_rfs = zlen_rf
     if nrf == 1:
@@ -76,6 +80,9 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         zlen_rfs += geo["bases"]["Collimator_thickness"]
         _body.append("RCC r1Bfrg 0.0 0.0 %f 0.0 0.0 %f %f" % (zbegins, grf["collimator_frange_thickness"],
                      grf["vacuum_chamber_rmin"] +grf["vacuum_chamber_thick"] ) )
+        beamoff3 = "%30s%10s%20s" % ("","VACUUM","beamoff3")
+        beamoff4 = "%30s%10s%20s" % ("","VACUUM","beamoff4")
+        beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
 
          
     _body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solout, zbegins, zlen_rfs, sol_rmax ) )
@@ -92,11 +99,11 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     if sys.version_info.major == 2:
         for reg, mat in matdata.iteritems():
             regname = "R%d%s" % (nrf, reg)
-            _assignma += [ "ASSIGNMA %10s%10s" % (mat, regname)]
+            _assignma += [ "ASSIGNMA %10s%10s" % (mat, regname) + beamoff4 ]
     else:
         for reg, mat in list(matdata.items()):
             regname = "R%d%s" % (nrf, reg)
-            _assignma += [ "ASSIGNMA %10s%10s" % (mat, regname)]
+            _assignma += [ "ASSIGNMA %10s%10s" % (mat, regname) + beamoff3 ]
 
     # Beam pipe after RF structure
     vcthick = grf["vacuum_chamber_thick"]
@@ -112,7 +119,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     _body.append("RCC r%dbpw 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin + zlen_rf, 
           bp_len0, r_beam_pipe + glbal["BPthick"] ) )                
     _region += [ "R%dbpw 6 +r%dbpw -r%dcvb " % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dbpw" % nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dbpw" % nrf)  + beamoff3 ]
 
     # Vacuum chamber and surrounding vacuum
     _body.append("RCC r%dvcho 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegin, vc_len, 
@@ -130,8 +137,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                       grf["BPfrange_thickness"], bp_frange_rmax) ]
     _region += ["R%dBPFr1 6 +r%dbpfr1 -r%dbpw" % (nrf, nrf, nrf) ]
     _region += ["R%dBPFr2 6 +r%dbpfr2 -r%dbpw" % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dBPFr1" % nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dBPFr2" % nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dBPFr1" % nrf) + beamoff3 ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dBPFr2" % nrf) + beamoff3 ]
  
     # Return yoke out side of solenoid
     _body += ["RCC r%dryo 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegins, yoke_len,
@@ -139,7 +146,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     _body += ["RCC r%dryi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegins, yoke_len,
                   grf["solenoid_outer_radius"] )]
     _region += [ "R%dyoke 6 +r%dryo  -r%dryi" % (nrf, nrf, nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) + beamoff4 ]
 
     # Collimator mask for the first cavity
     if nrf == 1:
@@ -147,8 +154,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         _body += ["RCC colmsko 0.0 0.0 %f 0.0 0.0 %f %f" % ( zbegins, zmsk_len, grf["Collimator_rmax"])]
         _body += ["RCC colmski 0.0 0.0 %f 0.0 0.0 %f %f" % ( zbegins, zmsk_len, grf["Collimator_rmin"])]
         _region += ["Colmsk 6 +colmsko -colmski "]
-#        _assignma += [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("Copper", "Colmsk","","VACUUM","beamoff3") ]
-        _assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("Copper", "Colmsk","","","") ]
+        _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "Colmsk" ) + beamoff3 ]
 
     # Air outside of vacuum chamber and shield beween solenoid
     _body.append("RCC r%dairo 0.0 0.0 %f 0.0 0.0 %f %f" % ( nrf, zbegin + zlen_rf,
@@ -173,7 +179,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 " | ( +r1Bsoli -r1stro -r1Bfrg -colmsko ) "  ] 
        _region += ["R1frg 6 +r1Bfrg -colmsko"]
 #       _assignma +=   [ "ASSIGNMA %10s%10s%40s%10s%10s" % ("STAINLES", "R1frg","","VACUUM","beamoff3") ]
-       _assignma +=   [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("STAINLES", "R1frg","","","") ]
+       _assignma +=   [ "ASSIGNMA %10s%10s" % ("STAINLES", "R1frg") + beamoff3 ]
     else:
        _region += ["R%dair 6 " % nrf + 
                 " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
@@ -182,7 +188,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
 
 
     _assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "R%dair" % nrf) ]
-    _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "R%dsols" % nrf) ]
+    _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "R%dsols" % nrf) + beamoff4 ]
  
 
 
@@ -266,7 +272,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         cpreg = "R%dcp" % nrf 
         cpregion = "%s 6 " % cpreg + " | ".join(pipe_region["front"] + pipe_region["back"])
         _region += join2FixedLength(cpregion.split())
-        _assignma += [ "ASSIGNMA %10s%10s" % ("WATER", cpreg) ]
+        _assignma += [ "ASSIGNMA %10s%10s" % ("WATER", cpreg) + beamoff3 ]
     
     centsign= {"front":"+", "back":"-"}
     # RF structure 
@@ -283,7 +289,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 rfstructure += " - ( " + pipe + " )"
         
         _region += join2FixedLength(rfstructure.split())
-        _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", rfstr) ]
+        _assignma += [ "ASSIGNMA %10s%10s" % ("Copper", rfstr) + beamoff3 ]
 
     # Vacuum out size of RF structure
     # vac1 = "R%dvaco 6 " % nrf 
@@ -424,13 +430,14 @@ def crZone1(geo, fd):
                 "Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou",
                 "Z1FeSha  6 +zbound2 -z1pln2 +rcylin -rcylbpou",]
 
+    beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
     assignma = ["*", "* **** Created by crZone1 ************************ ",
                   "ASSIGNMA %10s%10s" % ("VACUUM", "BPvac1"), 
-                  "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe1"), 
+                  "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe1") + beamoff5, 
  
                   "ASSIGNMA %10s%10s" % ("AIR", "Z1upair"), 
-                  "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh"),  
-                  "ASSIGNMA %10s%10s" % ("CASTIRON", "Z1FeSha")] 
+                  "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh") + beamoff5,  
+                  "ASSIGNMA %10s%10s" % ("CASTIRON", "Z1FeSha") + beamoff5 ] 
 
     fd.Add(body, region, assignma)
 
