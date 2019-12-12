@@ -254,6 +254,13 @@ def primary_score(geodata):
 #    cards += Primary_Score("rfEMd1",   "DOSE-EM", 86, 10.0,70.2, -10.2, 100, 1,800 )
 #    cards += Primary_Score("rfNiel1", "NIEL-DEP", 86, 10.0,70.2, -10.2, 100, 1,800 )
     cards += Primary_Score("rfDPA",    "DPA-SCO", 86, 20.0,69.8, -10.2, 200, 1,800 )
+# energy deposit to cavity/solenoid and downstream frange 
+    cards += Primary_Score("soldose",     "DOSE", 86, 60.0,200.6, 10.6, 380, 1,400 )
+    cards += Primary_Score("frgdose",     "DOSE", 86, 7.0,187.435,171.435, 35, 1,80 )
+# DPA and Edep to target and FC, phi dis.
+    cards += Primary_Score("tardose",     "DOSE", 86, 20.0,1.0,-2.0, 100, 150, 30 )
+    cards += Primary_Score("tardpa",    "DPA-SCO", 86, 20.0,1.0,-2.0, 100, 150, 30 )
+
 #
 # Does and DPA to Frange
 
