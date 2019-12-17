@@ -330,7 +330,10 @@ def crRFHoles(geo, fd):
     region_cbwl = " -cbgsol -wlsol "
     exclg3 = " -( -wgzdn +wgxup )"
     exclg3w = " -( -wgzwdn +wgxup )"
-    exclg3z= " -( -wgxdn +wgzdn )"
+#    exclg3z= " -( -wgxdn +wgzdn )"
+#    exclg3z= " -( -wgxdn +wgzdn )"
+    exclg3z= " -( wgxsdp -wgxsdm +wgzdn -wgzwdn +wgxup -wgxdn ) "
+#    exclg3z= " "
 
     body = ["* dummy entry" ]
 
