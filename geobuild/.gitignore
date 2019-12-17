@@ -4,3 +4,5 @@ v6
 v0603
 assignmat-decay*.inc
 *-v*.inc
+*.pyc
+temp

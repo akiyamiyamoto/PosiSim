@@ -29,45 +29,44 @@ from create_cavity import *
 # ========================================
 def crWorld(geo, fd):
     
-    _body = []
-    _region = []
-    _assignma = []
 
     geop = geo["world"]
     glp = geo["global"]
     gtar = geo["Target"]
 
+    body = []
     zmax = geop["blkRPP1"]
-    _body.append("ZCC blkRPP1 0.0 0.0 %f" % zmax )
+    body.append("ZCC blkRPP1 0.0 0.0 %f" % zmax )
 
     for iz in range(1, 6):
         bname = "zbound%d" % iz
-        _body.append("XYP %s %f" % ( bname, geop[bname] ) )
+        body.append("XYP %s %f" % ( bname, geop[bname] ) )
 
     zlen = glp["zmax"] - glp["zmin"]
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rbound1", geop["rbound1"]))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rbound2", geop["rbound2"]))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rbound3", geop["rbound3"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rbound1", geop["rbound1"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rbound2", geop["rbound2"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rbound3", geop["rbound3"]))
 
     # Concrete sheild radius common to Zone1 to 4.
     rcylout=geop["rbound2"] - glp["CShOut_thick"]
     rcylmed=glp["CShIn_rmin"] + glp["CShIn_thick"]
     rcylfein = glp["CShIn_rmin"] - glp["FeSh_thick"]
 
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylout",  rcylout))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylmed",  rcylmed))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylin",   glp["CShIn_rmin"]))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylfein", rcylfein))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylbpou", glp["BPrin"]+glp["BPthick"]))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylbpin", glp["BPrin"]))
-    _body.append("ZCC %s 0.0 0.0 %f" % ( "rcylbpso", glp["BPrin"]+glp["BPthick"]+gtar["BP_shield_thickness"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rcylout",  rcylout))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rcylmed",  rcylmed))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rcylin",   glp["CShIn_rmin"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rcylfein", rcylfein))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rcylbpou", glp["BPrin"]+glp["BPthick"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rcylbpin", glp["BPrin"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rcylbpso", glp["BPrin"]+glp["BPthick"]+gtar["BP_shield_thickness"]))
+    body.append("YZP yzplane 0.0")
             
 
     region = []
     assignma = []
 
     # create  region data
-    _region += ["*", "* black hole", 
+    region += ["*", "* black hole", 
        "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rbound3 ) ",
        "RockW   6 +rbound3 -rbound2 +zbound5 -zbound1 ", 
        "OutShld 6 +zbound5 -zbound1 +rbound2 -rcylout ", 
@@ -75,7 +74,7 @@ def crWorld(geo, fd):
        "InShld  6 +zbound5 -zbound1 +rcylmed -rcylin " ]
 
     # Assign material to each region
-    _assignma += ["*","* Assign material ","*",
+    assignma += ["*","* Assign material ","*",
        "*********1*********2*********3*********4*********5*********6*********7*********8",
        "*","ASSIGNMA   BLCKHOLE  BlHole",
        "*","ASSIGNMA      WATER   RockW",
@@ -83,32 +82,101 @@ def crWorld(geo, fd):
            "ASSIGNMA %10s%10s" % ("AIR", "MidAir"), 
            "ASSIGNMA %10s%10s" % ("CONCRETE", "InShld") ]
 
-    fd.Add(_body, _region, _assignma)
+    fd.Add(body, region, assignma)
 
     return
+
+# =========================================================================
+def crBodies4Holes(geo):
+    # create bodies for holes
+
+    gwg = geo["Holes"]["wave_guides"]
+    body = ["*** Bodies for wave guide holes",
+            "YZP wgxup %f" % ( gwg["xcenter"] + gwg["height"]*0.5),
+            "YZP wgxdn %f" % (gwg["xcenter"] - gwg["height"]*0.5),
+            "YZP wgxwup %f" % (gwg["xcenter"] + gwg["height"]*0.5 + gwg["wall_thickness"]),
+            "YZP wgxwdn %f" % (gwg["xcenter"] - gwg["height"]*0.5 - gwg["wall_thickness"]),
+            "XZP wgxsdp %f" %  (gwg["width"]*0.5),
+            "XZP wgxsdm %f" %  (-gwg["width"]*0.5),
+            "XZP wgxwsdp %f" %  (gwg["width"]*0.5 + gwg["wall_thickness"]),
+            "XZP wgxwsdm %f" % (-gwg["width"]*0.5 - gwg["wall_thickness"]),
+            "XYP wgzup %f" % ( gwg["zcenter"] + gwg["width"]*0.5),
+            "XYP wgzdn %f" % (gwg["zcenter"] - gwg["width"]*0.5),
+            "XYP wgzwup %f" % (gwg["zcenter"] + gwg["width"]*0.5 + gwg["wall_thickness"]),
+            "XYP wgzwdn %f" % (gwg["zcenter"] - gwg["width"]*0.5 - gwg["wall_thickness"]),
+            "XZP wgzsdp %f" %  (gwg["width"]*0.5),
+            "XZP wgzsdm %f" %  (-gwg["width"]*0.5),
+            "XZP wgzwsdp %f" %  (gwg["width"]*0.5 + gwg["wall_thickness"]),
+            "XZP wgzwsdm %f" % (-gwg["width"]*0.5 - gwg["wall_thickness"])]
+
+    gcb = geo["Holes"]["cables"]
+    body += ["ZCC cbrot %f 0.0 %f" % ( gcb["xcenter_rotator"], gcb["radius"] ), 
+             "ZCC cbgrot %f 0.0 %f" % ( gcb["xcenter_rotator"], gcb["radius"] + gcb["gap"] ), 
+             "ZCC cbfc %f 0.0 %f" % ( gcb["xcenter_FC"], gcb["radius"] ), 
+             "ZCC cbgfc %f 0.0 %f" % ( gcb["xcenter_FC"], gcb["radius"] + gcb["gap"] ), 
+             "ZCC cbsol %f 0.0 %f" % ( gcb["xcenter_solenoid"], gcb["radius"] ), 
+             "XYP cbsolzmx %f " % ( gcb["zcenter_solenoid"] + gcb["radius"]),
+             "YZP cbsolxc %f " % gcb["xcenter_solenoid"], 
+             "XYP cbgsolmx %f " % ( gcb["zcenter_solenoid"] + gcb["radius"] + gcb["gap"]),
+             "ZCC cbgsol %f 0.0 %f" % ( gcb["xcenter_solenoid"], gcb["radius"] + gcb["gap"]), 
+             "XCC cbsolz 0.0 %f %f" % ( gcb["zcenter_solenoid"], gcb["radius"] ),
+             "XCC cbgsolz 0.0 %f %f" % ( gcb["zcenter_solenoid"], gcb["radius"] + gcb["gap"] )]
+
+    gwl = geo["Holes"]["water_lines"]
+    body += ["ZCC wlrot %f 0.0 %f" % ( gwl["xcenter_rotator"], gwl["radius_rotator"] ), 
+             "ZCC wlfc %f 0.0 %f" % ( gwl["xcenter_FC"], gwl["radius_FC"] ), 
+             "ZCC wlsol %f 0.0 %f" % ( gwl["xcenter_solenoid"], gwl["radius"] ), 
+             "XYP wlsolzmx %f " % ( gwl["zcenter_solenoid"] + gwl["radius"] ), 
+             "YZP wlsolxc %f " % ( gwl["xcenter_solenoid"] ), 
+             "XCC wlsolz 0.0 %f %f" % ( gwl["zcenter_solenoid"], gwl["radius"] )] 
+
+    return body
 
 # ========================================
 def crZone1(geo, fd):
 
     
+    # Upstream shield parameter
+    zb2 = geo["front"]["CSh_up_pos"] # Concrete shield Max Z (Z end ) = Iron shield Min Z (Z begin)
+    zb1 = zb2 - geo["global"]["CSh_up_thick"] # Concrete shield Min Z (Z begin)
+    zb3 = zb2 + geo["global"]["FeSh_thick_upstream"] # Iron shield Max Z (z end)
+    z_cshup0_bgn = zb1 - geo["global"]["CSh_up_distance"]
+    z_cshup0_end = z_cshup0_bgn - geo["global"]["CSh_up0_thick"]
 
-    zb2 = geo["front"]["CSh_up_pos"]
-    zb1 = zb2 - geo["global"]["CSh_up_thick"]
-    zb3 = zb2 + geo["global"]["FeSh_thick"]
 
     body = ["*  Body for Zone1",
-         "XYP z1pln1 %f" % zb1, 
-         "XYP z1pln2 %f" % zb2] 
+         "XYP z1pln1 %f" % zb1,   #  
+         "XYP z1pln2 %f" % zb2, 
+         "XYP z1cs0bgn %f " % z_cshup0_end, 
+         "XYP z1cs0end %f " % z_cshup0_bgn] 
 #         "XYP z1pln3 %f" % zb3 ]
 
+    body += crBodies4Holes(geo)
+
+    region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
+    region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
+    region_cbwl = " -cbgrot -cbgfc -cbsol -cbgsol -wlsol -wlfc -wlrot "
 
     region = ["*", "* **** Created by crZone1 ************************ ",
                 "*", "* Beam pipe",
                 "BPvac1   6 +zbound2 -zbound1 +rcylbpin",
                 "BPpipe1  6 +zbound2 -zbound1 +rcylbpou  -rcylbpin",
-                "Z1upair  6 +z1pln1 -zbound1 +rcylin - rcylbpou", 
-                "Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou",
-                "Z1FeSha  6 +zbound2 -z1pln2 +rcylin -rcylbpou",]
+                "Z1upair  6 +z1pln1 -z1cs0end +rcylin - rcylbpou", 
+                "Z1upair0 6 +z1cs0bgn -zbound1 +rcylin - rcylbpou", 
+                "Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou %s -(%s)" % (region_cbwl, region_wgw),
+                "Z1FeSha  6 +zbound2 -z1pln2 +rcylin -rcylbpou %s -(%s)" % (region_cbwl, region_wgw),
+                "Z1CSh0   6 +z1cs0end -z1cs0bgn +rcylin -rcylbpou",
+                "WaveG1   6 +zbound2 -z1pln1 %s " % region_wg, 
+                "WaveGW1  6 +zbound2 -z1pln1 %s -( %s )" % (region_wgw, region_wg ), 
+                "CBFC1   6 +zbound2 -z1pln1 +cbfc",
+                "CBgFC1  6 +zbound2 -z1pln1 +cbgfc -cbfc", 
+                "CBsol1   6 +zbound2 -z1pln1 +cbsol",
+                "CBgsol1  6 +zbound2 -z1pln1 +cbgsol -cbsol",
+                "CBrot1   6 +zbound2 -z1pln1 +cbrot",
+                "CBgrot1  6 +zbound2 -z1pln1 +cbgrot -cbrot",
+                "WLrot1   6 +zbound2 -z1pln1 +wlrot", 
+                "WLFC1   6 +zbound2 -z1pln1 +wlfc", 
+                "WLsol1   6 +zbound2 -z1pln1 +wlsol"] 
 
     beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
     assignma = ["*", "* **** Created by crZone1 ************************ ",
@@ -116,8 +184,21 @@ def crZone1(geo, fd):
                   "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe1") + beamoff5, 
  
                   "ASSIGNMA %10s%10s" % ("AIR", "Z1upair"), 
+                  "ASSIGNMA %10s%10s" % ("AIR", "Z1upair0"), 
                   "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh") + beamoff5,  
-                  "ASSIGNMA %10s%10s" % ("CASTIRON", "Z1FeSha") + beamoff5 ] 
+                  "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh0") ,  
+                  "ASSIGNMA %10s%10s" % ("CASTIRON", "Z1FeSha") + beamoff5,  
+                  "ASSIGNMA %10s%10s" % ("VACUUM", "WaveG1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "WaveGW1") + beamoff5, 
+                  "ASSIGNMA %10s%10s" % ("AIR", "CBgFC1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBFC1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("AIR", "CBgsol1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBsol1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("AIR", "CBgrot1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBrot1") + beamoff5, 
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLrot1") + beamoff5, 
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLFC1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLsol1") + beamoff5 ] 
 
     fd.Add(body, region, assignma)
 
@@ -152,7 +233,11 @@ def crZone3(geo, fd):
                "XYP z3inpln2 %f" % zb2, 
                "XYP z3inpln3 %f" % zb3 ]
 
-    region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1"]
+    region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
+    exclwg = " -( +wgzwup -wgzwdn +wgzwsdp -wgzwsdm +wgxwdn -yzplane ) "
+    exclude = " -(+wlsolz +wlsolxc -yzplane) -(+wlsol +wlsolzmx) -(+cbsolz +cbsolxc -yzplane) -(+cbsol + cbsolzmx) "
+    exclude += " -(+wgzwup %s ) " % region_wgw + exclwg
+    region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1 " + exclude ] 
     region += ["Z3inFeS1 6 +z3inpln1 -zbound3 +rcylin -rcylfein"]
     region += ["Z3inFeS2 6 +z3inpln2 -z3inpln1 +rcylin -rbound1"]
     region += ["Z3inCSh1 6 +z3inpln3 -z3inpln2 +rcylin -rbound1"]
@@ -192,12 +277,12 @@ def crGeoInput(geo, fd):
     crWorld(geo, fd)
 
     crZone1(geo, fd)
-    crZone3(geo, fd)
     crZone4(geo, fd)
 
     
 
     crRFZone(geo, fd)
+    crZone3(geo, fd)
 
     crTargetZone(geo, fd)
 

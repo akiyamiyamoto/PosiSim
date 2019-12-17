@@ -146,6 +146,7 @@ def crRotationTarget(geo, fd):
     body += ["REC tfcuo %f 0.0 %f 0.0 0.0 %f %f 0.0 0.0 0.0 %f 0.0 " % \
            ( gtar["FC_ellipse_offset"], zfcu_bgn, fcu_length, \
              gtar["FC_ellipse_major"], gtar["FC_ellipse_minor"] ) ]
+    body += ["XYP tfcubgn %s" % zfcu_bgn ]
 
     fcu_vz = zfcc_bgn
     offset_sign = cmp(gtar["Wdisk_axis_offset"], 0.0)
@@ -257,6 +258,42 @@ def crSupportStructure(geo, fd, envelops):
     zlen = zend - zbegin
     rmax = glbal["CShIn_rmin"]
 
+    # Waveguide, cable and water lines for cavity, FC and solenoid
+    region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
+    region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
+    region_cbwl = " -cbgrot -cbgfc -cbgsol -wlsol -wlfc -wlrot "
+
+    region += [ "WaveG2   6 -zbound2 +zbound3  %s " % region_wg, 
+                "WaveGW2  6 -zbound2 +zbound3  %s -( %s )" % (region_wgw, region_wg ), 
+                "CBsol2   6 -zbound2 +zbound3  +cbsol",
+    #            "CBgsol2  6 -zbound2 +zbound3  +cbgsol -cbsol",
+                "WLsol2   6 -zbound2 +zbound3  +wlsol",
+                "CBFC2    6 -zbound2 +tfcubgn +cbfc",
+                "CBgFC2   6 -tshbgn -tvcbo +tfcubgn +cbgfc -cbfc",
+                "WLFC2    6 -zbound2 +tfcubgn +wlfc",
+                "CBrot2   6 -zbound2 -trotbody +tshbgn +cbrot",
+    #            "CBgrot2  6 -zbound2 -trotbody +tshbgn +cbgrot -cbrot",
+                "WLrot2   6 -zbound2 -trotbody +tshbgn +wlrot"] 
+
+    notair = " -wlfc -cbfc -wlrot -cbrot -cbsol -wlsol "
+    notair += " -(%s) " % region_wgw
+
+    # "-( zbound3 -zbound2 -(%s)" % region_wgw + " -cbgsol -wlsol -cbgfc -wlfc -cbgtot -wlrot "
+
+    beamoff2 = "%30s%10s%20s" % ("","VACUUM","beamoff2")
+    assignma += ["ASSIGNMA %10s%10s" % ("VACUUM", "WaveG2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("Copper", "WaveGW2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("AIR", "CBgFC2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBFC2") + beamoff2,
+    #              "ASSIGNMA %10s%10s" % ("AIR", "CBgsol2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBsol2") + beamoff2,
+    #              "ASSIGNMA %10s%10s" % ("AIR", "CBgrot2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBrot2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLrot2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLFC2") + beamoff2,
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLsol2") + beamoff2 ]
+    
+
     # Vacuum chamber surrounding FC and rotation target 
     zfc_end = zend - gtar["FC_to_RF_gap"]
     vc_thick = grf["vacuum_chamber_thick"]
@@ -278,7 +315,8 @@ def crSupportStructure(geo, fd, envelops):
     body += ["RCC tvcbsi 0.0 0.0 %f 0.0 0.0 %f %f" % ( gtar["vacuum_chamber_R_z_begin"] + vc_thick, 
                        vcb_zlen-vc_thick, vcb_rmin ) ] 
     region += ["TVCwall  6 ( +tvcro | +tvcbo ) - tvcri - tvcbi "]
-    region += ["TVCwalld  6 ( +tvcri | +tvcbi ) - tvcrsi - tvcbsi -tvcbpo " + envelops["rotation_body"] ]
+    region += ["TVCwalld  6 ( +tvcri | +tvcbi ) - tvcrsi - tvcbsi -tvcbpo " + 
+                envelops["rotation_body"] + "  -cbfc -wlfc " ]
     assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("STAINLES", "TVCwall","","VACUUM","beamoff2") ]
     assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("STAINLES", "TVCwalld","","VACUUM","beamoff2") ]
 
@@ -290,7 +328,7 @@ def crSupportStructure(geo, fd, envelops):
        for key in list(envelops.keys()):
           notvac += envelops[key]
     # print notvac
-    region += ["TVCvac 6 ( +tvcrsi | +tvcbsi ) " + notvac ]
+    region += ["TVCvac 6 ( +tvcrsi | +tvcbsi ) " + notvac + " -( +cbfc +tfcubgn ) -( +wlfc +tfcubgn) "]
     assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "TVCvac") ]
 
     # Beam pipe upstream of target
@@ -313,9 +351,11 @@ def crSupportStructure(geo, fd, envelops):
 
     shr_rmax = gtar["vacuum_chamber_R_r_max"] + gtar["WShield_thickness"]
     shb_rmax = vcb_rmin + vc_thick + gtar["WShield_thickness"]
+    body += ["XYP tshbgn %f " % sh_zbgn ]
     body += ["RCC tshro %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, sh_zbgn, shr_zlen, shr_rmax) ]
     body += ["RCC tshbo 0.0 0.0 %f 0.0 0.0 %f %f" % ( sh_zbgn, shr_zlen, shb_rmax ) ]
-    region += ["TWShield  6 ( +tshro | +tshbo ) - tvcro - tvcbo -tvcbpo " + envelops["rotation_body"] ]
+    region += ["TWShield  6 ( +tshro | +tshbo ) - tvcro - tvcbo -tvcbpo " + 
+              envelops["rotation_body"] + " -cbgfc -wlfc "]
     assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("Copper", "TWShield","","VACUUM","beamoff2") ]
 
     # Air surrounding target area
@@ -338,9 +378,11 @@ def crSupportStructure(geo, fd, envelops):
     region += ["TWShld2 6 ( +tshb2o -tvcbo -tshr2i ) | ( +tshr2o -tshr2i -tshb2o ) "]
     assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("Copper", "TWShld2","","VACUUM","beamoff2") ]     
 
+
+
     # Air body, region, assignma
     body += ["RCC tarair 0.0 0.0 %f 0.0 0.0 %f %f " % ( zbegin, air_zlen,  air_rmax)]
-    region += ["TARair 6 +tarair -tvcbpo -tshbo -tshro -tshb2o -tshr2o -trotbody "]
+    region += ["TARair 6 +tarair -tvcbpo -tshbo -tshro -tshb2o -tshr2o -trotbody " + notair  ]
     region += ["TARair2 6 ( +tshb2i -tvcbo -tshbo ) | (+tshr2i -tvcbo -tvcro) "]
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair") ]  
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair2") ]  

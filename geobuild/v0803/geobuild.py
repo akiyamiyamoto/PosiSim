@@ -80,7 +80,7 @@ def createGeoParam():
                  "FC_thickness" : 10.0, # Thickness(z length) of FC(AMD)
                  "Collimator_thickness" : 12.0, # Thickness(z length) of Collimator in front of cavity
                  "FC_to_Collimator_gap" : 11.4, #  Distance from the FC to the start of collimator
-                 "zmin":-400.0, # zmin of whole area
+                 "zmin":-600.0, # zmin of whole area
                  "zmax":1000.0, # zmax of whole area
                  "rmax":810.0 } # rmax of whole area
     
@@ -98,16 +98,19 @@ def createGeoParam():
     #@ global
     # zmax is determined as the end of RF + 1.0 cm
     geo["global"] = {
-        "zmin":-400.0, # zmin of whole area
+        "zmin":geo["bases"]["zmin"],  # zmin of whole area
     #     "zmax":1.3E3, # zmax of whole area
         "rmax":810.0,  # rmax of whole area
         "Mount_water_thickness":10.0, # Thickness of water layer out side of outer concrete tunnel
         "CShOut_thick":200.0, # Thickness of tunnel concrete, outer
         "CShIn_thick":200, # Thickness of tunnel concrete, inner
         "CShIn_rmin":120.0,  # inner radius of smaller concrete sheild
-        "CSh_up_thick":100.0, # Thickness of upstream concrete shield covering target area
+        "CSh_up_thick":30.0, # Thickness of upstream concrete shield covering target area
+        "CSh_up0_thick":70.0, # Thickness of first upstream concrete
+        "CSh_up_distance":200.0, # Distance between first and second concrete sheild in the upstream
         "CSh_down_thick":150.0, # Thickness of downsream concrete sheield coverging target area
         "FeSh_thick": 30.0, # Thickness of Iron sheild inside of concrete sheild
+        "FeSh_thick_upstream": 20, # Thickness of Iron shield of upstream.
         "BPrin":3.2, # Beam pipe inner radius 
         "BPthick":0.5} # Beam pipe thickness
 
@@ -224,25 +227,39 @@ def createGeoParam():
     gtar = geo["Target"]
     grfp["Collimator_rmax"] = grfp["r_cavity_outer_wall"]
     grfp["Collimator_rmin"] = grfp["r_cavity_beam_pipe"]
-    # gtar["FC_rmax"] = grfp["r_cavity_outer_wall"]
     gtar["FC_rmax"] = 6.0
 
-    # gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_RF_gap"] + gtar["FC_thickness"] + 
     gtar["Target_wdisk_z_begin"] = gwp["zbound3"] - ( gtar["FC_to_Collimator_gap"] +gtar["FC_thickness"] + 
                     gtar["Target_to_FC_gap"] + gtar["Target_thickness"] )
-#    gtar["vacuum_chamber_R_z_begin"] = gtar["Target_wdisk_z_begin"] - ( gtar["Rotator_disk_thickness"] +
-#                   gtar["Rotator_disk_to_vacuum_chamber_gap"] + 
-#                   grfp["vacuum_chamber_thick"] )
     gtar["vacuum_chamber_R_z_begin"] = gtar["Target_wdisk_z_begin"] \
            - ( gtar["FC_total_length"] - gtar["FC_thickness"] - gtar["Target_to_FC_gap"] - gtar["Target_thickness"] ) \
            -   gtar["FC_to_vacuum_chamber_zgap"] 
 
-    # gtar["vacuum_chamber_R_z_begin"] = 15.0
     gtar["vacuum_chamber_R_r_max"] = gtar["Wdisk_rmax"] + ( gtar["Rotator_disk_to_vacuum_chamber_gap"] +
                     grfp["vacuum_chamber_thick"] )
-    # gtar["Rotator_axis_length"] = ( gtar["Rotator_disk_to_vacuum_chamber_gap"] +
-    #               grfp["vacuum_chamber_thick"] + gtar["WShield_thickness"] )
     gtar["Rotator_axis_length"] = gtar["Rotator_structure_total_length"]
+
+    #@holes
+    # Parameters for various holes; wave guide, cabling, cooling pipe
+    geo["Holes"] = { "wave_guides":{}, "cables":{}, "water_lines":{}}
+    geo["Holes"]["wave_guides"] = {"width": 8.50, # longer side
+                     "height": 4.25, # shorter side
+                     "wall_thickness": 0.5,   # wall thickness
+                     "xcenter": 75.0, # X center position, which runs in Z direction.
+                     "zcenter": 98.02 } # Z center position, which runs in X direction
+    geo["Holes"]["cables"] = {"radius":1.0, # Radius of cable
+                     "gap":0.5, # gap between cable and concrete/castiron
+                     "xcenter_FC":-9.0, # X center for FC cable
+                     "xcenter_rotator":27.0, # X center for target rotating system
+                     "xcenter_solenoid":62.0, # X center for Solenoid power cable
+                     "zcenter_solenoid":86.0} # Z center for Solenoid power cable
+    geo["Holes"]["water_lines"] = {"radius":2.0, # Radius of water line,
+                     "radius_rotator": 0.5*geo["Target"]["Rotator_axis_cooling_pipe_diameter"],
+                     "radius_FC":1.0, # FC water line radius
+                     "xcenter_FC": -12.0, # xcenter for Flux concentrator
+                     "xcenter_rotator": 22.0, # xcenter for target cooling pipe
+                     "xcenter_solenoid":67.0, # x center for solenoid cooling water.
+                     "zcenter_solenoid": 91.0} # z center for solenoid cooling water  
 
     return geo
 
