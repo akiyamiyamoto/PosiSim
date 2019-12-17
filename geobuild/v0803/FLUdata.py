@@ -31,19 +31,26 @@ class FLUdata(object):
 
     def Output(self):
         outdata = {"body":self.body, "region":self.region, "assignmat":self.assignmat}
-        if sys.version_info.major == 2:
-            for key in outdata.keys():
-                fout = open(key+self.version+".inc","w")
-                fout.write("\n".join(outdata[key]))
-                fout.close()
-        else:
-            for key in list(outdata.keys()):
-                fout = open(key+self.version+".inc","w")
-                fout.write("\n".join(outdata[key]))
-                fout.close()
+        for key in ["body", "assignmat"]:
+            fout = open(key+self.version+".inc","w")
+            fout.write("\n".join(outdata[key]))
+            fout.close()
+        key = "region"
+        fout = open(key+self.version+".inc","w")
+        for rl in outdata[key]:
+           if len(rl) < 120:
+              fout.write(rl+"\n")
+           else:
+              outbuf=""
+              for brk in rl.split(" "):
+                  outbuf += brk+" "
+                  if len(outbuf) > 120:
+                     fout.write(outbuf+"\n")
+                     outbuf = "      "
+              if len(outbuf) > 7:
+                 fout.write(outbuf+"\n")
+        fout.close() 
     
-
-
 
 # ========================================
 def join2FixedLength(inlist, maxlength=120, nblanks=4, separator=" "):

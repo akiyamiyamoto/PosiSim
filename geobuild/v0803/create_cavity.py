@@ -299,7 +299,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 rfstructure += " - ( " + pipe + " )"
         
         region += join2FixedLength(rfstructure.split())
-        region[-1] += exclwg
+        if nrf == 1:
+            region[-1] += exclwg
         assignma += [ "ASSIGNMA %10s%10s" % ("Copper", rfstr) + beamoff3 ]
 
     # Vacuum out size of RF structure
