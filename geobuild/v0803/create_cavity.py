@@ -325,13 +325,13 @@ def crRFHoles(geo, fd):
     # Waveguide, cable and water lines for solenoid and cavity
     region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
     region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
+#    region_zwg = " +wgzup -wgzdn +wgzsdp -wgzsdm "
+#    region_zwgw = " +wgzwup -wgzwdn +wgzwsdp -wgzwsdm "
     region_zwg = " +wgzup -wgzdn +wgzsdp -wgzsdm "
     region_zwgw = " +wgzwup -wgzwdn +wgzwsdp -wgzwsdm "
     region_cbwl = " -cbgsol -wlsol "
     exclg3 = " -( -wgzdn +wgxup )"
     exclg3w = " -( -wgzwdn +wgxup )"
-#    exclg3z= " -( -wgxdn +wgzdn )"
-#    exclg3z= " -( -wgxdn +wgzdn )"
     exclg3z= " -( wgxsdp -wgxsdm +wgzdn -wgzwdn +wgxup -wgxdn ) "
 #    exclg3z= " "
 
@@ -340,8 +340,8 @@ def crRFHoles(geo, fd):
     region = [ "WaveG3   6 -zbound3 +wgzup  %s %s " % (region_wg,exclg3), 
                "WaveGW3  6 -zbound3 +wgzwup  %s -( %s ) %s " % (region_wgw, region_wg, exclg3w ),
 #               "WaveZG3   6 %s +wgxup -yzplane -r1cav6 " % region_zwg + " -(%s)"%region_wg , 
-               "WaveZG3   6 %s +wgxup -yzplane -r1cav6 " % region_zwg,
-               "WaveZGW3  6  %s -( %s ) +wgxup -yzplane -r1cav6 %s " % (region_zwgw, region_zwg, exclg3z ),
+               "WaveZG3   6 %s +wgxup -yzplane -r1cav6 -r1cav7 -r1cav8 -r1cvb " % region_zwg,
+               "WaveZGW3  6  %s -( %s ) +wgxup -yzplane -r1cav6 -r1cav7 -r1cav8 -r1cvb %s " % (region_zwgw, region_zwg, exclg3z ),
 #               "WaveZGW3  6  %s -( %s ) +wgxwdn -yzplane -r1cav6 " % (region_zwgw, region_zwg ),
                "CBsol3   6 -zbound3 +cbsolzmx +cbsol ",
                "CBsol3z  6 +cbsolz -cbsol +cbsolxc -r1Bsolo -yzplane ",

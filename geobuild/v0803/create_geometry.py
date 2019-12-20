@@ -92,22 +92,27 @@ def crBodies4Holes(geo):
 
     gwg = geo["Holes"]["wave_guides"]
     body = ["*** Bodies for wave guide holes",
-            "YZP wgxup %f" % ( gwg["xcenter"] + gwg["height"]*0.5),
-            "YZP wgxdn %f" % (gwg["xcenter"] - gwg["height"]*0.5),
-            "YZP wgxwup %f" % (gwg["xcenter"] + gwg["height"]*0.5 + gwg["wall_thickness"]),
-            "YZP wgxwdn %f" % (gwg["xcenter"] - gwg["height"]*0.5 - gwg["wall_thickness"]),
-            "XZP wgxsdp %f" %  (gwg["width"]*0.5),
-            "XZP wgxsdm %f" %  (-gwg["width"]*0.5),
-            "XZP wgxwsdp %f" %  (gwg["width"]*0.5 + gwg["wall_thickness"]),
-            "XZP wgxwsdm %f" % (-gwg["width"]*0.5 - gwg["wall_thickness"]),
+            "YZP wgxup %f" % ( gwg["xcenter"] + gwg["width"]*0.5),
+            "YZP wgxdn %f" % (gwg["xcenter"] - gwg["width"]*0.5),
+            "YZP wgxwup %f" % (gwg["xcenter"] + gwg["width"]*0.5 + gwg["wall_thickness"]),
+            "YZP wgxwdn %f" % (gwg["xcenter"] - gwg["width"]*0.5 - gwg["wall_thickness"]),
+            "XZP wgxsdp %f" %  (gwg["height"]*0.5),
+            "XZP wgxsdm %f" %  (-gwg["height"]*0.5),
+            "XZP wgxwsdp %f" %  (gwg["height"]*0.5 + gwg["wall_thickness"]),
+            "XZP wgxwsdm %f" % (-gwg["height"]*0.5 - gwg["wall_thickness"]),
+
             "XYP wgzup %f" % ( gwg["zcenter"] + gwg["width"]*0.5),
             "XYP wgzdn %f" % (gwg["zcenter"] - gwg["width"]*0.5),
             "XYP wgzwup %f" % (gwg["zcenter"] + gwg["width"]*0.5 + gwg["wall_thickness"]),
             "XYP wgzwdn %f" % (gwg["zcenter"] - gwg["width"]*0.5 - gwg["wall_thickness"]),
-            "XZP wgzsdp %f" %  (gwg["width"]*0.5),
-            "XZP wgzsdm %f" %  (-gwg["width"]*0.5),
-            "XZP wgzwsdp %f" %  (gwg["width"]*0.5 + gwg["wall_thickness"]),
-            "XZP wgzwsdm %f" % (-gwg["width"]*0.5 - gwg["wall_thickness"])]
+#            "XZP wgzsdp %f" %  (gwg["width"]*0.5),
+#            "XZP wgzsdm %f" %  (-gwg["width"]*0.5),
+#            "XZP wgzwsdp %f" %  (gwg["width"]*0.5 + gwg["wall_thickness"]),
+#            "XZP wgzwsdm %f" % (-gwg["width"]*0.5 - gwg["wall_thickness"])]
+            "XZP wgzsdp %f" %  (gwg["height"]*0.5),
+            "XZP wgzsdm %f" %  (-gwg["height"]*0.5),
+            "XZP wgzwsdp %f" %  (gwg["height"]*0.5 + gwg["wall_thickness"]),
+            "XZP wgzwsdm %f" % (-gwg["height"]*0.5 - gwg["wall_thickness"])]
 
     gcb = geo["Holes"]["cables"]
     body += ["ZCC cbrot %f 0.0 %f" % ( gcb["xcenter_rotator"], gcb["radius"] ), 

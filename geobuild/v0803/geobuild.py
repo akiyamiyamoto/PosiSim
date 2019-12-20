@@ -242,23 +242,28 @@ def createGeoParam():
     #@holes
     # Parameters for various holes; wave guide, cabling, cooling pipe
     geo["Holes"] = { "wave_guides":{}, "cables":{}, "water_lines":{}}
-    geo["Holes"]["wave_guides"] = {"width": 8.50, # longer side
+    geo["Holes"]["wave_guides"] = {
+                     "width": 8.50, # longer side
                      "height": 4.25, # shorter side
+#                     "width": 17.0, # longer side
+#                     "height": 8.5, # shorter side
                      "wall_thickness": 0.5,   # wall thickness
-                     "xcenter": 75.0, # X center position, which runs in Z direction.
+                     "xcenter": 78.0, # X center position, which runs in Z direction.
                      "zcenter": 98.02 } # Z center position, which runs in X direction
+    # Adjust Z position when width is changed.
+    geo["Holes"]["wave_guides"]["zcenter"] += (geo["Holes"]["wave_guides"]["width"] - 8.50)*0.5
     geo["Holes"]["cables"] = {"radius":1.0, # Radius of cable
                      "gap":0.5, # gap between cable and concrete/castiron
                      "xcenter_FC":-9.0, # X center for FC cable
                      "xcenter_rotator":27.0, # X center for target rotating system
-                     "xcenter_solenoid":62.0, # X center for Solenoid power cable
+                     "xcenter_solenoid":60.5, # X center for Solenoid power cable
                      "zcenter_solenoid":86.0} # Z center for Solenoid power cable
     geo["Holes"]["water_lines"] = {"radius":2.0, # Radius of water line,
                      "radius_rotator": 0.5*geo["Target"]["Rotator_axis_cooling_pipe_diameter"],
                      "radius_FC":1.0, # FC water line radius
                      "xcenter_FC": -12.0, # xcenter for Flux concentrator
                      "xcenter_rotator": 22.0, # xcenter for target cooling pipe
-                     "xcenter_solenoid":67.0, # x center for solenoid cooling water.
+                     "xcenter_solenoid":64.0, # x center for solenoid cooling water.
                      "zcenter_solenoid": 91.0} # z center for solenoid cooling water  
 
     return geo
