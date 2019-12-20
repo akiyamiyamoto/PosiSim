@@ -15,8 +15,14 @@ fi
 
 for f in ${indir}/*.png ; do 
    fname=`basename ${f}`
-   convert -trim ${f} ${outdir}/${fname}
-   echo "converted ${f} to ${outdir}/${fname}"
+   if [ ! -e ${outdir}/${fname} ] ;then 
+       convert -trim ${f} ${outdir}/${fname}
+       echo "converted ${f} to ${outdir}/${fname}"
+   elif [ ${f} -nt ${outdir}/${fname} ] ; then 
+       convert -trim ${f} ${outdir}/${fname}
+       echo "converted ${f} to ${outdir}/${fname}"
+   fi
+     
 done
 
 
