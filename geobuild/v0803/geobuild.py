@@ -5,6 +5,7 @@ import json
 import pprint
 import math
 import sys
+import subprocess
 
 from FLUdata import *
 from create_geometry import *
@@ -286,5 +287,6 @@ if __name__ == "__main__":
 
     fd.Output()
 
-
+    cmdout = subprocess.check_output("./decaygeo.sh".split())
+    print(cmdout)
 

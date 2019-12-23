@@ -8,13 +8,13 @@ import json
 import sys
 
 # ====================================================
-def DCYSCORE_DOSE(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, nbinZ, rmin=0.0, scoretype="DOSE-EQ" ):
+def DCYSCORE_DOSE(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, nbinZ, rmin=0.0, nphi=1, scoretype="DOSE-EQ" ):
 
     name = "Sv"+dcyname+postname
     zero = 0.0
     blank = " "
     usrbin = "USRBIN"
-    nbinFai = 1
+    nbinFai = nphi
 
     card0 = "* Userbin DOES-EQ for decay period of " + name
     
@@ -176,9 +176,17 @@ def decay_score(geodata):
        cards += DCYSCORE_DOSE(decaytimes[ind], "Allt", ind+1, 75, 
                 par_tar[0], par_tar[1], par_tar[2], par_tar[3], par_tar[4])
 
+     # Decay score of region upstream of target
+    # def DCYSCORE_DOSE(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, nbinZ, rmin=0.0, scoretype="DOSE-EQ" ):
     for ind in range(0, len(decaytimes)):
-       cards += DCYSCORE_DOSE(decaytimes[ind], "edep", ind+1, 78, 
-                20.0, 69.8, -10.2, 200, 800, scoretype="DOSE")
+       cards += DCYSCORE_DOSE(decaytimes[ind], "Fhim", ind+1, 76,
+                120.0, -107.0, -137.0,  120.0, 4.0, nphi=500.0 )
+       cards += DCYSCORE_DOSE(decaytimes[ind], "Almz", ind+1, 77,
+                120.0, 20.0, -600.0, 120.0, 720.0)
+
+    # for ind in range(0, len(decaytimes)):
+    #    cards += DCYSCORE_DOSE(decaytimes[ind], "edep", ind+1, 78, 
+    #            20.0, 69.8, -10.2, 200, 800, scoretype="DOSE")
 
     #for ind in range(0, len(decaytimes)):
     #   cards += DCYSCORE_ACTIVITY(decaytimes[ind], "Allt", ind+1, 76, 
@@ -229,6 +237,10 @@ def primary_score(geodata):
 
     cards += Primary_Score("primid", "DOSE-EQ", 82, 
                 par_mid[0], par_mid[1], par_mid[2], par_mid[3], 1.0, par_mid[4])
+    cards += Primary_Score("primidf", "DOSE-EQ", 82, 
+                par_mid[0], -107.0, -137.0,  120.0, 500.0, 4.0)
+    cards += Primary_Score("primidz", "DOSE-EQ", 82, 
+                par_mid[0], 20.0, -600.0,  120.0, 1.0, 720.0)
 
     cards += Primary_Score("pritar", "DOSE-EQ", 83, 
                 par_tar[0], par_tar[1], par_tar[2], par_tar[3], 1.0, par_tar[4])
