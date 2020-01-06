@@ -4,24 +4,29 @@
 
 # ########################### main part to create job-directory
 
-source setting.ini
 
 curdir=`pwd`
 jobs="jobs"
 njob_begin=1
 njob_end=200
-fluka_inp="${fluka_prefix}.inp"
-jobname_key="${version:4:2}J${fluka_inp:0:2}"
-fkey=`basename ${fluka_inp} .inp`
+job_queue="l"
 nrun_begin=0
 nrun_end=2
 sourcedir="${FLUKA}/init_fluka92.sh"
+fluka_inp=""
+jobname_key=""
 
 if [ -e ${jobs} ] ; then 
    echo "Error: ${jobs} directory exist. Remove it before re-create."
    exit -1
 fi
 
+source setting.ini
+
+[ "x${fluka_inp}" == "x" ] && fluka_inp="${fluka_prefix}.inp"
+[ "x${jobname_key}" == "x" ] && jobname_key="${version:4:2}J${fluka_inp:0:2}"
+
+fkey=`basename ${fluka_inp} .inp`
 
 mkdir -p ${jobs}
 (
@@ -39,14 +44,13 @@ mkdir -p ${jobs}
           if [ -e ${curdir}/geobuild ] ; then 
              ln -s ${curdir}/geobuild . 
           fi
-          # ln -s ${curdir}/beamOn1Year.inc .        
           ranv=`printf "%d%3.3d" ${RANDOM} ${jseq}`
           printf "%-10s%9d.%9d." "RANDOMIZ" 1 ${ranv} > random.inc
           cmd="rflukadpm3 -N${nrun_begin} -M${nrun_end} ${thisinp}"
           echo "Fluka command is ${cmd}" >> ${logfile}
           echo "" >> ${logfile}
           jobid="${jobname_key}${jseqstr}"
-          echo "bsub -o sub.log -q l -J ${jobid} \"( source ${sourcedir} && ${cmd} > sub.log 2>&1 )\" " > bsub.sh
+          echo "bsub -o sub.log -q ${job_queue} -J ${jobid} \"( source ${sourcedir} && ${cmd} > sub.log 2>&1 )\" " > bsub.sh
           echo "bsub.sh was created in ${jobdir}"
        )
     )
