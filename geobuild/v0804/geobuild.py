@@ -247,10 +247,8 @@ def createGeoParam():
     # mode would be, "front", "up", "side", for the direction of target removal.
     geo["Holes"] = { "mode":"up", "wave_guides":{}, "cables":{}, "water_lines":{}}
     geo["Holes"]["wave_guides"] = {
-                     "width": 16.51, # longer side
-                     "height": 8.255, # shorter side
-#                     "width": 17.0, # longer side
-#                     "height": 8.5, # shorter side
+                     "width":  8.255, # longer side
+                     "height":16.51, # shorter side
                      "wall_thickness": 0.5,   # wall thickness
                      "xcenter": 78.0, # X center position, which runs in Z direction.
                      "zcenter": 98.02 } # Z center position, which runs in X direction
