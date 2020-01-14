@@ -95,7 +95,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     # exclwg = " -( +wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane ) "
     exclwl = " -(+wlsolz%d -yzplane) " % nrf
     exclcb = " -(+cbgsolz%d -yzplane) " % nrf
-    exclwg = " -(+wgzwup%d -wgzwdn%d +wgzwsdp -wgzwsdm -yzplane ) " % (nrf, nrf)
+    exclwg = " -wgzw%d  " % nrf
     
 
 #    if nrf == 1:
@@ -384,8 +384,8 @@ def crRFHoles(geo, fd, nrf):
     #           "WaveZGW3  6  %s -( %s ) +rcyl3 -yzplane -r1cav6 -r1cav7 -r1cav8 -r1cvb " % (region_zwgw, region_zwg )]
         rmax_cbsol3z2= " +cbsolz%d +rcyl3 " % nrf
         rmax_wlsol3z2= " +wlsolz%d +rcyl3 " % nrf
-        region_zwg2 = " +wgzup%d -wgzdn%d +wgzsdp -wgzsdm " % ( nrf, nrf )
-        region_zwgw2 = " +wgzwup%d -wgzwdn%d +wgzwsdp -wgzwsdm " % ( nrf, nrf )
+        region_zwg2 = " +wgzv%d " % nrf 
+        region_zwgw2 = " +wgzw%d " % nrf
         exclcav = " -r%dcav6 -r%dcav7 -r%dcav8 -r%dcvb " % (nrf, nrf, nrf, nrf ) 
         region += ["WavZG3%d   6 %s +rcyl3 -yzplane %s " % (nrf, region_zwg2, exclcav ),
               "WavZGW3%d  6  %s -( %s ) +rcyl3 -yzplane %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]

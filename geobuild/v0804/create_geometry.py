@@ -68,12 +68,11 @@ def crWorld(geo, fd):
     assignma = []
 
     # create  region data
-    rexclude = "" if geo["Holes"]["mode"] != "up" else  " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) -(+wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane )"
-    # rexclude2= "" if geo["Holes"]["mode"] != "up" else " -(+cbsolz2 -yzplane) - (+wlsolz2 -yzplane ) -(+wgzwup2 -wgzwdn2 +wgzwsdp -wgzwsdm -yzplane )"
+    rexclude = "" if geo["Holes"]["mode"] != "up" else  " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) -wgzw1 "
     rexclude3 = ""
     if geo["Holes"]["mode"] == "up":
        for irf in range(2, int(geo["RF"]["Nb_structure"]) + 1):
-           rexclude3 += " -(+cbsolz%d -yzplane) - (+wlsolz%d -yzplane ) -(+wgzwup%d -wgzwdn%d +wgzwsdp -wgzwsdm -yzplane )" % (irf, irf, irf, irf)
+           rexclude3 += " -(+cbsolz%d -yzplane) - (+wlsolz%d -yzplane ) -wgzw%d " % (irf, irf, irf)
     
     region += ["*", "* black hole", 
        "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rbound3 ) ",
@@ -160,10 +159,14 @@ def crBodies4Holes(geo):
         zlen_rf_unit = geo["RF"]["zlen_rf_unit"]
         for irf in range(1, geo["RF"]["Nb_structure"]+1):
             zcenter = geo["Holes"]["wave_guides"]["zcenter"] + zlen_rf_unit*float(irf-1)
-            body += [ "XYP wgzup%d %f" % ( irf, zcenter + gwg["width"]*0.5),
-                      "XYP wgzdn%d %f" % ( irf, zcenter - gwg["width"]*0.5),
-                      "XYP wgzwup%d %f" % ( irf, zcenter + gwg["width"]*0.5 + gwg["wall_thickness"]),
-                      "XYP wgzwdn%d %f" % ( irf, zcenter - gwg["width"]*0.5 - gwg["wall_thickness"])]
+            xmax = geo["global"]["CShIn0_rmin"] + geo["global"]["CShIn0_thick"] 
+            #  RPP name  Xmin Xmax, Ymin, Ymax, Zmin, Zmax
+            body += ["RPP wgzv%d 0.0  %f %f %f %f %f " % ( irf, xmax, -gwg["height"]*0.5 , gwg["height"]*0.5 , 
+                      zcenter - gwg["width"]*0.5, zcenter + gwg["width"]*0.5 ),   
+                     "RPP wgzw%d 0.0  %f %f %f %f %f " % ( irf, xmax, -gwg["height"]*0.5 - gwg["wall_thickness"], 
+                      gwg["height"]*0.5 + gwg["wall_thickness"], 
+                      zcenter - gwg["width"]*0.5 - gwg["wall_thickness"], 
+                      zcenter + gwg["width"]*0.5 + gwg["wall_thickness"]) ]  
             zcenter = geo["Holes"]["cables"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
             body += [ "XCC cbsolz%d 0.0 %f %f" % ( irf, zcenter, gcb["radius"] ),
                       "XCC cbgsolz%d 0.0 %f %f" % ( irf, zcenter, gcb["radius"] + gcb["gap"] )]
@@ -299,11 +302,11 @@ def crZone3(geo, fd):
         region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1"]
     
     elif geo["Holes"]["mode"] == "up":
-        rexclude1 = " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) -(+wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane )"
-        rexclude2 = " -(+cbsolz2 -yzplane) - (+wlsolz2 -yzplane ) -(+wgzwup2 -wgzwdn2 +wgzwsdp -wgzwsdm -yzplane )"
+        rexclude1 = " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) -wgzw1 "
+        rexclude2 = " -(+cbsolz2 -yzplane) - (+wlsolz2 -yzplane ) -wgzw2 "
         rexclude3 = ""
         for i in range(3, int(geo["RF"]["Nb_structure"])+1):
-          rexclude3 += " -(+cbsolz%d -yzplane) - (+wlsolz%d -yzplane ) -(+wgzwup%d -wgzwdn%d +wgzwsdp -wgzwsdm -yzplane )" % (i, i, i, i)
+          rexclude3 += " -(+cbsolz%d -yzplane) - (+wlsolz%d -yzplane ) -wgzw%d " % (i, i, i)
 
         region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1 " + rexclude1 ] 
         region += ["Z3inFeS1 6 +z3inpln1 -zbound3 +rcylin -rcylfein" + rexclude1 ]
