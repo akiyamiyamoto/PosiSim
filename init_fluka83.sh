@@ -12,4 +12,7 @@ export FLUKA_SCRIPTS=${FLUKA}/scripts
 export PATH=${FLUKA_SCRIPTS}:${FLUPRO}:${FLUPRO}/flutil:${FLUKA}/flair-2.3:${FLUKA}/au-fluka-tools:${PATH}
 export PYTHONPATH=${FLUKA_SCRIPTS}:${PYTHONPATH}
 
+if [ "x`echo ${PWD} | grep fluka`" == "x" ] ; then 
+  cd ${FLUKA}
+fi
 
