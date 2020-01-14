@@ -269,13 +269,13 @@ def createGeoParam():
                      "xcenter_solenoid":64.0, # x center for solenoid cooling water.
                      "zcenter_solenoid": 91.0} # z center for solenoid cooling water  
     if geo["Holes"]["mode"] == "up":
-       geo["Holes"]["water_lines"]["zcenter_solenoid"] = geo["Holes"]["wave_guides"]["zcenter"] + \
-               geo["Holes"]["wave_guides"]["width"]*0.5 + \
-               geo["Holes"]["wave_guides"]["wall_thickness"]*2 + \
+       geo["Holes"]["water_lines"]["zcenter_solenoid"] = geo["Holes"]["wave_guides"]["zcenter"] - \
+               geo["Holes"]["wave_guides"]["width"]*0.5 - \
+               geo["Holes"]["wave_guides"]["wall_thickness"]*2 - \
                geo["Holes"]["water_lines"]["radius"]
-       geo["Holes"]["cables"]["zcenter_solenoid"] = geo["Holes"]["water_lines"]["zcenter_solenoid"] + \
-               geo["Holes"]["water_lines"]["radius"] + \
-               geo["Holes"]["cables"]["radius"] + \
+       geo["Holes"]["cables"]["zcenter_solenoid"] = geo["Holes"]["water_lines"]["zcenter_solenoid"] - \
+               geo["Holes"]["water_lines"]["radius"] - \
+               geo["Holes"]["cables"]["radius"] - \
                geo["Holes"]["cables"]["gap"]*2
 
     return geo

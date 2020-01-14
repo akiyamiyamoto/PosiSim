@@ -69,23 +69,27 @@ def crWorld(geo, fd):
 
     # create  region data
     rexclude = "" if geo["Holes"]["mode"] != "up" else  " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) -(+wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane )"
-    rexclude2= "" if geo["Holes"]["mode"] != "up" else " -(+cbsolz2 -yzplane) - (+wlsolz2 -yzplane ) -(+wgzwup2 -wgzwdn2 +wgzwsdp -wgzwsdm -yzplane )"
+    # rexclude2= "" if geo["Holes"]["mode"] != "up" else " -(+cbsolz2 -yzplane) - (+wlsolz2 -yzplane ) -(+wgzwup2 -wgzwdn2 +wgzwsdp -wgzwsdm -yzplane )"
+    rexclude3 = ""
+    if geo["Holes"]["mode"] == "up":
+       for irf in range(2, int(geo["RF"]["Nb_structure"]) + 1):
+           rexclude3 += " -(+cbsolz%d -yzplane) - (+wlsolz%d -yzplane ) -(+wgzwup%d -wgzwdn%d +wgzwsdp -wgzwsdm -yzplane )" % (irf, irf, irf, irf)
     
     region += ["*", "* black hole", 
        "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rbound3 ) ",
        "RockW   6 +rbound3 -rbound2 +zbound5 -zbound1 ", 
        "OutShld 6 +zbound5 -zbound1 +rbound2 -rcylout ", 
        "MidAir0  6 +zbound5 -zbound1 +rcylout -rcyl3 ",
-       "InShld0  6 +zbound5 -zbound1 +rcyl3 -rcyl2 " + rexclude + rexclude2 ,
+       "InShld0  6 +zbound5 -zbound1 +rcyl3 -rcyl2 " + rexclude + rexclude3,
        "MidAira  6 -zbound1 +z1cs0bgn +rcyl2 -rcyl1 ",
        "InShlda  6 -z1cs0bgn +z1cs0end +rcyl2 -rcyl1 ",
        "MidAirb  6 -z1cs0end +z1pln1 +rcyl2 -rcyl1 ",
        "InShldb  6 -z1pln1 +z1pln2 +rcyl2 -rcyl1 ",
-       "MidAirc  6 -z1pln2 +z3inpln2 +rcyl2 -rcyl1 " + rexclude + rexclude2 ,
+       "MidAirc  6 -z1pln2 +z3inpln2 +rcyl2 -rcyl1 " + rexclude ,
        "InShldc  6 -z3inpln2 +z3inpln3 +rcyl2 -rcyl1 ",
 
-       "MidAird  6 -z3inpln3 +zbound5 +rcyl2 -rcyl1 " + rexclude2,
-       "InShld  6 +zbound5 -zbound1 +rcyl1 -rcylin " + rexclude + rexclude2 ]
+       "MidAird  6 -z3inpln3 +zbound5 +rcyl2 -rcyl1 " + rexclude3,
+       "InShld  6 +zbound5 -zbound1 +rcyl1 -rcylin " + rexclude + rexclude3 ]
 
     # Assign material to each region
     assignma += ["*","* Assign material ","*",
@@ -154,16 +158,17 @@ def crBodies4Holes(geo):
 
     if geo["Holes"]["mode"] == "up":
         zlen_rf_unit = geo["RF"]["zlen_rf_unit"]
-        zcenter = geo["Holes"]["wave_guides"]["zcenter"] + zlen_rf_unit
-        body += [ "XYP wgzup2 %f" % ( zcenter + gwg["width"]*0.5),
-                  "XYP wgzdn2 %f" % (zcenter - gwg["width"]*0.5),
-                  "XYP wgzwup2 %f" % (zcenter + gwg["width"]*0.5 + gwg["wall_thickness"]),
-                  "XYP wgzwdn2 %f" % (zcenter - gwg["width"]*0.5 - gwg["wall_thickness"])]
-        zcenter = geo["Holes"]["cables"]["zcenter_solenoid"] + zlen_rf_unit
-        body += [ "XCC cbsolz2 0.0 %f %f" % ( zcenter, gcb["radius"] ),
-                  "XCC cbgsolz2 0.0 %f %f" % ( zcenter, gcb["radius"] + gcb["gap"] )]
-        zcenter = geo["Holes"]["water_lines"]["zcenter_solenoid"] + zlen_rf_unit
-        body += [ "XCC wlsolz2 0.0 %f %f" % ( zcenter, gwl["radius"] )] 
+        for irf in range(1, geo["RF"]["Nb_structure"]+1):
+            zcenter = geo["Holes"]["wave_guides"]["zcenter"] + zlen_rf_unit*float(irf-1)
+            body += [ "XYP wgzup%d %f" % ( irf, zcenter + gwg["width"]*0.5),
+                      "XYP wgzdn%d %f" % ( irf, zcenter - gwg["width"]*0.5),
+                      "XYP wgzwup%d %f" % ( irf, zcenter + gwg["width"]*0.5 + gwg["wall_thickness"]),
+                      "XYP wgzwdn%d %f" % ( irf, zcenter - gwg["width"]*0.5 - gwg["wall_thickness"])]
+            zcenter = geo["Holes"]["cables"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
+            body += [ "XCC cbsolz%d 0.0 %f %f" % ( irf, zcenter, gcb["radius"] ),
+                      "XCC cbgsolz%d 0.0 %f %f" % ( irf, zcenter, gcb["radius"] + gcb["gap"] )]
+            zcenter = geo["Holes"]["water_lines"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
+            body += [ "XCC wlsolz%d 0.0 %f %f" % ( irf, zcenter, gwl["radius"] )] 
 
     return body
 
@@ -282,34 +287,37 @@ def crZone3(geo, fd):
     exclude = ""
     rexclude = ""
     rexclude2 = ""
+    region += ["Z3inFeS2 6 +z3inpln2 -z3inpln1 +rcylin -rbound1"]
+    region += ["Z3inCSh1 6 +z3inpln3 -z3inpln2 +rcylin -rbound1"]
     if geo["Holes"]["mode"] == "front":
         region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
         exclwg = " -( +wgzwup -wgzwdn +wgzwsdp -wgzwsdm +wgxwdn -yzplane ) "
         exclude = " -(+wlsolz +wlsolxc -yzplane) -(+wlsol +wlsolzmx) -(+cbsolz +cbsolxc -yzplane) -(+cbsol + cbsolzmx) "
         exclude += " -(+wgzwup %s ) " % region_wgw + exclwg
+        region += ["Z3inAir2 6 +z3inpln4 -z3inpln3 +rcylin -rbound1" + exclude]
+        region += ["Z3inCSh3 6 +z3inpln5 -z3inpln4 +rcylin -rbound1"]
+        region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1"]
+    
     elif geo["Holes"]["mode"] == "up":
-        region_wgw = " " 
-        exclwg = " -( +wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane ) "
-        exclude = " -(+wlsolz -yzplane) -(+cbsolz -yzplane) "
-        exclude +=  exclwg
-        rexclude = " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) -(+wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane )"
+        rexclude1 = " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) -(+wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane )"
         rexclude2 = " -(+cbsolz2 -yzplane) - (+wlsolz2 -yzplane ) -(+wgzwup2 -wgzwdn2 +wgzwsdp -wgzwsdm -yzplane )"
+        rexclude3 = ""
+        for i in range(3, int(geo["RF"]["Nb_structure"])+1):
+          rexclude3 += " -(+cbsolz%d -yzplane) - (+wlsolz%d -yzplane ) -(+wgzwup%d -wgzwdn%d +wgzwsdp -wgzwsdm -yzplane )" % (i, i, i, i)
 
-    region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1 " + exclude ] 
-    region += ["Z3inFeS1 6 +z3inpln1 -zbound3 +rcylin -rcylfein" + rexclude ]
-    region += ["Z3inFeS2 6 +z3inpln2 -z3inpln1 +rcylin -rbound1"]
-    region += ["Z3inCSh1 6 +z3inpln3 -z3inpln2 +rcylin -rbound1"]
-    region += ["Z3inAir2 6 +z3inpln4 -z3inpln3 +rcylin -rbound1" + rexclude2]
-    region += ["Z3inCSh3 6 +z3inpln5 -z3inpln4 +rcylin -rbound1"]
-    region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1"]
+        region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1 " + rexclude1 ] 
+        region += ["Z3inFeS1 6 +z3inpln1 -zbound3 +rcylin -rcylfein" + rexclude1 ]
+        region += ["Z3inAir2 6 +z3inpln4 -z3inpln3 +rcylin -rbound1" + rexclude2]
+        region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1" + rexclude3 ]
+        region += ["Z3inCSh3 6 +z3inpln5 -z3inpln4 +rcylin -rbound1" ]
 
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir1") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "Z3inFeS1") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "Z3inFeS2") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CONCRETE", "Z3inCSh1") ]
+    assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir3") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir2") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CONCRETE", "Z3inCSh3") ]
-    assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir3") ]
 
     fd.Add(body, region, assignma)
 
