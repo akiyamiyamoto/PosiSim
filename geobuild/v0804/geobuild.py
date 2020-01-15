@@ -251,7 +251,10 @@ def createGeoParam():
                      "height":16.51, # shorter side
                      "wall_thickness": 0.5,   # wall thickness
                      "xcenter": 78.0, # X center position, which runs in Z direction.
-                     "zcenter": 98.02 } # Z center position, which runs in X direction
+                     "zcenter": 98.02,  # Z center position, which runs in X direction
+                     "nbend": 2, # Nb of bend in Z direction
+                     "zoffset": [ 25.0, 25.0 ] } # offset in Z direction, when wave guide was bended. 
+                                                 # This applies to cables and water_lines as well.  
     # Adjust Z position when width is changed.
     geo["Holes"]["wave_guides"]["zcenter"] += (geo["Holes"]["wave_guides"]["width"] - 8.50)*0.5
     geo["Holes"]["cables"] = {"radius":1.0, # Radius of cable

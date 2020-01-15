@@ -90,12 +90,9 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solin, zbegins, zlen_rfs, sol_rmin ) )
 
     region += ["*", "* **** Created by crOneRFStructure  nrf=%d ************************ " % nrf ]
-    # exclwl = " -(+wlsolz -yzplane) " 
-    # exclcb = " -(+cbgsolz -yzplane) " 
-    # exclwg = " -( +wgzwup -wgzwdn +wgzwsdp -wgzwsdm -yzplane ) "
     exclwl = " -(+wlsolz%d -yzplane) " % nrf
     exclcb = " -(+cbgsolz%d -yzplane) " % nrf
-    exclwg = " -wgzw%d  " % nrf
+    exclwg = " -wgrw%d0  " % nrf
     
 
 #    if nrf == 1:
@@ -348,8 +345,6 @@ def crRFHoles(geo, fd, nrf):
     # Waveguide, cable and water lines for solenoid and cavity
     region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
     region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
-#    region_zwg = " +wgzup -wgzdn +wgzsdp -wgzsdm "
-#    region_zwgw = " +wgzwup -wgzwdn +wgzwsdp -wgzwsdm "
     region_zwg = " +wgzup -wgzdn +wgzsdp -wgzsdm "
     region_zwgw = " +wgzwup -wgzwdn +wgzwsdp -wgzwsdm "
     region_cbwl = " -cbgsol -wlsol "
@@ -378,33 +373,21 @@ def crRFHoles(geo, fd, nrf):
             rmax_cbsol3z = " +cbsolz -cbsol +cbsolxc"
             rmax_wlsol3z = " +wlsolz -wlsol +wlsolxc "
     elif geo["Holes"]["mode"] == "up":
-    #    rmax_cbsol3z = " +cbsolz +rcyl3 "
-    #    rmax_wlsol3z = " +wlsolz +rcyl3 "
-    #    region += ["WaveZG3   6 %s +rcyl3 -yzplane -r1cav6 -r1cav7 -r1cav8 -r1cvb " % region_zwg ,
-    #           "WaveZGW3  6  %s -( %s ) +rcyl3 -yzplane -r1cav6 -r1cav7 -r1cav8 -r1cvb " % (region_zwgw, region_zwg )]
         rmax_cbsol3z2= " +cbsolz%d +rcyl3 " % nrf
         rmax_wlsol3z2= " +wlsolz%d +rcyl3 " % nrf
-        region_zwg2 = " +wgzv%d " % nrf 
-        region_zwgw2 = " +wgzw%d " % nrf
+        region_zwg2 = " +wgrv%d0 " % nrf 
+        region_zwgw2 = " +wgrw%d0 " % nrf
         exclcav = " -r%dcav6 -r%dcav7 -r%dcav8 -r%dcvb " % (nrf, nrf, nrf, nrf ) 
-        region += ["WavZG3%d   6 %s +rcyl3 -yzplane %s " % (nrf, region_zwg2, exclcav ),
-              "WavZGW3%d  6  %s -( %s ) +rcyl3 -yzplane %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
+        region += ["WavZG3%d   6 %s  -yzplane %s " % (nrf, region_zwg2, exclcav ),
+              "WavZGW3%d  6  %s -( %s )  -yzplane %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
+        # region += ["WavZG3%d   6 %s +rcyl3 -yzplane %s " % (nrf, region_zwg2, exclcav ),
+        #       "WavZGW3%d  6  %s -( %s ) +rcyl3 -yzplane %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
         assignma += ["ASSIGNMA %10s%10s" % ("VACUUM", "WavZG3%d" % nrf ) ,
                      "ASSIGNMA %10s%10s" % ("Copper", "WavZGW3%d" % nrf) + beamoff4]
                    
-#    region += ["CBsol3z  6 %s -r1Bsolo -yzplane " % rmax_cbsol3z,
-#               "CBgsol3z  6 +cbgsolz +rbound1 -cbsolz -r1Bsolo -yzplane ",
-#               "WLsol3z  6 %s -r1Bscpo -yzplane " % rmax_wlsol3z,
-
     region +=  [ "CBs3z%d  6 %s -r%dBsolo -yzplane " % (nrf, rmax_cbsol3z2, nrf),
                  "CBgs3z%d  6 +cbgsolz%d +rbound1 -cbsolz%d -r%dBsolo -yzplane " % (nrf, nrf, nrf, nrf),
                  "WLs3z%d  6 %s -r%dBscpo -yzplane " % (nrf, rmax_wlsol3z2, nrf) ]
-#    assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "WaveZG3%d" % nrf ) ,
-#                  "ASSIGNMA %10s%10s" % ("Copper", "WavZGW3%d" % nrf ) + beamoff4]
-
-#                 "ASSIGNMA %10s%10s" % ("Copper", "CBsol3z") + beamoff4,
-#                 "ASSIGNMA %10s%10s" % ("AIR", "CBgsol3z") + beamoff4,
-#                 "ASSIGNMA %10s%10s" % ("WATER", "WLsol3z") + beamoff4,
 
     assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "CBs3z%d" % nrf ) + beamoff4,
                   "ASSIGNMA %10s%10s" % ("AIR", "CBgs3z%d" % nrf ) + beamoff4,
