@@ -68,42 +68,35 @@ def crWorld(geo, fd):
     assignma = []
 
     # create  region data
-    rexclude = ""
-    rexclude3 = ""
+    rexclude = [""]*(geo["RF"]["Nb_structure"]+1)
+    rexclgap = [""]*(geo["RF"]["Nb_structure"]+1)
     if geo["Holes"]["mode"] == "up":
-       rexclude = " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) "
-       for ib in range(1, int(geo["Holes"]["wave_guides"]["nbend"]) + 1):
-           rexclude += "-wgrw1%d -wgbw1%d " % (ib, ib )
-
-       rexclude0 = " -wgrw1%d " % int(geo["Holes"]["wave_guides"]["nbend"])
-       for irf in range(2, int(geo["RF"]["Nb_structure"]) + 1):
-           rexclude3 += " -(+cbsolz%d -yzplane) -(+wlsolz%d -yzplane ) " % (irf, irf)
-           rexclude0 += " -wgrw%d%d " % ( irf, int(geo["Holes"]["wave_guides"]["nbend"]))
-           for ib in range(1, int(geo["Holes"]["wave_guides"]["nbend"])+1):
-               rexclude3 += " -wgrw%d%d -wgbw%d%d " % ( irf, ib, irf, ib )
-   
-       if int(geo["Holes"]["wave_guides"]["nbend"]) == 0:
-           rexclude += " -wgrw10 "
-           rexclude0 = " -wgrw10 "
-           for irf in range(2, int(geo["RF"]["Nb_structure"])+1):
-               rexclude3 += " -wgrw%d0 " % irf
-               rexclude0 += " -wgrw%d0 " % irf
+       for i in range(1, int(geo["RF"]["Nb_structure"]) + 1):
+           rexclude[i] = " -cbrc%d0 -wlrc%d0 " % ( i, i )
+           rexclgap[i] = " -cbrg%d0 " % i
+           for ib in range(1, int(geo["Holes"]["wave_guides"]["nbend"]) + 1):
+               rexclude[i] += " -wgrw%d%d -wgbw%d%d -wlrc%d%d -wlbc%d%d " % (i, ib, i, ib, i, ib, i, ib )
+               rexclude[i] += " -cbrc%d%d -cbbc%d%d " % (i,ib, i, ib)
+               rexclgap[i] += " -cbrg%d%d " % ( i, ib )
+               
+           if int(geo["Holes"]["wave_guides"]["nbend"]) == 0:
+               rexclude[i] += " -wgrw%d0 " % i
     
     region += ["*", "* black hole", 
        "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rbound3 ) ",
        "RockW   6 +rbound3 -rbound2 +zbound5 -zbound1 ", 
        "OutShld 6 +zbound5 -zbound1 +rbound2 -rcylout ", 
-       "MidAir0  6 +zbound5 -zbound1 +rcylout -rcyl3 " + rexclude0 ,
-       "InShld0  6 +zbound5 -zbound1 +rcyl3 -rcyl2 " + rexclude + rexclude3,
+       "MidAir0  6 +zbound5 -zbound1 +rcylout -rcyl3 " ,
+       "InShld0  6 +zbound5 -zbound1 +rcyl3 -rcyl2 " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]),
        "MidAira  6 -zbound1 +z1cs0bgn +rcyl2 -rcyl1 ",
        "InShlda  6 -z1cs0bgn +z1cs0end +rcyl2 -rcyl1 ",
        "MidAirb  6 -z1cs0end +z1pln1 +rcyl2 -rcyl1 ",
        "InShldb  6 -z1pln1 +z1pln2 +rcyl2 -rcyl1 ",
-       "MidAirc  6 -z1pln2 +z3inpln2 +rcyl2 -rcyl1 " + rexclude + rexclude0,
+       "MidAirc  6 -z1pln2 +z3inpln2 +rcyl2 -rcyl1 " + " ".join(rexclude[1:2]),
        "InShldc  6 -z3inpln2 +z3inpln3 +rcyl2 -rcyl1 ",
 
-       "MidAird  6 -z3inpln3 +zbound5 +rcyl2 -rcyl1 " + rexclude3,
-       "InShld  6 +zbound5 -zbound1 +rcyl1 -rcylin " + rexclude + rexclude3 ]
+       "MidAird  6 -z3inpln3 +zbound5 +rcyl2 -rcyl1 " + " ".join(rexclude[2:]),
+       "InShld  6 +zbound5 -zbound1 +rcyl1 -rcylin " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]) ]
 
     # Assign material to each region
     assignma += ["*","* Assign material ","*",
@@ -126,9 +119,9 @@ def crWorld(geo, fd):
        if nbend >= 1:
           for irf in range(1, int(geo["RF"]["Nb_structure"])+1):
               for ib in range(1, nbend + 1):
-                  region += [ "WGRV%d%d 6 +wgrv%d%d " % ( irf, ib , irf, ib), 
+                  region += [ "WGRV%d%d 6 +wgrv%d%d +rcyl3 " % ( irf, ib , irf, ib), 
                               "WGBV%d%d 6 +wgbv%d%d " % (irf, ib, irf, ib ), 
-                              "WGRW%d%d 6 +wgrw%d%d -wgrv%d%d -wgbv%d%d" % (irf, ib, irf, ib, irf, ib, irf, ib),  
+                              "WGRW%d%d 6 +wgrw%d%d -wgrv%d%d -wgbv%d%d +rcyl3 " % (irf, ib, irf, ib, irf, ib, irf, ib),  
                               "WGBW%d%d 6 +wgbw%d%d -wgbv%d%d -wgrv%d%d" % (irf, ib, irf, ib, irf, ib, irf, ib) ]
                   if ib > 0 :
                      region[-1] += " -wgrv%d%d " % ( irf, ib-1 )
@@ -189,19 +182,54 @@ def crBodies4Holes(geo):
 
     if geo["Holes"]["mode"] == "up":
         zlen_rf_unit = geo["RF"]["zlen_rf_unit"]
-        # Cable and Water line
-        for irf in range(1, geo["RF"]["Nb_structure"]+1):
-            zcenter = geo["Holes"]["cables"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
-            body += [ "XCC cbsolz%d 0.0 %f %f" % ( irf, zcenter, gcb["radius"] ),
-                      "XCC cbgsolz%d 0.0 %f %f" % ( irf, zcenter, gcb["radius"] + gcb["gap"] )]
-            zcenter = geo["Holes"]["water_lines"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
-            body += [ "XCC wlsolz%d 0.0 %f %f" % ( irf, zcenter, gwl["radius"] )] 
-
-        # Wave guide
+        # Wave guide max
         xminb = [ 0.0,  geo["world"]["rbound1"], 
                  geo["global"]["CShIn_rmin"] + geo["global"]["CShIn_thick"],  
                  geo["global"]["CShIn0_rmin"] + geo["global"]["CShIn0_thick"] ]
-                  
+        nbend = geo["Holes"]["wave_guides"]["nbend"]
+        # Water lines
+        wlrbound = [ geo["RF"]["solenoid_outer_radius"] - geo["RF"]["solenoid_thickness"], 
+                   xminb[1]+gwg["width"] + 2*gwg["wall_thickness"], 
+                   xminb[2]+gwg["width"] + 2*gwg["wall_thickness"], 
+                   xminb[3] ]
+        wlrbound[nbend+1] = xminb[-1]
+        
+        for irf in range(1, geo["RF"]["Nb_structure"]+1):
+            zcenter = geo["Holes"]["water_lines"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
+            for ib in range(0, nbend+1):
+                zcenterb = zcenter - gwl["radius"]
+                zcenter += geo["Holes"]["wave_guides"]["zoffset"][ib]
+                xcenter = wlrbound[ib] 
+                rlen = wlrbound[ib+1] - wlrbound[ib] + gwl["radius"]
+                body += [ "RCC wlrc%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, wlrbound[ib], 
+                          zcenter, rlen, gwl["radius"] ) ]
+                if ib != 0:
+                   zlen = geo["Holes"]["wave_guides"]["zoffset"][ib] + 2*gwl["radius"] 
+                   body += [ "RCC wlbc%d%d %f 0.0 %f 0.0 0.0 %f %f" % (irf, ib, wlrbound[ib] + gwl["radius"], 
+                              zcenterb, zlen, gwl["radius"] )]
+
+        cbrbound = [ geo["RF"]["solenoid_outer_radius"] - geo["RF"]["solenoid_thickness"], 
+                     wlrbound[1] + 2*gwl["radius"] + gcb["gap"],  wlrbound[2] + 2*gwl["radius"] + gcb["gap"], xminb[3] ] 
+        cbrbound[nbend+1] = xminb[-1]
+
+        # Cable and Water line... to be removed.
+        for irf in range(1, geo["RF"]["Nb_structure"]+1):
+            zcenter = geo["Holes"]["cables"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
+
+            for ib in range(0, nbend+1):
+                zcenterb = zcenter - gcb["radius"] 
+                zcenter += geo["Holes"]["wave_guides"]["zoffset"][ib]
+                xcenter = cbrbound[ib] 
+                rlen = cbrbound[ib+1] - cbrbound[ib] + gcb["radius"]
+                body += [ "RCC cbrc%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, cbrbound[ib], zcenter, rlen, gcb["radius"] ) ]
+                body += [ "RCC cbrg%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, cbrbound[ib], zcenter, rlen, gcb["radius"] + 
+                        gcb["gap"] ) ]
+                if ib != 0:
+                   zlen = geo["Holes"]["wave_guides"]["zoffset"][ib] + 2*gcb["radius"] 
+                   body += [ "RCC cbbc%d%d %f 0.0 %f 0.0 0.0 %f %f" % (irf, ib, cbrbound[ib] + gcb["radius"], 
+                              zcenterb, zlen, gcb["radius"] )]
+
+        # wave guide bodies
         for irf in range(1, geo["RF"]["Nb_structure"]+1):
             zcenter = geo["Holes"]["wave_guides"]["zcenter"] + zlen_rf_unit*float(irf-1)
             #  RPP name  Xmin Xmax, Ymin, Ymax, Zmin, Zmax
@@ -224,7 +252,7 @@ def crBodies4Holes(geo):
                 xmaxg = xminb[ib+1] if ib != nbend else xminb[-1]
                 xmin1 = xming + wallth
                 xmax1 = xmaxg if ib == nbend else xmaxg + wallth  
-                zcenterb += gwg["zoffset"][ib-1]
+                zcenterb += gwg["zoffset"][ib]
                 # radial direction part of wave guide.
                 body += ["RPP wgrv%d%d %f %f %f %f %f %f " % ( irf, ib, xmin1, xmax1,
                          -gwg["height"]*0.5, gwg["height"]*0.5, 
@@ -237,11 +265,11 @@ def crBodies4Holes(geo):
                 # beam direction part of wave guide  
                 body += ["RPP wgbv%d%d %f %f %f %f %f %f " % ( irf, ib, xmin1, xmin1 + gwg["width"], 
                          -gwg["height"]*0.5, gwg["height"]*0.5, 
-                         zcenterb -gwg["zoffset"][ib-1] - gwg["width"]*0.5, zcenterb - gwg["width"]*0.5 ),   
+                         zcenterb -gwg["zoffset"][ib] - gwg["width"]*0.5, zcenterb - gwg["width"]*0.5 ),   
 
                          "RPP wgbw%d%d %f  %f %f %f %f %f " % ( irf, ib, xmin1 - wallth, xmin1 + gwg["width"] + wallth, 
                          -gwg["height"]*0.5 - wallth, gwg["height"]*0.5 + wallth, 
-                         zcenterb - gwg["zoffset"][ib-1] - gwg["width"]*0.5 - wallth, 
+                         zcenterb - gwg["zoffset"][ib] - gwg["width"]*0.5 - wallth, 
                          zcenterb - gwg["width"]*0.5 - wallth)] 
 
     return body
@@ -263,14 +291,15 @@ def crZone1(geo, fd):
          "XYP z1pln2 %f" % zb2, 
          "XYP z1cs0bgn %f " % z_cshup0_end, 
          "XYP z1cs0end %f " % z_cshup0_bgn] 
-#         "XYP z1pln3 %f" % zb3 ]
 
     body += crBodies4Holes(geo)
 
     region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
     region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
     region_cbwl = " -cbgrot -cbgfc -cbsol -cbgsol -wlsol -wlfc -wlrot "
+    beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
 
+    assignma = ["*", "* **** Created by crZone1 ************************ "]
     region = ["*", "* **** Created by crZone1 ************************ ",
                 "*", "* Beam pipe",
                 "BPvac1   6 +zbound2 -zbound1 +rcylbpin",
@@ -297,10 +326,33 @@ def crZone1(geo, fd):
        region += ["Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou ",
                 "Z1FeSha  6 +zbound2 -z1pln2 +rcylin -rcylbpou ",
                 "Z1CSh0   6 +z1cs0end -z1cs0bgn +rcylin -rcylbpou"]
+       nbend = geo["Holes"]["wave_guides"]["nbend"]
+       for irf in range(1, geo["RF"]["Nb_structure"]+1):
+           bodies = " +wlrc%d0 " % irf 
+           for ib in range(1, geo["Holes"]["wave_guides"]["nbend"]+1):
+               bodies += " | +wlrc%d%d | +wlbc%d%d " % (irf, ib, irf, ib )
+           regname = "WLUP%d" % irf
+           region += [ regname + " 6 +rcyl3 -r%dBscpo + ( " % irf + bodies + ")"]
+           assignma += [ "ASSIGNMA %10s%10s" % ("WATER", regname) + beamoff5 ] 
 
-    beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
-    assignma = ["*", "* **** Created by crZone1 ************************ ",
-                  "ASSIGNMA %10s%10s" % ("VACUUM", "BPvac1"), 
+           bodies = " +cbrc%d0 " % irf
+           for ib in range(1, geo["Holes"]["wave_guides"]["nbend"]+1):
+               bodies += " | +cbrc%d%d | +cbbc%d%d " % (irf, ib, irf, ib )
+           regname = "CBUP%d" % irf
+           region += [ regname + " 6 +rcyl3 -r%dBsolo + ( " % irf + bodies + ")"]
+           assignma += [ "ASSIGNMA %10s%10s" % ("Copper", regname) + beamoff5 ] 
+ 
+           rlimit = [ " +rbound1 -r%dBsolo "% irf , " +rcyl1 -rcylin ", " +rcyl3 -rcyl2 " ]
+           if nbend == 0 and irf == 1:
+              rlimit[1] = " +rcyl1 -rcylfein " 
+
+           for ib0 in range(0, len(rlimit)):
+              ib = nbend if ib0 > nbend else ib0
+              region += [ "CBGUP%d%d 6 +cbrg%d%d -cbrc%d%d" % (irf, ib0, irf, ib, irf, ib) + rlimit[ib0] ]
+              assignma += ["ASSIGNMA %10s%10s" % ("AIR", "CBGUP%d%d"%(irf,ib0)) + beamoff5 ]  
+
+
+    assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "BPvac1"), 
                   "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe1") + beamoff5, 
  
                   "ASSIGNMA %10s%10s" % ("AIR", "Z1upair"), 
@@ -373,27 +425,22 @@ def crZone3(geo, fd):
         region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1"]
     
     elif geo["Holes"]["mode"] == "up":
-        rexclude1 = " -(+cbsolz -yzplane) - (+wlsolz -yzplane ) "
-        rexclude2 = " -(+cbsolz2 -yzplane) - (+wlsolz2 -yzplane ) "
-        for ib in range(1, int(geo["Holes"]["wave_guides"]["nbend"])+1):
-           rexclude1 += " -wgrw1%d -wgbw1%d -wgrw1%d" % (ib, ib, ib-1)
-           rexclude2 += " -wgrw2%d -wgbw2%d -wgrw2%d" % (ib, ib, ib-1)
-
-        rexclude3 = ""
-        for i in range(3, int(geo["RF"]["Nb_structure"])+1):
-          rexclude3 += " -(+cbsolz%d -yzplane) - (+wlsolz%d -yzplane ) " % (i, i)
+        rexclude = [""]*(geo["RF"]["Nb_structure"]+1)
+        for i in range(1, int(geo["RF"]["Nb_structure"])+1):
+          rexclude[i] = " -cbrc%d0 -wlrc%d0 " % (i, i)
           for ib in range(1, int(geo["Holes"]["wave_guides"]["nbend"])+1):
-             rexclude3 += " -wgrw%d%d -wgbw%d%d -wgrw%d%d" % (i, ib, i, ib, i, ib-1)
+             rexclude[i] += " -wgrw%d%d -wgbw%d%d -wgrw%d%d" % (i, ib, i, ib, i, ib-1)
+             rexclude[i] += " -wlrc%d%d -wlbc%d%d " % (i, ib, i, ib)
+             rexclude[i] += " -cbrc%d%d -cbbc%d%d " % (i, ib, i, ib)
+          
         if int(geo["Holes"]["wave_guides"]["nbend"]) == 0:
-          rexclude1 += " -wgrw10 "
-          rexclude2 += " -wgrw20 "
-          for i in range(3, int(geo["RF"]["Nb_structure"])+1):
-             rexclude3 += " -wgrw%d0 " % i
+          for i in range(1, int(geo["RF"]["Nb_structure"])+1):
+             rexclude[i] += " -wgrw%d0 " % i
 
-        region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1 " + rexclude1 ] 
-        region += ["Z3inFeS1 6 +z3inpln1 -zbound3 +rcylin -rcylfein" + rexclude1 ]
-        region += ["Z3inAir2 6 +z3inpln4 -z3inpln3 +rcylin -rbound1" + rexclude2]
-        region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1" + rexclude3 ]
+        region += ["Z3inAir1 6 +z3inpln1 -zbound3 +rcylfein -rbound1 " + rexclude[1] ] 
+        region += ["Z3inFeS1 6 +z3inpln1 -zbound3 +rcylin -rcylfein" + rexclude[1] + " -cbrg10 " ]
+        region += ["Z3inAir2 6 +z3inpln4 -z3inpln3 +rcylin -rbound1" + rexclude[2]]
+        region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1" + " ".join(rexclude[3:]) ]
         region += ["Z3inCSh3 6 +z3inpln5 -z3inpln4 +rcylin -rbound1" ]
 
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir1") ]

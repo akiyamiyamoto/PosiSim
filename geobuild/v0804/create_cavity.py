@@ -90,23 +90,13 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solin, zbegins, zlen_rfs, sol_rmin ) )
 
     region += ["*", "* **** Created by crOneRFStructure  nrf=%d ************************ " % nrf ]
-    exclwl = " -(+wlsolz%d -yzplane) " % nrf
-    exclcb = " -(+cbgsolz%d -yzplane) " % nrf
+    exclwl = " -(+wlrc%d0 -yzplane) " % nrf
+    exclcb = " -cbrg%d0 " % nrf
     exclwg = " -wgrw%d0  " % nrf
     
-
-#    if nrf == 1:
     region +=["R%dsolo 6 +r%dBsolo -r%dBscpo " % (nrf, nrf, nrf) + exclwl + exclwg,
                 "R%dsolc 6 +r%dBscpo -r%dBscpi" % (nrf, nrf, nrf) + exclwg,
                 "R%dsoli 6 +r%dBscpi -r%dBsoli" % (nrf, nrf, nrf) + exclwg ]
-#    elif nrf == 2:
-#      region +=["R%dsolo 6 +r%dBsolo -r%dBscpo " % (nrf, nrf, nrf) + exclwl2 + exclwg2,
-#                "R%dsolc 6 +r%dBscpo -r%dBscpi" % (nrf, nrf, nrf) + exclwg2,
-#                "R%dsoli 6 +r%dBscpi -r%dBsoli" % (nrf, nrf, nrf) + exclwg2 ]
-#    else:
-#      region +=["R%dsolo 6 +r%dBsolo -r%dBscpo" % (nrf, nrf, nrf),
-#                "R%dsolc 6 +r%dBscpo -r%dBscpi" % (nrf, nrf, nrf),
-#                "R%dsoli 6 +r%dBscpi -r%dBsoli" % (nrf, nrf, nrf)]
 
     matdata = {"solo":"Copper", "solc":"WATER", "soli":"Copper"}
     if sys.version_info.major == 2:
@@ -158,15 +148,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                   grf["solenoid_outer_radius"] + grf["solenoid_return_yoke_thick"] ) ]
     body += ["RCC r%dryi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegins, yoke_len,
                   grf["solenoid_outer_radius"] )]
-#    if nrf == 1:
     region   += [ "R%dyoke 6 +r%dryo  -r%dryi " % (nrf, nrf, nrf) + exclwl  + exclcb + exclwg ]
     assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) + beamoff4 ]
-#    elif nrf == 2:
-#        region   += [ "R%dyoke 6 +r%dryo  -r%dryi " % (nrf, nrf, nrf) + exclwl2  + exclcb2 + exclwg2 ]
-#        assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) + beamoff4 ]
-#    else:
-#        region += [ "R%dyoke 6 +r%dryo  -r%dryi" % (nrf, nrf, nrf) ]
-#        assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) + beamoff4 ]
 
     # Collimator mask for the first cavity
     if nrf == 1:
@@ -199,13 +182,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 " | ( +r1Bsoli -r1stro -r1Bfrg -colmsko %s ) " % exclwg   ] 
        region += ["R1frg 6 +r1Bfrg -colmsko"]
        assignma +=   [ "ASSIGNMA %10s%10s" % ("STAINLES", "R1frg") + beamoff3 ]
-#    elif nrf == 2:
-#       region += ["R%dair 6 " % nrf + 
-#                " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
-#                " -r%dbpfr1 -r%dbpfr2 " % (nrf, nrf ) + 
-#                " | ( +r2Bsoli -r2stro  %s ) " % exclwg2   ] 
-       # region += ["R2frg 6 +r2Bfrg -colmsko"]
-       # assignma +=   [ "ASSIGNMA %10s%10s" % ("STAINLES", "R2frg") + beamoff3 ]
+
     else:
        region += ["R%dair 6 " % nrf + 
                 " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
@@ -216,11 +193,6 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "R%dair" % nrf) ]
     assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "R%dsols" % nrf) + beamoff4 ]
  
-
-
-
-
-
     ################################################################### 
     ## RF Structure it self
     ##  Structure is devided to front and back, to avoic FLUKA error, too many terms
@@ -316,21 +288,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         
         region += join2FixedLength(rfstructure.split())
         region[-1] += exclwg
- #       if nrf == 1:
- #           region[-1] += exclwg
- #       elif nrf == 2:
- #           region[-1] += exclwg2
-
         assignma += [ "ASSIGNMA %10s%10s" % ("Copper", rfstr) + beamoff3 ]
 
-    # Vacuum out size of RF structure
-    # vac1 = "R%dvaco 6 " % nrf 
-    # vac1 += " +r%dvchi -r%dstro -r%dbpw " % (nrf, nrf, nrf) 
-    # vac1 += " - ( +r%dmsko -r%dmski ) " % (nrf, nrf) 
-    # _region += join2FixedLength(vac1.split())
-    # rfvac = "R%dvaco" % nrf
-    # _assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", rfvac) ]
-    
     zlast = zbegin + zlen_rf_unit
 
     fd.Add(body, region, assignma)
@@ -351,7 +310,6 @@ def crRFHoles(geo, fd, nrf):
     exclg3 = " -( -wgzdn +wgxup )"
     exclg3w = " -( -wgzwdn +wgxup )"
     exclg3z= " -( wgxsdp -wgxsdm +wgzdn -wgzwdn +wgxup -wgxdn ) "
-#    exclg3z= " "
 
     body = ["* Holes in cavity region " ]
     region = ["* Holes in cavity region "]
@@ -372,28 +330,27 @@ def crRFHoles(geo, fd, nrf):
                        "WaveZGW3  6  %s -( %s ) +wgxup -yzplane -r1cav6 -r1cav7 -r1cav8 -r1cvb %s " % (region_zwgw, region_zwg, exclg3z )]
             rmax_cbsol3z = " +cbsolz -cbsol +cbsolxc"
             rmax_wlsol3z = " +wlsolz -wlsol +wlsolxc "
+            region +=  [ "CBs3z%d  6 %s -r%dBsolo -yzplane " % (nrf, rmax_cbsol3z2, nrf),
+                         "CBgs3z%d  6 +cbgsolz%d +rbound1 -cbsolz%d -r%dBsolo -yzplane " % (nrf, nrf, nrf, nrf),
+                         "WLs3z%d  6 %s -r%dBscpo -yzplane " % (nrf, rmax_wlsol3z2, nrf) ]
+        
+            assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "CBs3z%d" % nrf ) + beamoff4,
+                          "ASSIGNMA %10s%10s" % ("AIR", "CBgs3z%d" % nrf ) + beamoff4,
+                          "ASSIGNMA %10s%10s" % ("WATER", "WLs3z%d" % nrf ) + beamoff4 ]
+
     elif geo["Holes"]["mode"] == "up":
-        rmax_cbsol3z2= " +cbsolz%d +rcyl3 " % nrf
-        rmax_wlsol3z2= " +wlsolz%d +rcyl3 " % nrf
+        rmax_cbsol3z2= " +cbrc%d0 +rcyl3 " % nrf
+        rmax_wlsol3z2= " +wlrc%d0 +rcyl3 " % nrf
         region_zwg2 = " +wgrv%d0 " % nrf 
         region_zwgw2 = " +wgrw%d0 " % nrf
         exclcav = " -r%dcav6 -r%dcav7 -r%dcav8 -r%dcvb " % (nrf, nrf, nrf, nrf ) 
         region += ["WavZG3%d   6 %s  -yzplane %s " % (nrf, region_zwg2, exclcav ),
               "WavZGW3%d  6  %s -( %s )  -yzplane %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
-        # region += ["WavZG3%d   6 %s +rcyl3 -yzplane %s " % (nrf, region_zwg2, exclcav ),
-        #       "WavZGW3%d  6  %s -( %s ) +rcyl3 -yzplane %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
         assignma += ["ASSIGNMA %10s%10s" % ("VACUUM", "WavZG3%d" % nrf ) ,
                      "ASSIGNMA %10s%10s" % ("Copper", "WavZGW3%d" % nrf) + beamoff4]
-                   
-    region +=  [ "CBs3z%d  6 %s -r%dBsolo -yzplane " % (nrf, rmax_cbsol3z2, nrf),
-                 "CBgs3z%d  6 +cbgsolz%d +rbound1 -cbsolz%d -r%dBsolo -yzplane " % (nrf, nrf, nrf, nrf),
-                 "WLs3z%d  6 %s -r%dBscpo -yzplane " % (nrf, rmax_wlsol3z2, nrf) ]
 
-    assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "CBs3z%d" % nrf ) + beamoff4,
-                  "ASSIGNMA %10s%10s" % ("AIR", "CBgs3z%d" % nrf ) + beamoff4,
-                  "ASSIGNMA %10s%10s" % ("WATER", "WLs3z%d" % nrf ) + beamoff4 ]
-
-
+        # rbound = [ " -r%dBscpo " % nrf, " -wgbw%d1 -rbound1 " % nrf, 
+        #           " -wgbw%d2 -rcyl1 " % nrf ] 
      
     fd.Add(body, region, assignma)
 

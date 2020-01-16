@@ -102,7 +102,7 @@ def createGeoParam():
         "zmin":geo["bases"]["zmin"],  # zmin of whole area
         "rmax":geo["bases"]["rmax"],  # rmax of whole area
         "Mount_water_thickness":10.0, # Thickness of water layer out side of outer concrete tunnel
-        "CShOut_thick":200.0, # Thickness of tunnel concrete, outer
+        "CShOut_thick":300.0, # Thickness of tunnel concrete, outer
         "CShIn0_thick":70, # Thickness of tunnel concrete, inner
         "CShIn0_rmin":210.0,  # inner radius of smaller concrete sheild
         "CShIn_thick":30, # Thickness of tunnel concrete, inner
@@ -253,8 +253,9 @@ def createGeoParam():
                      "xcenter": 78.0, # X center position, which runs in Z direction.
                      "zcenter": 98.02,  # Z center position, which runs in X direction
                      "nbend": 2, # Nb of bend in Z direction
-                     "zoffset": [ 25.0, 25.0 ] } # offset in Z direction, when wave guide was bended. 
-                                                 # This applies to cables and water_lines as well.  
+                     "zoffset": [ 0.0, 25.0, 25.0 ] } # offset in Z direction, when wave guide was bended. 
+                                                 # This applies to cables and water_lines as well.
+                                                 # First entry is for the one attached to the cavity  
     # Adjust Z position when width is changed.
     geo["Holes"]["wave_guides"]["zcenter"] += (geo["Holes"]["wave_guides"]["width"] - 8.50)*0.5
     geo["Holes"]["cables"] = {"radius":1.0, # Radius of cable
