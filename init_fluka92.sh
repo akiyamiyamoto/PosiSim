@@ -29,3 +29,7 @@ export PATH=${FLUKA_SCRIPTS}:${FLUPRO}:${FLUPRO}/flutil:${FLUKA}/flair-2.3:${FLU
 export PYTHONPATH=${FLUKA_SCRIPTS}:${PYTHONPATH}
 
 
+if [ "x`echo ${PWD} | grep fluka`" == "x" ] ; then 
+  cd ${FLUKA}
+fi
+
