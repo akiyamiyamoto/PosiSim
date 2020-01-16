@@ -170,8 +170,6 @@ def createGeoParam():
 
     gwp["rbound1"] = grfp["solenoid_return_yoke_thick"] + grfp["solenoid_outer_radius"]
     gwp["zbound4"] = gwp["zbound3"]  + geo["bases"]["Collimator_thickness"] + grfp["zlen_rf_unit"] * grfp["Nb_structure"] + grfp["vacuum_chamber_thick"]
-    gwp["zbound5"] = math.ceil(gwp["zbound4"] + 1.0)
-    geo["global"]["zmax"] = gwp["zbound5"]
    
 
     glp["FeSh_zone3_z_length"] = grfp["zlen_rf_unit"]  + geo["bases"]["Collimator_thickness"]  # Fe Shied length in zone 3. ( to the Fe Shield upstream surface )
@@ -253,9 +251,11 @@ def createGeoParam():
                      "xcenter": 78.0, # X center position, which runs in Z direction.
                      "zcenter": 98.02,  # Z center position, which runs in X direction
                      "nbend": 2, # Nb of bend in Z direction
-                     "zoffset": [ 0.0, 25.0, 25.0 ] } # offset in Z direction, when wave guide was bended. 
+                     "zoffset": [ 0.0, 55.0, 55.0 ] } # offset in Z direction, when wave guide was bended. 
+                     #  "zoffset": [ 0.0, 25.0, 25.0 ] } # offset in Z direction, when wave guide was bended. 
                                                  # This applies to cables and water_lines as well.
-                                                 # First entry is for the one attached to the cavity  
+                                                 # First entry is for the one attached to the cavity
+  
     # Adjust Z position when width is changed.
     geo["Holes"]["wave_guides"]["zcenter"] += (geo["Holes"]["wave_guides"]["width"] - 8.50)*0.5
     geo["Holes"]["cables"] = {"radius":1.0, # Radius of cable
@@ -281,6 +281,21 @@ def createGeoParam():
                geo["Holes"]["water_lines"]["radius"] - \
                geo["Holes"]["cables"]["radius"] - \
                geo["Holes"]["cables"]["gap"]*2
+
+    zoffsetsum = 0
+    for zoff in geo["Holes"]["wave_guides"]["zoffset"]:
+        zoffsetsum += zoff
+    wgzmax = geo["Holes"]["wave_guides"]["zcenter"] + \
+             (geo["RF"]["Nb_structure"]-1)*geo["RF"]["zlen_rf_unit"] + zoffsetsum + \
+             geo["Holes"]["wave_guides"]["width"]*0.5 + \
+             geo["Holes"]["wave_guides"]["wall_thickness"]
+    gwp["zbound5"] = math.ceil(gwp["zbound4"] + 1.0)
+    if gwp["zbound5"] < wgzmax: 
+       gwp["zbound5"] = wgzmax
+    geo["global"]["zmax"] = gwp["zbound5"]
+
+
+
 
     return geo
 
