@@ -135,12 +135,16 @@ def crWorld(geo, fd):
     return
 
 # =========================================================================
-def crBodies4Holes(geo):
-    # create bodies for holes
+def crBodies4Holes_front(geo):
+    # create bodies for holes, for front side replace
 
     gwg = geo["Holes"]["wave_guides"]
-    body = ["*** Bodies for wave guide holes",
-            "YZP wgxup %f" % ( gwg["xcenter"] + gwg["width"]*0.5),
+    gcb = geo["Holes"]["cables"]
+    gwl = geo["Holes"]["water_lines"]
+
+    body = ["*** Bodies for wave guide holes"]
+    # if geo["Holes"]["mode"] == "front" :
+    body += ["YZP wgxup %f" % ( gwg["xcenter"] + gwg["width"]*0.5),
             "YZP wgxdn %f" % (gwg["xcenter"] - gwg["width"]*0.5),
             "YZP wgxwup %f" % (gwg["xcenter"] + gwg["width"]*0.5 + gwg["wall_thickness"]),
             "YZP wgxwdn %f" % (gwg["xcenter"] - gwg["width"]*0.5 - gwg["wall_thickness"]),
@@ -158,7 +162,6 @@ def crBodies4Holes(geo):
             "XZP wgzwsdp %f" %  (gwg["height"]*0.5 + gwg["wall_thickness"]),
             "XZP wgzwsdm %f" % (-gwg["height"]*0.5 - gwg["wall_thickness"])]
 
-    gcb = geo["Holes"]["cables"]
     body += ["ZCC cbrot %f 0.0 %f" % ( gcb["xcenter_rotator"], gcb["radius"] ), 
              "ZCC cbgrot %f 0.0 %f" % ( gcb["xcenter_rotator"], gcb["radius"] + gcb["gap"] ), 
              "ZCC cbfc %f 0.0 %f" % ( gcb["xcenter_FC"], gcb["radius"] ), 
@@ -171,7 +174,6 @@ def crBodies4Holes(geo):
              "XCC cbsolz 0.0 %f %f" % ( gcb["zcenter_solenoid"], gcb["radius"] ),
              "XCC cbgsolz 0.0 %f %f" % ( gcb["zcenter_solenoid"], gcb["radius"] + gcb["gap"] )]
 
-    gwl = geo["Holes"]["water_lines"]
     body += ["ZCC wlrot %f 0.0 %f" % ( gwl["xcenter_rotator"], gwl["radius_rotator"] ), 
              "ZCC wlfc %f 0.0 %f" % ( gwl["xcenter_FC"], gwl["radius_FC"] ), 
              "ZCC wlsol %f 0.0 %f" % ( gwl["xcenter_solenoid"], gwl["radius"] ), 
@@ -179,98 +181,108 @@ def crBodies4Holes(geo):
              "YZP wlsolxc %f " % ( gwl["xcenter_solenoid"] ), 
              "XCC wlsolz 0.0 %f %f" % ( gwl["zcenter_solenoid"], gwl["radius"] )] 
 
+    return body
 
-    if geo["Holes"]["mode"] == "up":
-        zlen_rf_unit = geo["RF"]["zlen_rf_unit"]
-        # Wave guide max
-        xminb = [ 0.0,  geo["world"]["rbound1"], 
-                 geo["global"]["CShIn_rmin"] + geo["global"]["CShIn_thick"],  
-                 geo["global"]["CShIn0_rmin"] + geo["global"]["CShIn0_thick"] ]
-        nbend = geo["Holes"]["wave_guides"]["nbend"]
-        # Water lines
-        wlrbound = [ geo["RF"]["solenoid_outer_radius"] - geo["RF"]["solenoid_thickness"], 
-                   xminb[1]+gwg["width"] + 2*gwg["wall_thickness"], 
-                   xminb[2]+gwg["width"] + 2*gwg["wall_thickness"], 
-                   xminb[3] ]
-        wlrbound[nbend+1] = xminb[-1]
-        
-        for irf in range(1, geo["RF"]["Nb_structure"]+1):
-            zcenter = geo["Holes"]["water_lines"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
-            for ib in range(0, nbend+1):
-                zcenterb = zcenter - gwl["radius"]
-                zcenter += geo["Holes"]["wave_guides"]["zoffset"][ib]
-                xcenter = wlrbound[ib] 
-                rlen = wlrbound[ib+1] - wlrbound[ib] + gwl["radius"]
-                body += [ "RCC wlrc%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, wlrbound[ib], 
-                          zcenter, rlen, gwl["radius"] ) ]
-                if ib != 0:
-                   zlen = geo["Holes"]["wave_guides"]["zoffset"][ib] + 2*gwl["radius"] 
-                   body += [ "RCC wlbc%d%d %f 0.0 %f 0.0 0.0 %f %f" % (irf, ib, wlrbound[ib] + gwl["radius"], 
-                              zcenterb, zlen, gwl["radius"] )]
+# =========================================================================
+def crBodies4Holes_up(geo):
+    # create bodies for holes, for front side replace
 
-        cbrbound = [ geo["RF"]["solenoid_outer_radius"] - geo["RF"]["solenoid_thickness"], 
-                     wlrbound[1] + 2*gwl["radius"] + gcb["gap"],  wlrbound[2] + 2*gwl["radius"] + gcb["gap"], xminb[3] ] 
-        cbrbound[nbend+1] = xminb[-1]
+    gwg = geo["Holes"]["wave_guides"]
+    gcb = geo["Holes"]["cables"]
+    gwl = geo["Holes"]["water_lines"]
 
-        # Cable and Water line... to be removed.
-        for irf in range(1, geo["RF"]["Nb_structure"]+1):
-            zcenter = geo["Holes"]["cables"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
+    body = ["*** Bodies for wave guide holes"]
+    # elif geo["Holes"]["mode"] == "up":
+    zlen_rf_unit = geo["RF"]["zlen_rf_unit"]
+    # Wave guide max
+    xminb = [ 0.0,  geo["world"]["rbound1"], 
+             geo["global"]["CShIn_rmin"] + geo["global"]["CShIn_thick"],  
+             geo["global"]["CShIn0_rmin"] + geo["global"]["CShIn0_thick"] ]
+    nbend = geo["Holes"]["wave_guides"]["nbend"]
+    # Water lines
+    wlrbound = [ geo["RF"]["solenoid_outer_radius"] - geo["RF"]["solenoid_thickness"], 
+               xminb[1]+gwg["width"] + 2*gwg["wall_thickness"], 
+               xminb[2]+gwg["width"] + 2*gwg["wall_thickness"], 
+               xminb[3] ]
+    wlrbound[nbend+1] = xminb[-1]
+    
+    for irf in range(1, geo["RF"]["Nb_structure"]+1):
+        zcenter = geo["Holes"]["water_lines"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
+        for ib in range(0, nbend+1):
+            zcenterb = zcenter - gwl["radius"]
+            zcenter += geo["Holes"]["wave_guides"]["zoffset"][ib]
+            xcenter = wlrbound[ib] 
+            rlen = wlrbound[ib+1] - wlrbound[ib] + gwl["radius"]
+            body += [ "RCC wlrc%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, wlrbound[ib], 
+                      zcenter, rlen, gwl["radius"] ) ]
+            if ib != 0:
+               zlen = geo["Holes"]["wave_guides"]["zoffset"][ib] + 2*gwl["radius"] 
+               body += [ "RCC wlbc%d%d %f 0.0 %f 0.0 0.0 %f %f" % (irf, ib, wlrbound[ib] + gwl["radius"], 
+                          zcenterb, zlen, gwl["radius"] )]
 
-            for ib in range(0, nbend+1):
-                zcenterb = zcenter - gcb["radius"] 
-                zcenter += geo["Holes"]["wave_guides"]["zoffset"][ib]
-                xcenter = cbrbound[ib] 
-                rlen = cbrbound[ib+1] - cbrbound[ib] + gcb["radius"]
-                body += [ "RCC cbrc%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, cbrbound[ib], zcenter, rlen, gcb["radius"] ) ]
-                body += [ "RCC cbrg%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, cbrbound[ib], zcenter, rlen, gcb["radius"] + 
-                        gcb["gap"] ) ]
-                if ib != 0:
-                   zlen = geo["Holes"]["wave_guides"]["zoffset"][ib] + 2*gcb["radius"] 
-                   body += [ "RCC cbbc%d%d %f 0.0 %f 0.0 0.0 %f %f" % (irf, ib, cbrbound[ib] + gcb["radius"], 
-                              zcenterb, zlen, gcb["radius"] )]
+    cbrbound = [ geo["RF"]["solenoid_outer_radius"] - geo["RF"]["solenoid_thickness"], 
+                 wlrbound[1] + 2*gwl["radius"] + gcb["gap"],  wlrbound[2] + 2*gwl["radius"] + gcb["gap"], xminb[3] ] 
+    cbrbound[nbend+1] = xminb[-1]
 
-        # wave guide bodies
-        for irf in range(1, geo["RF"]["Nb_structure"]+1):
-            zcenter = geo["Holes"]["wave_guides"]["zcenter"] + zlen_rf_unit*float(irf-1)
-            #  RPP name  Xmin Xmax, Ymin, Ymax, Zmin, Zmax
-            xmaxv = xminb[-1] if geo["Holes"]["wave_guides"]["nbend"] == 0 else xminb[1] + gwg["wall_thickness"]
-            xmaxw = xminb[-1] if geo["Holes"]["wave_guides"]["nbend"] == 0 else xminb[1] 
+    # Cable and Water line... to be removed.
+    for irf in range(1, geo["RF"]["Nb_structure"]+1):
+        zcenter = geo["Holes"]["cables"]["zcenter_solenoid"] + zlen_rf_unit*float(irf-1)
 
-            body += ["RPP wgrv%d0 0.0  %f %f %f %f %f " % ( irf, xmaxv ,  
-                      -gwg["height"]*0.5 , gwg["height"]*0.5 , 
-                      zcenter - gwg["width"]*0.5, zcenter + gwg["width"]*0.5 ),   
-                     "RPP wgrw%d0 0.0  %f %f %f %f %f " % ( irf, xmaxw, -gwg["height"]*0.5 - gwg["wall_thickness"], 
-                      gwg["height"]*0.5 + gwg["wall_thickness"], 
-                      zcenter - gwg["width"]*0.5 - gwg["wall_thickness"], 
-                      zcenter + gwg["width"]*0.5 + gwg["wall_thickness"]) ]
+        for ib in range(0, nbend+1):
+            zcenterb = zcenter - gcb["radius"] 
+            zcenter += geo["Holes"]["wave_guides"]["zoffset"][ib]
+            xcenter = cbrbound[ib] 
+            rlen = cbrbound[ib+1] - cbrbound[ib] + gcb["radius"]
+            body += [ "RCC cbrc%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, cbrbound[ib], zcenter, rlen, gcb["radius"] ) ]
+            body += [ "RCC cbrg%d%d %f 0.0 %f %f 0.0 0.0 %f" % ( irf, ib, cbrbound[ib], zcenter, rlen, gcb["radius"] + 
+                    gcb["gap"] ) ]
+            if ib != 0:
+               zlen = geo["Holes"]["wave_guides"]["zoffset"][ib] + 2*gcb["radius"] 
+               body += [ "RCC cbbc%d%d %f 0.0 %f 0.0 0.0 %f %f" % (irf, ib, cbrbound[ib] + gcb["radius"], 
+                          zcenterb, zlen, gcb["radius"] )]
 
-            zcenterb = zcenter 
-            nbend = int(geo["Holes"]["wave_guides"]["nbend"])
-            for ib in range(1, nbend + 1):
-                wallth = gwg["wall_thickness"]
-                xming = xminb[ib]
-                xmaxg = xminb[ib+1] if ib != nbend else xminb[-1]
-                xmin1 = xming + wallth
-                xmax1 = xmaxg if ib == nbend else xmaxg + wallth  
-                zcenterb += gwg["zoffset"][ib]
-                # radial direction part of wave guide.
-                body += ["RPP wgrv%d%d %f %f %f %f %f %f " % ( irf, ib, xmin1, xmax1,
-                         -gwg["height"]*0.5, gwg["height"]*0.5, 
-                         zcenterb - gwg["width"]*0.5, zcenterb + gwg["width"]*0.5 ),   
+    # wave guide bodies
+    for irf in range(1, geo["RF"]["Nb_structure"]+1):
+        zcenter = geo["Holes"]["wave_guides"]["zcenter"] + zlen_rf_unit*float(irf-1)
+        #  RPP name  Xmin Xmax, Ymin, Ymax, Zmin, Zmax
+        xmaxv = xminb[-1] if geo["Holes"]["wave_guides"]["nbend"] == 0 else xminb[1] + gwg["wall_thickness"]
+        xmaxw = xminb[-1] if geo["Holes"]["wave_guides"]["nbend"] == 0 else xminb[1] 
 
-                         "RPP wgrw%d%d %f  %f %f %f %f %f " % ( irf, ib, xming, xmaxg, 
-	  		 -gwg["height"]*0.5 - wallth, gwg["height"]*0.5 + wallth, 
-                         zcenterb - gwg["width"]*0.5 - wallth, 
-                         zcenterb + gwg["width"]*0.5 + wallth)] 
-                # beam direction part of wave guide  
-                body += ["RPP wgbv%d%d %f %f %f %f %f %f " % ( irf, ib, xmin1, xmin1 + gwg["width"], 
-                         -gwg["height"]*0.5, gwg["height"]*0.5, 
-                         zcenterb -gwg["zoffset"][ib] - gwg["width"]*0.5, zcenterb - gwg["width"]*0.5 ),   
+        body += ["RPP wgrv%d0 0.0  %f %f %f %f %f " % ( irf, xmaxv ,  
+                  -gwg["height"]*0.5 , gwg["height"]*0.5 , 
+                  zcenter - gwg["width"]*0.5, zcenter + gwg["width"]*0.5 ),   
+                 "RPP wgrw%d0 0.0  %f %f %f %f %f " % ( irf, xmaxw, -gwg["height"]*0.5 - gwg["wall_thickness"], 
+                  gwg["height"]*0.5 + gwg["wall_thickness"], 
+                  zcenter - gwg["width"]*0.5 - gwg["wall_thickness"], 
+                  zcenter + gwg["width"]*0.5 + gwg["wall_thickness"]) ]
 
-                         "RPP wgbw%d%d %f  %f %f %f %f %f " % ( irf, ib, xmin1 - wallth, xmin1 + gwg["width"] + wallth, 
-                         -gwg["height"]*0.5 - wallth, gwg["height"]*0.5 + wallth, 
-                         zcenterb - gwg["zoffset"][ib] - gwg["width"]*0.5 - wallth, 
-                         zcenterb - gwg["width"]*0.5 - wallth)] 
+        zcenterb = zcenter 
+        nbend = int(geo["Holes"]["wave_guides"]["nbend"])
+        for ib in range(1, nbend + 1):
+            wallth = gwg["wall_thickness"]
+            xming = xminb[ib]
+            xmaxg = xminb[ib+1] if ib != nbend else xminb[-1]
+            xmin1 = xming + wallth
+            xmax1 = xmaxg if ib == nbend else xmaxg + wallth  
+            zcenterb += gwg["zoffset"][ib]
+            # radial direction part of wave guide.
+            body += ["RPP wgrv%d%d %f %f %f %f %f %f " % ( irf, ib, xmin1, xmax1,
+                     -gwg["height"]*0.5, gwg["height"]*0.5, 
+                     zcenterb - gwg["width"]*0.5, zcenterb + gwg["width"]*0.5 ),   
+
+                     "RPP wgrw%d%d %f  %f %f %f %f %f " % ( irf, ib, xming, xmaxg, 
+      		 -gwg["height"]*0.5 - wallth, gwg["height"]*0.5 + wallth, 
+                     zcenterb - gwg["width"]*0.5 - wallth, 
+                     zcenterb + gwg["width"]*0.5 + wallth)] 
+            # beam direction part of wave guide  
+            body += ["RPP wgbv%d%d %f %f %f %f %f %f " % ( irf, ib, xmin1, xmin1 + gwg["width"], 
+                     -gwg["height"]*0.5, gwg["height"]*0.5, 
+                     zcenterb -gwg["zoffset"][ib] - gwg["width"]*0.5, zcenterb - gwg["width"]*0.5 ),   
+
+                     "RPP wgbw%d%d %f  %f %f %f %f %f " % ( irf, ib, xmin1 - wallth, xmin1 + gwg["width"] + wallth, 
+                     -gwg["height"]*0.5 - wallth, gwg["height"]*0.5 + wallth, 
+                     zcenterb - gwg["zoffset"][ib] - gwg["width"]*0.5 - wallth, 
+                     zcenterb - gwg["width"]*0.5 - wallth)] 
 
     return body
 
@@ -292,11 +304,11 @@ def crZone1(geo, fd):
          "XYP z1cs0bgn %f " % z_cshup0_end, 
          "XYP z1cs0end %f " % z_cshup0_bgn] 
 
-    body += crBodies4Holes(geo)
+    if geo["Holes"]["mode"] == "front":
+        body += crBodies4Holes_front(geo) 
+    elif geo["Holes"]["mode"] == "up":
+        body += crBodies4Holes_up(geo) 
 
-    region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
-    region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
-    region_cbwl = " -cbgrot -cbgfc -cbsol -cbgsol -wlsol -wlfc -wlrot "
     beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
 
     assignma = ["*", "* **** Created by crZone1 ************************ "]
@@ -308,6 +320,9 @@ def crZone1(geo, fd):
                 "Z1upair0 6 +z1cs0bgn -zbound1 +rcylin - rcylbpou"]
 
     if geo["Holes"]["mode"] == "front":
+       region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
+       region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
+       region_cbwl = " -cbgrot -cbgfc -cbsol -cbgsol -wlsol -wlfc -wlrot "
        region += ["Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou %s -(%s)" % (region_cbwl, region_wgw),
                 "Z1FeSha  6 +zbound2 -z1pln2 +rcylin -rcylbpou %s -(%s)" % (region_cbwl, region_wgw),
                 "Z1CSh0   6 +z1cs0end -z1cs0bgn +rcylin -rcylbpou",
@@ -322,6 +337,19 @@ def crZone1(geo, fd):
                 "WLrot1   6 +zbound2 -z1pln1 +wlrot", 
                 "WLFC1   6 +zbound2 -z1pln1 +wlfc", 
                 "WLsol1   6 +zbound2 -z1pln1 +wlsol"] 
+
+       assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "WaveG1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "WaveGW1") + beamoff5, 
+                  "ASSIGNMA %10s%10s" % ("AIR", "CBgFC1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBFC1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("AIR", "CBgsol1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBsol1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("AIR", "CBgrot1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("Copper", "CBrot1") + beamoff5, 
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLrot1") + beamoff5, 
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLFC1") + beamoff5,
+                  "ASSIGNMA %10s%10s" % ("WATER", "WLsol1") + beamoff5 ] 
+
     elif geo["Holes"]["mode"] == "up":
        region += ["Z1CSh    6 +z1pln2 -z1pln1 +rcylin -rcylbpou ",
                 "Z1FeSha  6 +zbound2 -z1pln2 +rcylin -rcylbpou ",
@@ -360,19 +388,6 @@ def crZone1(geo, fd):
                   "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh") + beamoff5,  
                   "ASSIGNMA %10s%10s" % ("CONCRETE", "Z1CSh0") ,  
                   "ASSIGNMA %10s%10s" % ("CASTIRON", "Z1FeSha") + beamoff5]
-    if geo["Holes"]["mode"] == "front":  
-         assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "WaveG1") + beamoff5,
-                  "ASSIGNMA %10s%10s" % ("Copper", "WaveGW1") + beamoff5, 
-                  "ASSIGNMA %10s%10s" % ("AIR", "CBgFC1") + beamoff5,
-                  "ASSIGNMA %10s%10s" % ("Copper", "CBFC1") + beamoff5,
-                  "ASSIGNMA %10s%10s" % ("AIR", "CBgsol1") + beamoff5,
-                  "ASSIGNMA %10s%10s" % ("Copper", "CBsol1") + beamoff5,
-                  "ASSIGNMA %10s%10s" % ("AIR", "CBgrot1") + beamoff5,
-                  "ASSIGNMA %10s%10s" % ("Copper", "CBrot1") + beamoff5, 
-                  "ASSIGNMA %10s%10s" % ("WATER", "WLrot1") + beamoff5, 
-                  "ASSIGNMA %10s%10s" % ("WATER", "WLFC1") + beamoff5,
-                  "ASSIGNMA %10s%10s" % ("WATER", "WLsol1") + beamoff5 ] 
-    # elif geo["Holes"]["mode"] == "up":
 
 
     fd.Add(body, region, assignma)

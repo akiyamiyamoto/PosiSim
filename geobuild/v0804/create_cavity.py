@@ -90,9 +90,9 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solin, zbegins, zlen_rfs, sol_rmin ) )
 
     region += ["*", "* **** Created by crOneRFStructure  nrf=%d ************************ " % nrf ]
-    exclwl = " -(+wlrc%d0 -yzplane) " % nrf
+    exclwl = " -wlrc%d0 " % nrf
     exclcb = " -cbrg%d0 " % nrf
-    exclwg = " -wgrw%d0  " % nrf
+    exclwg = " -wgrw%d0 " % nrf
     
     region +=["R%dsolo 6 +r%dBsolo -r%dBscpo " % (nrf, nrf, nrf) + exclwl + exclwg,
                 "R%dsolc 6 +r%dBscpo -r%dBscpi" % (nrf, nrf, nrf) + exclwg,
@@ -301,16 +301,6 @@ def crRFHoles(geo, fd, nrf):
     ''' 
     Create holes by wave guide, water lines, cable lines 
     '''
-    # Waveguide, cable and water lines for solenoid and cavity
-    region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
-    region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
-    region_zwg = " +wgzup -wgzdn +wgzsdp -wgzsdm "
-    region_zwgw = " +wgzwup -wgzwdn +wgzwsdp -wgzwsdm "
-    region_cbwl = " -cbgsol -wlsol "
-    exclg3 = " -( -wgzdn +wgxup )"
-    exclg3w = " -( -wgzwdn +wgxup )"
-    exclg3z= " -( wgxsdp -wgxsdm +wgzdn -wgzwdn +wgxup -wgxdn ) "
-
     body = ["* Holes in cavity region " ]
     region = ["* Holes in cavity region "]
     assignma = ["* Holes in cavity region" ] 
@@ -318,6 +308,16 @@ def crRFHoles(geo, fd, nrf):
 
     if geo["Holes"]["mode"] == "front":
         if nrf == 1:
+            # Waveguide, cable and water lines for solenoid and cavity
+            region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
+            region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
+            region_zwg = " +wgzup -wgzdn +wgzsdp -wgzsdm "
+            region_zwgw = " +wgzwup -wgzwdn +wgzwsdp -wgzwsdm "
+            region_cbwl = " -cbgsol -wlsol "
+            exclg3 = " -( -wgzdn +wgxup )"
+            exclg3w = " -( -wgzwdn +wgxup )"
+            exclg3z= " -( wgxsdp -wgxsdm +wgzdn -wgzwdn +wgxup -wgxdn ) "
+        
             region += [ "WaveG3   6 -zbound3 +wgzup  %s %s " % (region_wg,exclg3), 
                         "WaveGW3  6 -zbound3 +wgzwup  %s -( %s ) %s " % (region_wgw, region_wg, exclg3w ),
                         "CBsol3   6 -zbound3 +cbsolzmx +cbsol ",
@@ -341,17 +341,14 @@ def crRFHoles(geo, fd, nrf):
     elif geo["Holes"]["mode"] == "up":
         rmax_cbsol3z2= " +cbrc%d0 +rcyl3 " % nrf
         rmax_wlsol3z2= " +wlrc%d0 +rcyl3 " % nrf
-        region_zwg2 = " +wgrv%d0 " % nrf 
+        region_zwg2  = " +wgrv%d0 " % nrf 
         region_zwgw2 = " +wgrw%d0 " % nrf
         exclcav = " -r%dcav6 -r%dcav7 -r%dcav8 -r%dcvb " % (nrf, nrf, nrf, nrf ) 
-        region += ["WavZG3%d   6 %s  -yzplane %s " % (nrf, region_zwg2, exclcav ),
-              "WavZGW3%d  6  %s -( %s )  -yzplane %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
+        region += ["WavZG3%d 6 %s  %s " % (nrf, region_zwg2, exclcav ),
+              "WavZGW3%d 6 %s -( %s )  %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
         assignma += ["ASSIGNMA %10s%10s" % ("VACUUM", "WavZG3%d" % nrf ) ,
                      "ASSIGNMA %10s%10s" % ("Copper", "WavZGW3%d" % nrf) + beamoff4]
 
-        # rbound = [ " -r%dBscpo " % nrf, " -wgbw%d1 -rbound1 " % nrf, 
-        #           " -wgbw%d2 -rcyl1 " % nrf ] 
-     
     fd.Add(body, region, assignma)
 
     return
