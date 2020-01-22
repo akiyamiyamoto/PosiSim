@@ -272,6 +272,10 @@ def createGeoParam():
                      "xcenter_rotator": 22.0, # xcenter for target cooling pipe
                      "xcenter_solenoid":64.0, # x center for solenoid cooling water.
                      "zcenter_solenoid": 91.0} # z center for solenoid cooling water  
+    geo["Holes"]["vacpipe"] = { "radius":2.5, # Radius of the vacuum part of vacuum pipe for target area
+                     "wall_thickness": 0.5, # Thickness of vacuum pipe
+                     "zcenters":[5.0, -17.0, -50.0] } # Zcenter of vacuum pipe 
+
     if geo["Holes"]["mode"] == "up":
        geo["Holes"]["water_lines"]["zcenter_solenoid"] = geo["Holes"]["wave_guides"]["zcenter"] - \
                geo["Holes"]["wave_guides"]["width"]*0.5 - \
@@ -281,6 +285,7 @@ def createGeoParam():
                geo["Holes"]["water_lines"]["radius"] - \
                geo["Holes"]["cables"]["radius"] - \
                geo["Holes"]["cables"]["gap"]*2
+
 
     zoffsetsum = 0
     for zoff in geo["Holes"]["wave_guides"]["zoffset"]:

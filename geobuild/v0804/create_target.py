@@ -54,7 +54,12 @@ def crTargetCollimatorZone(geo, fd):
     region += ["* *************************************",
               "* Region data of Target Zone " ,
               "* *************************************"]
-    
+    rextar = ""
+    if geo["Holes"]["mode"] == "up":
+        nbend = geo["Holes"]["wave_guides"]["nbend"]
+        ipipe = 1 if nbend == 2 else nbend
+        rextar = " -vcrw0%d" % ipipe
+
     # CastIron outside
     zbegin = gworld["zbound2"]
     zend = gworld["zbound3"]
@@ -63,7 +68,7 @@ def crTargetCollimatorZone(geo, fd):
     body += ["RCC z2FeSho 0.0 0.0 %f 0.0 0.0 %f %f" % (zbegin, zlen, rmax), 
              "RCC z2FeShi 0.0 0.0 %f 0.0 0.0 %f %f" % (zbegin, zlen, 
                   rmax - glbal["FeSh_thick"]) ]
-    region += ["TARColim 6 +z2FeSho -z2FeShi"] 
+    region += ["TARColim 6 +z2FeSho -z2FeShi " + rextar ] 
     assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "TARColim") ]
 
     # Add geometry data
@@ -316,7 +321,10 @@ def crSupportStructure(geo, fd, envelops):
                        vcb_zlen, vcb_rmin ) ] 
     body += ["RCC tvcbsi 0.0 0.0 %f 0.0 0.0 %f %f" % ( gtar["vacuum_chamber_R_z_begin"] + vc_thick, 
                        vcb_zlen-vc_thick, vcb_rmin ) ] 
-    region += ["TVCwall  6 ( +tvcro | +tvcbo ) - tvcri - tvcbi "]
+
+    rextar = "" if geo["Holes"]["mode"] != "up" else " -vcrw00"
+
+    region += ["TVCwall  6 ( +tvcro | +tvcbo ) - tvcri - tvcbi " + rextar]
     region += ["TVCwalld  6 ( +tvcri | +tvcbi ) - tvcrsi - tvcbsi -tvcbpo " + 
                 envelops["rotation_body"] + fcwcbvc ]
     assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("STAINLES", "TVCwall","","VACUUM","beamoff2") ]
@@ -356,7 +364,7 @@ def crSupportStructure(geo, fd, envelops):
     body += ["RCC tshro %f 0.0 %f 0.0 0.0 %f %f" % ( axis_x_offset, sh_zbgn, shr_zlen, shr_rmax) ]
     body += ["RCC tshbo 0.0 0.0 %f 0.0 0.0 %f %f" % ( sh_zbgn, shr_zlen, shb_rmax ) ]
     region += ["TWShield  6 ( +tshro | +tshbo ) - tvcro - tvcbo -tvcbpo " + 
-              envelops["rotation_body"] + fcwcb ]
+              envelops["rotation_body"] + fcwcb + rextar]
     assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("Copper", "TWShield","","VACUUM","beamoff2") ]
 
     # Air surrounding target area
@@ -379,11 +387,17 @@ def crSupportStructure(geo, fd, envelops):
     region += ["TWShld2 6 ( +tshb2o -tvcbo -tshr2i ) | ( +tshr2o -tshr2i -tshb2o ) "]
     assignma += [ "ASSIGNMA %10s%10s%30s%10s%20s" % ("Copper", "TWShld2","","VACUUM","beamoff2") ]     
 
-
+    # vacuum pipe body
+    rextar = ""
+    if geo["Holes"]["mode"] == "up":
+        nbend = geo["Holes"]["wave_guides"]["nbend"]
+        rextar = " -vcrw00 "
+        if nbend != 0:
+           rextar += " -vcbw01 -vcrw01 "
 
     # Air body, region, assignma
     body += ["RCC tarair 0.0 0.0 %f 0.0 0.0 %f %f " % ( zbegin, air_zlen,  air_rmax)]
-    region += ["TARair 6 +tarair -tvcbpo -tshbo -tshro -tshb2o -tshr2o -trotbody " + notair  ]
+    region += ["TARair 6 +tarair -tvcbpo -tshbo -tshro -tshb2o -tshr2o -trotbody " + notair  + rextar ]
     region += ["TARair2 6 ( +tshb2i -tvcbo -tshbo ) | (+tshr2i -tvcbo -tvcro) "]
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair") ]  
     assignma += ["ASSIGNMA %10s%10s" % ("AIR", "TARair2") ]  

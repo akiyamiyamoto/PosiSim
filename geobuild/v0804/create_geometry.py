@@ -70,33 +70,38 @@ def crWorld(geo, fd):
     # create  region data
     rexclude = [""]*(geo["RF"]["Nb_structure"]+1)
     rexclgap = [""]*(geo["RF"]["Nb_structure"]+1)
+    nbend = geo["Holes"]["wave_guides"]["nbend"]
     if geo["Holes"]["mode"] == "up":
        for i in range(1, int(geo["RF"]["Nb_structure"]) + 1):
            rexclude[i] = " -cbrc%d0 -wlrc%d0 " % ( i, i )
            rexclgap[i] = " -cbrg%d0 " % i
-           for ib in range(1, int(geo["Holes"]["wave_guides"]["nbend"]) + 1):
+           for ib in range(1, nbend + 1):
                rexclude[i] += " -wgrw%d%d -wgbw%d%d -wlrc%d%d -wlbc%d%d " % (i, ib, i, ib, i, ib, i, ib )
                rexclude[i] += " -cbrc%d%d -cbbc%d%d " % (i,ib, i, ib)
                rexclgap[i] += " -cbrg%d%d " % ( i, ib )
                
            if int(geo["Holes"]["wave_guides"]["nbend"]) == 0:
                rexclude[i] += " -wgrw%d0 " % i
+
+       rextar = " -vcrw0%d" % nbend
+       for ib in range(1, nbend+1):
+           rextar += " -vcrw0%d - vcbw0%d " % (ib, ib) 
     
     region += ["*", "* black hole", 
        "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rbound3 ) ",
        "RockW   6 +rbound3 -rbound2 +zbound5 -zbound1 ", 
        "OutShld 6 +zbound5 -zbound1 +rbound2 -rcylout ", 
        "MidAir0  6 +zbound5 -zbound1 +rcylout -rcyl3 " ,
-       "InShld0  6 +zbound5 -zbound1 +rcyl3 -rcyl2 " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]),
+       "InShld0  6 +zbound5 -zbound1 +rcyl3 -rcyl2 " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]) + " " + rextar,
        "MidAira  6 -zbound1 +z1cs0bgn +rcyl2 -rcyl1 ",
        "InShlda  6 -z1cs0bgn +z1cs0end +rcyl2 -rcyl1 ",
        "MidAirb  6 -z1cs0end +z1pln1 +rcyl2 -rcyl1 ",
        "InShldb  6 -z1pln1 +z1pln2 +rcyl2 -rcyl1 ",
-       "MidAirc  6 -z1pln2 +z3inpln2 +rcyl2 -rcyl1 " + " ".join(rexclude[1:2]),
+       "MidAirc  6 -z1pln2 +z3inpln2 +rcyl2 -rcyl1 " + " ".join(rexclude[1:2]) + rextar,
        "InShldc  6 -z3inpln2 +z3inpln3 +rcyl2 -rcyl1 ",
 
        "MidAird  6 -z3inpln3 +zbound5 +rcyl2 -rcyl1 " + " ".join(rexclude[2:]),
-       "InShld  6 +zbound5 -zbound1 +rcyl1 -rcylin " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]) ]
+       "InShld  6 +zbound5 -zbound1 +rcyl1 -rcylin " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]) + rextar ]
 
     # Assign material to each region
     assignma += ["*","* Assign material ","*",
@@ -192,7 +197,6 @@ def crBodies4Holes_up(geo):
     gwl = geo["Holes"]["water_lines"]
 
     body = ["*** Bodies for wave guide holes"]
-    # elif geo["Holes"]["mode"] == "up":
     zlen_rf_unit = geo["RF"]["zlen_rf_unit"]
     # Wave guide max
     xminb = [ 0.0,  geo["world"]["rbound1"], 
@@ -257,7 +261,6 @@ def crBodies4Holes_up(geo):
                   zcenter + gwg["width"]*0.5 + gwg["wall_thickness"]) ]
 
         zcenterb = zcenter 
-        nbend = int(geo["Holes"]["wave_guides"]["nbend"])
         for ib in range(1, nbend + 1):
             wallth = gwg["wall_thickness"]
             xming = xminb[ib]
@@ -283,6 +286,29 @@ def crBodies4Holes_up(geo):
                      -gwg["height"]*0.5 - wallth, gwg["height"]*0.5 + wallth, 
                      zcenterb - gwg["zoffset"][ib] - gwg["width"]*0.5 - wallth, 
                      zcenterb - gwg["width"]*0.5 - wallth)] 
+
+    # Vacuum pipes in target area
+    r_tvcri = geo["Target"]["vacuum_chamber_R_r_max"] - geo["RF"]["vacuum_chamber_thick"] + \
+              geo["Target"]["Wdisk_axis_offset"] - 2.0
+    r_tshro = geo["Target"]["vacuum_chamber_R_r_max"] + geo["Target"]["WShield_thickness"] + \
+              geo["Target"]["Wdisk_axis_offset"]
+    rbound = [r_tvcri, r_tshro, xminb[-2], xminb[-1] ]
+    rbound[nbend+1] = rbound[-1]
+    zcenters = geo["Holes"]["vacpipe"]["zcenters"]
+    vcrad = geo["Holes"]["vacpipe"]["radius"]
+    vwrad = vcrad + geo["Holes"]["vacpipe"]["wall_thickness"]
+    for ib in range(0, nbend+1):
+        zcenter = zcenters[ib]
+        xcenter = cbrbound[ib] 
+        rlen = rbound[ib+1] - rbound[ib] + vwrad 
+        body += [ "RCC vcrc0%d %f 0.0 %f %f 0.0 0.0 %f" % ( ib, rbound[ib] + geo["Holes"]["vacpipe"]["wall_thickness"], zcenter, rlen, vcrad ) ]
+        body += [ "RCC vcrw0%d %f 0.0 %f %f 0.0 0.0 %f" % ( ib, rbound[ib], zcenter, rlen, vwrad ) ]
+        if ib != 0:
+           zlen = geo["Holes"]["vacpipe"]["zcenters"][ib-1] - geo["Holes"]["vacpipe"]["zcenters"][ib]  
+           body += [ "RCC vcbc0%d %f 0.0 %f 0.0 0.0 %f %f" % (ib, rbound[ib] + vwrad, 
+                      zcenter-vcrad, zlen + 2*vcrad, vcrad )]
+           body += [ "RCC vcbw0%d %f 0.0 %f 0.0 0.0 %f %f" % (ib, rbound[ib] + vwrad, 
+                      zcenter-vwrad, zlen + 2*vwrad, vwrad )]
 
     return body
 
@@ -378,7 +404,20 @@ def crZone1(geo, fd):
               ib = nbend if ib0 > nbend else ib0
               region += [ "CBGUP%d%d 6 +cbrg%d%d -cbrc%d%d" % (irf, ib0, irf, ib, irf, ib) + rlimit[ib0] ]
               assignma += ["ASSIGNMA %10s%10s" % ("AIR", "CBGUP%d%d"%(irf,ib0)) + beamoff5 ]  
-
+        
+       vcc = []
+       vcw = []
+       for ib in range(0, nbend+1):
+          vcc.append(" vcrc0%d " % ib )
+          vcw.append(" vcrw0%d " % ib )
+          if ib != 0:
+             vcc.append(" vcbc0%d " % ib )
+             vcw.append(" vcbw0%d " % ib )
+       region += [ "VCCTAR 6 +rcyl3 -tvcri +( " + "|".join(vcc) + " )",
+                   "VCWTAR 6 +rcyl3 -tvcri +( " + "|".join(vcw) + " ) -( " + "|".join(vcc) + ") "]
+       assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "VCCTAR"), 
+                     "ASSIGNMA %10s%10s" % ("STAINLES", "VCWTAR") + beamoff5 ]
+    
 
     assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "BPvac1"), 
                   "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe1") + beamoff5, 
