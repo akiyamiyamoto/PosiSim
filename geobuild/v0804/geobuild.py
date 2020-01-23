@@ -112,7 +112,9 @@ def createGeoParam():
         "CSh_up_distance":200.0, # Distance between first and second concrete sheild in the upstream
         "CSh_down_thick":30.0, # Thickness of downsream concrete sheield coverging target area
         "CSh_down_thick3":50.0, # Thickness of downsream concrete sheield coverging target area
-        "FeSh_thick": 20.0, # Thickness of Iron sheild inside of concrete sheild
+        # "FeSh_thick": 20.0, # Thickness of Iron sheild inside of concrete sheild
+        "FeSh_thick": 5.0, # Thickness of Iron sheild inside of concrete sheild
+        "FeSh_thick_downstream": 20.0, # Thickness of Iron sheild inside of concrete sheild
         "FeSh_thick_upstream": 20, # Thickness of Iron shield of upstream.
         "BPrin":1.5, # Beam pipe inner radius 
         "BPthick":0.5} # Beam pipe thickness
@@ -251,7 +253,7 @@ def createGeoParam():
                      "xcenter": 78.0, # X center position, which runs in Z direction.
                      "zcenter": 98.02,  # Z center position, which runs in X direction
                      "nbend": 2, # Nb of bend in Z direction
-                     "zoffset": [ 0.0, 55.0, 55.0 ] } # offset in Z direction, when wave guide was bended. 
+                     "zoffset": [ 0.0, 92.0, 18.0 ] } # offset in Z direction, when wave guide was bended. 
                      #  "zoffset": [ 0.0, 25.0, 25.0 ] } # offset in Z direction, when wave guide was bended. 
                                                  # This applies to cables and water_lines as well.
                                                  # First entry is for the one attached to the cavity
@@ -274,7 +276,7 @@ def createGeoParam():
                      "zcenter_solenoid": 91.0} # z center for solenoid cooling water  
     geo["Holes"]["vacpipe"] = { "radius":2.5, # Radius of the vacuum part of vacuum pipe for target area
                      "wall_thickness": 0.5, # Thickness of vacuum pipe
-                     "zcenters":[5.0, -17.0, -50.0] } # Zcenter of vacuum pipe 
+                     "zcenters":[5.0, -50.0, -70.0] } # Zcenter of vacuum pipe 
 
     if geo["Holes"]["mode"] == "up":
        geo["Holes"]["water_lines"]["zcenter_solenoid"] = geo["Holes"]["wave_guides"]["zcenter"] - \
