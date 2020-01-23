@@ -112,8 +112,7 @@ def createGeoParam():
         "CSh_up_distance":200.0, # Distance between first and second concrete sheild in the upstream
         "CSh_down_thick":30.0, # Thickness of downsream concrete sheield coverging target area
         "CSh_down_thick3":50.0, # Thickness of downsream concrete sheield coverging target area
-        # "FeSh_thick": 20.0, # Thickness of Iron sheild inside of concrete sheild
-        "FeSh_thick": 5.0, # Thickness of Iron sheild inside of concrete sheild
+        "FeSh_thick": 20.0, # Thickness of Iron sheild inside of concrete sheild
         "FeSh_thick_downstream": 20.0, # Thickness of Iron sheild inside of concrete sheild
         "FeSh_thick_upstream": 20, # Thickness of Iron shield of upstream.
         "BPrin":1.5, # Beam pipe inner radius 

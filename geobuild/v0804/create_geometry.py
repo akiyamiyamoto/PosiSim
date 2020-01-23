@@ -101,9 +101,12 @@ def crWorld(geo, fd):
        "InShldc  6 -z3inpln2 +z3inpln3 +rcyl2 -rcyl1 ",
 
        "MidAird  6 -z3inpln3 +zbound5 +rcyl2 -rcyl1 " + " ".join(rexclude[2:]),
-       "InShld  6 +zbound5 -zbound1 +rcyl1 -rcylin " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]) + rextar ]
+       "InShldf  6 +zbound2 -zbound1 +rcyl1 -rcylin " ,
+       "InShldu  6 +z3inpln1 -zbound2 +rcyl1 -rcylin " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]) + rextar,  
+       "InShld  6 +zbound5 -z3inpln1 +rcyl1 -rcylin " + " ".join(rexclude[1:]) + " ".join(rexclgap[1:]) ]
 
     # Assign material to each region
+    upward1 = "%30s%10s%20s" % ("","VACUUM","upward1")
     assignma += ["*","* Assign material ","*",
        "*********1*********2*********3*********4*********5*********6*********7*********8",
        "*","ASSIGNMA   BLCKHOLE  BlHole",
@@ -112,6 +115,8 @@ def crWorld(geo, fd):
            "ASSIGNMA %10s%10s" % ("AIR", "MidAir0"), 
            "ASSIGNMA %10s%10s" % ("AIR", "MidAird"), 
            "ASSIGNMA %10s%10s" % ("CONCRETE", "InShld"),
+           "ASSIGNMA %10s%10s" % ("CONCRETE", "InShldf"),
+           "ASSIGNMA %10s%10s" % ("CONCRETE", "InShldu") + upward1,
            "ASSIGNMA %10s%10s" % ("CONCRETE", "InShld0")]
     for k in ["a", "b", "c"]:
         assignma += [
@@ -335,7 +340,6 @@ def crZone1(geo, fd):
     elif geo["Holes"]["mode"] == "up":
         body += crBodies4Holes_up(geo) 
 
-    beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
 
     assignma = ["*", "* **** Created by crZone1 ************************ "]
     region = ["*", "* **** Created by crZone1 ************************ ",
@@ -345,7 +349,9 @@ def crZone1(geo, fd):
                 "Z1upair  6 +z1pln1 -z1cs0end +rcylin - rcylbpou", 
                 "Z1upair0 6 +z1cs0bgn -zbound1 +rcylin - rcylbpou"]
 
+    beamoff5 = ""
     if geo["Holes"]["mode"] == "front":
+       beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
        region_wg = " +wgxup -wgxdn +wgxsdp -wgxsdm "
        region_wgw = " +wgxwup -wgxwdn +wgxwsdp -wgxwsdm "
        region_cbwl = " -cbgrot -cbgfc -cbsol -cbgsol -wlsol -wlfc -wlrot "
@@ -387,14 +393,14 @@ def crZone1(geo, fd):
                bodies += " | +wlrc%d%d | +wlbc%d%d " % (irf, ib, irf, ib )
            regname = "WLUP%d" % irf
            region += [ regname + " 6 +rcyl3 -r%dBscpo + ( " % irf + bodies + ")"]
-           assignma += [ "ASSIGNMA %10s%10s" % ("WATER", regname) + beamoff5 ] 
+           assignma += [ "ASSIGNMA %10s%10s" % ("WATER", regname) ] 
 
            bodies = " +cbrc%d0 " % irf
            for ib in range(1, geo["Holes"]["wave_guides"]["nbend"]+1):
                bodies += " | +cbrc%d%d | +cbbc%d%d " % (irf, ib, irf, ib )
            regname = "CBUP%d" % irf
            region += [ regname + " 6 +rcyl3 -r%dBsolo + ( " % irf + bodies + ")"]
-           assignma += [ "ASSIGNMA %10s%10s" % ("Copper", regname) + beamoff5 ] 
+           assignma += [ "ASSIGNMA %10s%10s" % ("Copper", regname) ] 
  
            rlimit = [ " +rbound1 -r%dBsolo "% irf , " +rcyl1 -rcylin ", " +rcyl3 -rcyl2 " ]
            if nbend == 0 and irf == 1:
@@ -403,7 +409,7 @@ def crZone1(geo, fd):
            for ib0 in range(0, len(rlimit)):
               ib = nbend if ib0 > nbend else ib0
               region += [ "CBGUP%d%d 6 +cbrg%d%d -cbrc%d%d" % (irf, ib0, irf, ib, irf, ib) + rlimit[ib0] ]
-              assignma += ["ASSIGNMA %10s%10s" % ("AIR", "CBGUP%d%d"%(irf,ib0)) + beamoff5 ]  
+              assignma += ["ASSIGNMA %10s%10s" % ("AIR", "CBGUP%d%d"%(irf,ib0)) ]  
         
        vcc = []
        vcw = []
@@ -416,7 +422,7 @@ def crZone1(geo, fd):
        region += [ "VCCTAR 6 +rcyl3 -tvcri +( " + "|".join(vcc) + " )",
                    "VCWTAR 6 +rcyl3 -tvcri +( " + "|".join(vcw) + " ) -( " + "|".join(vcc) + ") "]
        assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "VCCTAR"), 
-                     "ASSIGNMA %10s%10s" % ("STAINLES", "VCWTAR") + beamoff5 ]
+                     "ASSIGNMA %10s%10s" % ("STAINLES", "VCWTAR") ]
     
 
     assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "BPvac1"), 
@@ -454,7 +460,7 @@ def crZone3(geo, fd):
               "* *************************************"]
 
     zb1 = gworld["zbound3"] + glbal["FeSh_zone3_z_length"]
-    zb2 = zb1 + glbal["FeSh_thick"]
+    zb2 = zb1 + glbal["FeSh_thick_downstream"]
     zb3 = zb2 + glbal["CSh_down_thick"]
     zb4 = zb1 + grf["zlen_rf_unit"]
     zb5 = zb4 + glbal["CSh_down_thick3"]
@@ -497,8 +503,9 @@ def crZone3(geo, fd):
         region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1" + " ".join(rexclude[3:]) ]
         region += ["Z3inCSh3 6 +z3inpln5 -z3inpln4 +rcylin -rbound1" ]
 
+    upward2 = "%30s%10s%20s" % ("","VACUUM","upward2")
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir1") ]
-    assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "Z3inFeS1") ]
+    assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "Z3inFeS1") + upward2 ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "Z3inFeS2") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CONCRETE", "Z3inCSh1") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir3") ]
@@ -519,9 +526,9 @@ def crZone4(geo, fd):
                 "Z4air    6 +zbound5 -zbound4 +rcylin -rcylbpou"])
 
     fd.AddAssignmat(["*", "* **** Created by crZone1 ************************ ",
-                  "ASSIGNMA %10s%10s" % ("VACUUM", "BPvac4"),
-                  "ASSIGNMA %10s%10s" % ("STAINLES", "BPpipe4"),
-                  "ASSIGNMA %10s%10s" % ("AIR", "Z4air")])
+                  "ASSIGNMA %10s%10s" % ("BLCKHOLE", "BPvac4"),
+                  "ASSIGNMA %10s%10s" % ("BLCKHOLE", "BPpipe4"),
+                  "ASSIGNMA %10s%10s" % ("BLCKHOLE", "Z4air")])
 
     fd.AddRegion(["***** End of crZone4 region. ****","*"])
     fd.AddAssignmat( ["**** End of crZone4 assignmat. ****", "*"])

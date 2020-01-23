@@ -79,9 +79,10 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
         zlen_rfs += geo["bases"]["Collimator_thickness"]
         body.append("RCC r1Bfrg 0.0 0.0 %f 0.0 0.0 %f %f" % (zbegins, grf["collimator_frange_thickness"],
                      grf["vacuum_chamber_rmin"] +grf["vacuum_chamber_thick"] ) )
-        beamoff3 = "%30s%10s%20s" % ("","VACUUM","beamoff3")
-        beamoff4 = "%30s%10s%20s" % ("","VACUUM","beamoff4")
-        beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
+        if geo["Holes"]["mode"] == "front":
+            beamoff3 = "%30s%10s%20s" % ("","VACUUM","beamoff3")
+            beamoff4 = "%30s%10s%20s" % ("","VACUUM","beamoff4")
+            beamoff5 = "%30s%10s%20s" % ("","VACUUM","beamoff5")
 
          
     body.append("RCC %s 0.0 0.0 %f 0.0 0.0 %f %f" % ( solout, zbegins, zlen_rfs, sol_rmax ) )
@@ -347,7 +348,7 @@ def crRFHoles(geo, fd, nrf):
         region += ["WavZG3%d 6 %s  %s " % (nrf, region_zwg2, exclcav ),
               "WavZGW3%d 6 %s -( %s )  %s " % (nrf, region_zwgw2, region_zwg2, exclcav )]
         assignma += ["ASSIGNMA %10s%10s" % ("VACUUM", "WavZG3%d" % nrf ) ,
-                     "ASSIGNMA %10s%10s" % ("Copper", "WavZGW3%d" % nrf) + beamoff4]
+                     "ASSIGNMA %10s%10s" % ("Copper", "WavZGW3%d" % nrf) ]
 
     fd.Add(body, region, assignma)
 
