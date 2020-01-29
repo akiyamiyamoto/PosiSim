@@ -3,6 +3,10 @@ v5
 v6
 v0603
 assignmat-decay*.inc
+assignmat-nodecay.inc
 *-v*.inc
 *.pyc
+*.pdf
+*.json
 temp
+temp/*
