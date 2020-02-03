@@ -15,6 +15,9 @@ MATERIAL                              1.                              LIQSEAL
 MATERIAL                            2.43                              CONCRETE
 MATERIAL                            8.94                              Copper
 MATERIAL                            19.7                              WShield
+MATERIAL                            7.87                              LOWCIRON
+MATERIAL         27.                 8.9                              COBALT
+*
 COMPOUND       -0.75  TUNGSTEN     -0.25   RHENIUM    -5E-05    COBALTTARMAT
 COMPOUND          2.  HYDROGEN        1.    OXYGEN                    WATER
 *
@@ -25,19 +28,19 @@ COMPOUND      -0.513    OXYGEN   -0.0042  MAGNESIU   -0.0079  ALUMINUMCONCRETE
 COMPOUND      -0.157   SILICON   -0.0042    SULFUR     -0.23   CALCIUMCONCRETE
 COMPOUND      -0.005      IRON    -5E-05    COBALT                    CONCRETE
 *
-* Stainless-Steel SUS316
-*
-COMPOUND     -0.0008    CARBON     -0.01   SILICON     -0.02  MANGANESSTAINLES
-COMPOUND    -0.00045   PHOSPHO   -0.0003    SULFUR     -0.16  CHROMIUMSTAINLES
-COMPOUND        -0.1    NICKEL     -0.02  MOLYBDEN   -68.845      IRONSTAINLES
-COMPOUND     -0.0001    COBALT                                        STAINLES
+* Stainless-Steel SUS316LN (Same as fluka's Steel316LN )+0.02Mo
+* Fe65%,Cr18%,Ni11%,Mn1.9%,Si0.97%,Mo1.9%,P0.03%,S0.29%,C0.29%
+COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELSTAINLES
+COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOSTAINLES
+COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MORYBDENSTAINLES
+COMPOUND     -0.0001    COBALT                                        STAINLES 
 *
 * Light SUS for the Target rotator structure
 *
-COMPOUND     -0.0008    CARBON     -0.01   SILICON     -0.02  MANGANESLIGHTSUS
-COMPOUND    -0.00045   PHOSPHO   -0.0003    SULFUR     -0.16  CHROMIUMLIGHTSUS
-COMPOUND        -0.1    NICKEL     -0.02  MOLYBDEN   -68.845      IRONLIGHTSUS
-COMPOUND     -0.0001    COBALT                                        LIGHTSUS
+COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELSTAINLES
+COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOSTAINLES
+COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MORYBDENSTAINLES
+COMPOUND     -0.0001    COBALT                                        STAINLES 
 *
 * Liquid Seal material
 *
@@ -46,16 +49,23 @@ COMPOUND     -85.700    CARBON   -14.300  HYDROGEN                    LIQSEAL
 * Cast Iron UNS F33100
 *
 COMPOUND     -0.0365    CARBON  -0.00334  MANGANES -0.000575   PHOSPHOCASTIRON
-COMPOUND      -0.024   SILICON   -0.0002    SULFUR  -93.5385      IRONCASTIRON
+COMPOUND      -0.024   SILICON   -0.0002    SULFUR -0.935835      IRONCASTIRON
 COMPOUND      -5E-05    COBALT                                        CASTIRON
 *
 * Wshield
 *
 COMPOUND         -1.  TUNGSTEN    -5E-05    COBALT                    WShield
 *
+* Iron for Return yoke : Laminated pure iron
+* Product of Tokusyu-Kinzoku Excel
+* Ref: https://www.tokkin.co.jp/materials/common_steel/suy-1
+*
+COMPOUND      -0.004    CARBON     -0.01   SILICON    -0.170  MANGANESLOWCIRON
+COMPOUND      -0.010   PHOSPHO    -0.005    SULFUR   -99.801      IRONLOWCIRON
+COMPOUND     -0.0001    COBALT
+*
 * Copper
 COMPOUND         -1.    COPPER    -5E-05    COBALT                    Copper
-MATERIAL         27.                 8.9                              COBALT
 MAT-PROP                            297.    COBALT
 MAT-PROP         40.                        COBALT                    DPA-ENER
 MAT-PROP         40.                        Copper                    DPA-ENER
