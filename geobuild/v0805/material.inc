@@ -30,17 +30,18 @@ COMPOUND      -0.005      IRON    -5E-05    COBALT                    CONCRETE
 *
 * Stainless-Steel SUS316LN (Same as fluka's Steel316LN )+0.02Mo
 * Fe65%,Cr18%,Ni11%,Mn1.9%,Si0.97%,Mo1.9%,P0.03%,S0.29%,C0.29%
+*
 COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELSTAINLES
 COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOSTAINLES
-COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MORYBDENSTAINLES
+COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MOLYBDENSTAINLES
 COMPOUND     -0.0001    COBALT                                        STAINLES 
 *
 * Light SUS for the Target rotator structure
 *
-COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELSTAINLES
-COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOSTAINLES
-COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MORYBDENSTAINLES
-COMPOUND     -0.0001    COBALT                                        STAINLES 
+COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELLIGHTSUS
+COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOLIGHTSUS
+COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MOLYBDENLIGHTSUS
+COMPOUND     -0.0001    COBALT                                        LIGHTSUS 
 *
 * Liquid Seal material
 *
@@ -61,8 +62,8 @@ COMPOUND         -1.  TUNGSTEN    -5E-05    COBALT                    WShield
 * Ref: https://www.tokkin.co.jp/materials/common_steel/suy-1
 *
 COMPOUND      -0.004    CARBON     -0.01   SILICON    -0.170  MANGANESLOWCIRON
-COMPOUND      -0.010   PHOSPHO    -0.005    SULFUR   -99.801      IRONLOWCIRON
-COMPOUND     -0.0001    COBALT
+COMPOUND      -0.010   PHOSPHO    -0.005    SULFUR  -0.99801      IRONLOWCIRON
+COMPOUND     -0.0001    COBALT                                        LOWCIRON
 *
 * Copper
 COMPOUND         -1.    COPPER    -5E-05    COBALT                    Copper
