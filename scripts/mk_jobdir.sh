@@ -12,6 +12,7 @@ njob_end=200
 job_queue="l"
 nrun_begin=0
 nrun_end=2
+opts=""
 sourcedir="${FLUKA}/init_fluka92.sh"
 fluka_inp=""
 jobname_key=""
@@ -46,7 +47,7 @@ mkdir -p ${jobs}
           fi
           ranv=`printf "%d%3.3d" ${RANDOM} ${jseq}`
           printf "%-10s%9d.%9d." "RANDOMIZ" 1 ${ranv} > random.inc
-          cmd="rflukadpm3 -N${nrun_begin} -M${nrun_end} ${thisinp}"
+          cmd="rflukadpm3 ${opts} -N${nrun_begin} -M${nrun_end} ${thisinp}"
           echo "Fluka command is ${cmd}" >> ${logfile}
           echo "" >> ${logfile}
           jobid="${jobname_key}${jseqstr}"
