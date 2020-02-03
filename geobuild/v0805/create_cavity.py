@@ -150,7 +150,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     body += ["RCC r%dryi 0.0 0.0 %f 0.0 0.0 %f %f" % (nrf, zbegins, yoke_len,
                   grf["solenoid_outer_radius"] )]
     region   += [ "R%dyoke 6 +r%dryo  -r%dryi " % (nrf, nrf, nrf) + exclwl  + exclcb + exclwg ]
-    assignma += [ "ASSIGNMA %10s%10s" % ("STAINLES", "R%dyoke" % nrf) + beamoff4 ]
+    assignma += [ "ASSIGNMA %10s%10s" % ("LOWCIRON", "R%dyoke" % nrf) + beamoff4 ]
 
     # Collimator mask for the first cavity
     if nrf == 1:
@@ -176,7 +176,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     if nrf == 1:
        region[-1] += " -colmsko "
        region += ["Colvac 6 +colmski"]
-       assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "Colvac" ) ]
+       magon = "" if geo["Target"]["MagField"] == "Off" else "1.0"
+       assignma += [ "ASSIGNMA %10s%10s%20s%10s" % ("VACUUM", "Colvac","",magon ) ]
        region += ["R%dair 6 " % nrf + 
                 " +r%dairo -r%dbpw - (+r%dsolso -r%dsolsi) " % (nrf, nrf, nrf, nrf)  + 
                 " -r%dbpfr1 -r%dbpfr2 " % (nrf, nrf ) + 

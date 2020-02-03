@@ -229,6 +229,7 @@ def createGeoParam():
                  "Collimator_cooling_pipe_thickness": 0.7, # Collimator cooling pipe thickness
                  "Collimator_cooling_pipe_offset": 1.0 } # Collimator cooling pipe 
                                           # distance fron front, back, and inner surface.
+    geo["Target"]["MagField"] = "On"
     gtar = geo["Target"]
     grfp["Collimator_rmax"] = grfp["r_cavity_outer_wall"]
     grfp["Collimator_rmin"] = grfp["r_cavity_beam_pipe"]

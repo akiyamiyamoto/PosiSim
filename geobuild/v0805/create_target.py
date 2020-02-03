@@ -135,7 +135,8 @@ def crRotationTarget(geo, fd):
     beamoff2 = "%30s%10s%20s" % ( "", "VACUUM", "beamoff2") if geo["Holes"]["mode"] == "front" else ""
     assignma += [ "ASSIGNMA %10s%10s" % ("Copper", "TFC") + beamoff2 ]
     region += ["TFCvac 6 +tfci "]
-    assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "TFCvac") ]
+    magon = "" if geo["Target"]["MagField"] == "Off" else "1.0"
+    assignma += [ "ASSIGNMA %10s%10s%20s%10s" % ("VACUUM", "TFCvac","",magon) ]
     envelops["TFC"] = " -tfco "
 
     # Downstream part of FC
@@ -343,7 +344,9 @@ def crSupportStructure(geo, fd, envelops):
           notvac += envelops[key]
     # print notvac
     region += ["TVCvac 6 ( +tvcrsi | +tvcbsi ) " + notvac ]
-    assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "TVCvac") ]
+    # assignma += [ "ASSIGNMA %10s%10s" % ("VACUUM", "TVCvac") ]
+    magon = "" if geo["Target"]["MagField"] == "Off" else "1.0"
+    assignma += [ "ASSIGNMA %10s%10s%20s%10s" % ("VACUUM", "TVCvac","",magon) ]
 
     # Beam pipe upstream of target
     bp_zlen = gtar["vacuum_chamber_R_z_begin"] + vc_thick -zbegin
