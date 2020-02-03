@@ -14,7 +14,7 @@
       do 200 ix = 1, 5
         x = 1.0 *(ix-1)
         open(10,file=filename(ix),form='formatted',status='unknown')
-        do 100 i=0, 500
+        do 100 i=0, 90020
           z = -2.0 + 0.1*i
 *          x=1.0d0
 *          z=0.2d0

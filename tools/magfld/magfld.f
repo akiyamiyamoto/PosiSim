@@ -47,8 +47,10 @@
       integer*4 numdata, numdummy 
 
 *     zdata, rmax is cm unit.
-      data zrange/  -2.0D0, 30.0D0 /
-      data rmax/ 3.0D0 /
+*      data zrange/  -2.0D0, 30.0D0 /
+      data zrange/  -2.0D0, 1050.0D0 /
+      data rmax/ 10.0D0 /
+*      data rmax/ 3.0D0 /
       data zstep/0.05d0/
 *     Z of FC in the field map (cm)
       data zfcmap/  0.5d0 /
@@ -57,7 +59,7 @@
       
       real*8 znow
       integer l_dir, l_name
-      parameter ( maxdata = 1000 )
+      parameter ( maxdata = 30000 )
       real*8 bdata(4,maxdata), readbuf(6)
       integer*4 iread/99/
 
