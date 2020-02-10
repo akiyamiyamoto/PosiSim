@@ -45,11 +45,15 @@
       REAL*8   zrange(2), rmax
       REAL*8   zstep, zfdmap, zfcreal, zmap
       integer*4 numdata, numdummy 
+      REAL*8   fcrin(2), fczlen, rbound
 
 *     zdata, rmax is cm unit.
 *      data zrange/  -2.0D0, 30.0D0 /
       data zrange/  -2.0D0, 1050.0D0 /
       data rmax/ 10.0D0 /
+      data fcrin/  1.0d0, 3.2d0 /
+      data fczlen/10.0d0/    
+
 *      data rmax/ 3.0D0 /
       data zstep/0.05d0/
 *     Z of FC in the field map (cm)
@@ -140,14 +144,23 @@ c      BTX   = UMGFLD
 c      BTY   = VMGFLD
 c      BTZ   = WMGFLD
 c      B     = BIFUNI
+c     BTX,BTY,BTZ are direction vector of unit 1.
+c     B is the magnitude of magnetic field
       BTX   = 0.0d0
       BTY   = 0.0d0
       BTZ   = 1.0d0
       B     = 0.0d0
+c  zmap, rnow, x,y,z is in cm unit.
       zmap = z - zfcmc + zfcmap 
       rnow = sqrt( x*x + y*y )
       if ( zmap.le. zrange(1) .or. zmap .ge. zrange(2) .or. 
      >   rnow .gt.rmax ) then 
+         return
+      endif
+    
+      rbound = fcrin(1) + 
+     >        (fcrin(2)-fcrin(1))/fczlen*(zmap-zrange(1))
+      if ( rnow .gt. rbound ) then 
          return
       endif
 *
@@ -164,8 +177,8 @@ c      B     = BIFUNI
       bz1 = bdata(3, ip) + ( bdata(3,ip+1)-bdata(3,ip) ) * zscale
       bz2 = bdata(4, ip) + ( bdata(4,ip+1)-bdata(4,ip) ) * zscale
       
-      br = ( -0.5d0*rnow*1.0d-2*bz1 )
-      bz = ( bz0 - 0.25d0*rnow*rnow*1.0d-4*bz2 )
+      br = ( -0.5d0*rnow*10.0*bz1 )
+      bz = ( bz0 - 0.25d0*rnow*rnow*100.0*bz2 )
       if ( rnow .gt. 0.0d0 ) then 
         bx = br * x / rnow
         by = br * y / rnow

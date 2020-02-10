@@ -4,15 +4,18 @@
       implicit real*8 (A-H,O-Z)
 
       character*32 filename(5)
-      data filename/'data/bfdata-r00.dat', 'data/bfdata-r10.dat',
-     >              'data/bfdata-r20.dat',
-     >              'data/bfdata-r30.dat', 'data/bfdata-r40.dat'/
+c      data filename/'data/bfdata-r00.dat', 'data/bfdata-r10.dat',
+c     >              'data/bfdata-r20.dat',
+c     >              'data/bfdata-r30.dat', 'data/bfdata-r40.dat'/
+      data filename/'data/bfdata-r00.dat', 'data/bfdata-r05.dat',
+     >              'data/bfdata-r10.dat',
+     >              'data/bfdata-r15.dat', 'data/bfdata-r20.dat'/
 
 *     x,y,z in cm unit, b in tesla
       x=0.0d0
       y=0.0d0
       do 200 ix = 1, 5
-        x = 1.0 *(ix-1)
+        x = 0.5 *(ix-1)
         open(10,file=filename(ix),form='formatted',status='unknown')
         do 100 i=0, 90020
           z = -2.0 + 0.1*i
