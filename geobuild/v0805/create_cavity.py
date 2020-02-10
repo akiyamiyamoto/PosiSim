@@ -266,6 +266,8 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
     vacregion = "%s 6 " % vacreg + " | ".join(cav_region["front"]+cav_region["back"])
     region += join2FixedLength(vacregion.split())
     magon = "" if geo["Target"]["MagField"] == "Off" else "1.0"
+    if nrf != 1:
+       magon = ""
     assignma += [ "ASSIGNMA %10s%10s%20s%10s" % ("VACUUM", vacreg,"",magon ) ]
 
     # Cooling pipe in RF structure
