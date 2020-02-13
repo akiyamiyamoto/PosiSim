@@ -9,7 +9,7 @@ add_usrbin()
    #for fu in `seq 71 76` `seq 81 85` `seq 90 93` ; do 
    echo "fort data with unit ${usrbin_unit} are added"
    for fu in ${usrbin_unit} ; do
-       outname="$2-f${fu}"
+       outname="$2_${fu}"
        find ${tdir}/job* -name "*_fort.${fu}" -print > ${outname}.usbsuw
        echo "" >> ${outname}.usbsuw
        echo "${outname}" >> ${outname}.usbsuw

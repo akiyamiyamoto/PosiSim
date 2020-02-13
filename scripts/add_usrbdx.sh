@@ -46,16 +46,17 @@ exec_usrsuw()
    outdir=$2
    fu=$3
 
-   outpref=`( cd ${srcdir}/job001 && /bin/ls *.inp | sed -e "s/\.inp//g" )` 
+   outpref=`( cd ${srcdir}/job001 && /bin/ls *.inp | grep -v "-echo" | sed -e "s/\.inp//g" )` 
   
-#   mkdir -p ${outdir}
+   if [ ! -e ${outdir} ] ; then
+     mkdir -p ${outdir}
+   fi
    ( 
       cd ${outdir}
-      outname="${outpref}-f${fu}"
+      outname="${outpref}_${fu}"
       find ${srcdir} -name "*_fort.${fu}" -print > ${outname}.usxsuw
       echo "" >> ${outname}.usxsuw
-      echo "${outname}" >> ${outname}.usxsuw
-      cat ${outname}.usxsuw
+      echo "${outname}" >> ${outname}.usxsuw 
       usxsuw < ${outname}.usxsuw 2>&1 | tee  ${outname}.log  
       tabfile=`/bin/ls ${outname}_tab.lis | head -1`
       echo "######## tabfile ${tabfile} .... outname ${outname} ############ "
@@ -74,6 +75,7 @@ print ostr
 EOF
 }
 
+# ###### Main part of this script #############################
 source setting.ini
 
 echo ${usrbdx_unit}

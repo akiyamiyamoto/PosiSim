@@ -5,8 +5,7 @@
 import os
 import json
 import pprint
-
-
+import add_resnucle
 
 # =================================================
 def getRegionActivity(runit_in, volregion, resnuclei, atomic_number="1", mass_number="3"):
@@ -63,7 +62,8 @@ def activity_table_csv(version, region_unit):
 
     csvfile="activity_table.csv"
     lines = ["Reg.,Vol.(l),"]
-    pdata = ["1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"] 
+    # pdata = ["1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"] 
+    pdata = ["1h", "1d", "4d", "1m", "1y", "Xy" ]
     lines[0] += ",".join(pdata)
 
     data_bqrate = []

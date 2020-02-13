@@ -7,6 +7,7 @@ import json
 import ROOT
 
 _DATA_UNITS=range(30, 38)
+
 _INPUT_DATA_DIR="jobs/job*"
 # _ROOT_FILE_NAME="resnuclei.root"
 _OUTPUT_DATA_DIR="resnuclei_data"
@@ -61,7 +62,7 @@ def add_resnucle(out_prefix, fid):
     alldata = {}
 
     for fu in _DATA_UNITS:
-        outname = "%s-f%2.2d" % ( outdir, fu )
+        outname = "%s_%2.2d" % ( outdir, fu )
         flist=outname+".usrsuw" 
         tfiles = glob.glob("../%s/*_fort.%s" % ( _INPUT_DATA_DIR, str(fu) )) 
         # print tfiles
@@ -110,6 +111,28 @@ def add_resnucle(out_prefix, fid):
     os.chdir(cwd)
 
     return alldata
+
+##########################################################
+def get_resnuclei_unit_no(version):
+
+    # set unit umber from a file.
+    resnuclei_file = "geobuild/decayscore"+version+".inc"
+    # print(" resnuclei_file="+resnuclei_file)
+
+    unitno = []
+    if os.path.exists(resnuclei_file):
+        print("resnuclei unit numbers obtained from "+resnuclei_file)
+        for line in open(resnuclei_file):
+           if line[0:8] == "RESNUCLE":
+              unitstr = line[20:29].replace("-","").split(".")[0].replace(" ","")
+              if int(unitstr) not in unitno:
+                  unitno.append(int(unitstr))
+    #    if len(unitno) > 0:
+    #       _DATA_UNITS = unitno
+
+    # print("add_resnuclei unit number are "+" ".join(_DATA_UNITS))
+    return unitno
+
     
 ##########################################################
 if __name__ == "__main__":
@@ -117,12 +140,10 @@ if __name__ == "__main__":
     if os.path.exists("setting.py"):
        execfile("setting.py")
 
-
-    # rf = ROOT.TFile(_ROOT_FILE_NAME,"recreate")
-    # nt = ROOT.TNtuple("nt","resnuclei","fid:fno:did:isiso:a:z:m:nb:r")
+    unitno = get_resnuclei_unit_no(_VERSION)
+    print( "unitno is " + str(unitno))
+    if len(unitno) > 0:
+       _DATA_UNITS = unitno
 
     data = add_resnucle(_OUTPUT_DATA_DIR, 1)
-
-    # nt.Write()
-    # rf.Close()
 
