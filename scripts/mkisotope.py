@@ -6,6 +6,7 @@ import json
 import pprint
 
 import ROOT
+import add_resnucle
 
 _DATA_UNITS=range(30, 38)
 _INPUT_DATA_DIR="jobs/job*"
@@ -41,9 +42,12 @@ def get_hot_atoms(jdata, thick, fu, fout, actmin = 1.0):
     isotype="isotopes"
     ipiso = 2
     
-    period=["1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"]
-    _PLOT_PERIOD=[1, 6, 8, 10, 11]
-    _PLOT_PERIOD=[1, 2, 4, 5, 6, 8, 9, 10, 11]
+    # period=["1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"]
+    # _PLOT_PERIOD=[1, 6, 8, 10, 11]
+    # _PLOT_PERIOD=[1, 2, 4, 5, 6, 8, 9, 10, 11]
+    resnuclei_config = json.load(open("resnuclei_config.json"))
+    period = resnuclei_config["DATA_PERIOD"]
+    PLOT_PERIOD = resnuclei_config["PLOT_PERIOD"]
     # ind=0
     # colorcode=[0,1,2,3,4,6]
     key="f%d-dn1" % ( int(fu)) 
@@ -51,7 +55,7 @@ def get_hot_atoms(jdata, thick, fu, fout, actmin = 1.0):
 
     atom_index = []
     active_atom = {}
-    for dtype in _PLOT_PERIOD:
+    for dtype in PLOT_PERIOD:
        key="f%d-dn%d" % ( int(fu), int(dtype) )
        hotatom = []       
        header.append( jdata[key]["detname"][0:2] )
@@ -136,18 +140,22 @@ def mk_plots_isotopes(jdata, thick, fu, rf, xaxis="Z"):
     detlist=""
     # Index for _PLOT_PERIOD
     #         0      1    2     3     4     5     6     7     8     9     10    11
-    period=["pri", "1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"]
+    # period=["pri", "1s", "1M", "1h", "1d", "1w", "1m", "3m", "1y", "4y", "Xy", "Zy"]
     # _PLOT_PERIOD=[1, 6, 8, 10, 11]
-    _PLOT_PERIOD=[1, 4, 7, 8, 10]
-    for dtype in _PLOT_PERIOD:
+    # _PLOT_PERIOD=[1, 4, 7, 8, 10]
+    # execfile("resnuclei_config.py")
+    resnuclei_config = json.load(open("resnuclei_config.json"))
+    period = resnuclei_config["DATA_PERIOD"]
+    PLOT_PERIOD = resnuclei_config["PLOT_PERIOD"]
+    for dtype in PLOT_PERIOD:
        key="f%d-dn%d" % ( int(fu), int(dtype) )
        detlist += ":%s" % jdata[key]["detname"][0:2]
-    detlist += "| det=%s" % jdata["f%d-dn7"%int(fu)]["detname"]
+    # detlist += "| det=%s" % jdata["f%d-dn7"%int(fu)]["detname"]
     
     print "xmin=%f xmax=%f xdiv=%f ymin=%f" % ( xmin, xmax, xdiv, ymin)
     ind=0
-    colorcode=[0,1,2,3,4,6]
-    for dtype in _PLOT_PERIOD:
+    colorcode=[0,1,2,3,4,6, 8]
+    for dtype in PLOT_PERIOD:
        plname = "pl%d" % dtype    
        ind +=1 
        # ic = ind if dtype != 7 else 6
@@ -216,6 +224,11 @@ if __name__ == "__main__":
     if os.path.exists("setting.py"):
        execfile("setting.py")
 
+    unitno = add_resnucle.get_resnuclei_unit_no(_VERSION)
+    if len(unitno) > 0:
+       _DATA_UNITS = unitno
+
+
     dataname = "resnuclei_data"
     jdata = json.load(open("%s/%s.json" % ( dataname, dataname ) ))
     do_plot(jdata, _DATA_UNITS, dataname)
@@ -230,7 +243,8 @@ if __name__ == "__main__":
     fout=open(resactive,"w")
 
     # for fus in range(30, 33) + [50]:
-    for fus in range(30, 52):
+    # for fus in range(30, 52):
+    for fus in _DATA_UNITS :
         fu = str(fus)
         # print jdata.keys()
         # print jdata[fu].keys()
