@@ -19,5 +19,5 @@ install: ${EXE}
 	install -m 644 ${EXE}.map ${FLUPRO}
 
 clean:
-	rm -fv magfld.o ${EXE} ${EXE}.map
+	rm -fv magfld.o ${EXE} ${EXE}.map magtest
 

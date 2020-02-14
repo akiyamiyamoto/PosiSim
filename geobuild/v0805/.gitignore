@@ -1,0 +1,7 @@
+*.pyc
+*-v*.inc
+*.pdf
+*.json
+temp
+temp/*
+*.py-20*

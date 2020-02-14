@@ -4,3 +4,6 @@ orig
 work
 gcc83
 gcc92
+*.so
+*.o
+*.pyc
