@@ -17,12 +17,13 @@ sourcedir="${FLUKA}/init_fluka92.sh"
 fluka_inp=""
 jobname_key=""
 
+source setting.ini
+
 if [ -e ${jobs} ] ; then 
    echo "Error: ${jobs} directory exist. Remove it before re-create."
    exit -1
 fi
 
-source setting.ini
 
 [ "x${fluka_inp}" == "x" ] && fluka_inp="${fluka_prefix}.inp"
 [ "x${jobname_key}" == "x" ] && jobname_key="${version:4:2}J${fluka_inp:0:2}"
