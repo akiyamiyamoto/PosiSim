@@ -1,0 +1,1824 @@
+#!/home/ilc/miyamoto/fluka/flair-2.3/flair
+# FLUKA Project file
+Version: 2
+Title: EDriven Source v06 : with geometry built by geobuilder
+Input: oneyear001.inp
+Submit: *Default
+Tabs: 0.1 0.32 0.56 0.81 1.0
+Page: Plot
+DefMain: True
+LinkPrg: lfluka
+F77bound: True
+F77dline: False
+
+# Run information
+Run: <default>
+	Prev:     0
+	Last:     2
+	Status:   0
+	Pid:      0
+	StartRun: 0
+End
+# Geometry Information
+Geometry:
+	Frame.bsplit: 0.5
+	Frame.tsplit: 0.01
+	Frame.vsplit: 0.99
+End
+# Geometry plot "GeoViewer Blue plot"
+Plot: Blue
+	Format: .eps
+	Type:   Geometry
+	basisu: 1 0 0
+	basisv: 0 1 0
+	boundaries: 1
+	coord: X-Y
+	extends: 100 75
+	labels: 1
+	layer: Media
+	origin: 0 0 1.5
+	subtype: Material
+	title: GeoViewer Blue plot
+End
+# Geometry plot "GeoViewer Green plot"
+Plot: Green
+	Format: .eps
+	Type:   Geometry
+	basisu: 0 0 1
+	basisv: 1 0 0
+	boundaries: 1
+	coord: Z-X
+	extends: 298.599 239.9
+	labels: 1
+	layer: Media
+	origin: -21.974 0 146.35
+	subtype: Material
+	title: GeoViewer Green plot
+End
+# Material
+Material: MANGANES
+	alpha: 0
+	color: #B050D0
+	fuzz: 0.0
+	ior: 1.0
+	shine: 10.0
+	specular: 0.0
+End
+# Material
+Material: MOLYBDEN
+	alpha: 0
+	color: #70B090
+	fuzz: 0.0
+	ior: 1.0
+	shine: 10.0
+	specular: 0.0
+End
+# Geometry plot "GeoViewer Magenta plot"
+Plot: Magenta
+	Format: .eps
+	Type:   Geometry
+	basisu: 0.999947 0 -0.0102751
+	basisv: 0 1 0
+	boundaries: 1
+	coord: U-V
+	extends: 57.8704 43.4028
+	labels: 1
+	layer: Media
+	origin: -36 -3.57143 -4070.83
+	subtype: Material
+	title: GeoViewer Magenta plot
+End
+# Material
+Material: RHENIUM
+	alpha: 0
+	color: #205010
+	fuzz: 0.0
+	ior: 1.0
+	shine: 10.0
+	specular: 0.0
+End
+# Geometry plot "GeoViewer Red plot"
+Plot: Red
+	Format: .eps
+	Type:   Geometry
+	basisu: 0 0 1
+	basisv: 1 0 0
+	boundaries: 1
+	cbcolors: 0
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	coord: Z-X
+	cpd: 0
+	extends: 48.2253 5272.63
+	grid: 0
+	index: 0
+	labels: 1
+	layer: Media
+	origin: -2.99287 0 2.40602
+	subtype: Material
+	title: GeoViewer Red plot
+	x2log: False
+	x2tics: 0
+	xlog: False
+	y2log: False
+	y2tics: 0
+	ylog: False
+	zlog: False
+	ztics: 0
+End
+# Material
+Material: WATER1
+	alpha: 0
+	color: #101050
+	fuzz: 0.0
+	ior: 1.0
+	shine: 10.0
+	specular: 0.0
+End
+# Geometry plot "GeoViewer red rotation target xy view"
+Plot: red-rottar-xy
+	Format: .eps
+	Type:   Geometry
+	basisu: 1 0 0
+	basisv: 0 1 0
+	boundaries: 1
+	cbcolors: 0
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	coord: X-Y
+	cpd: 0
+	extends: 40 40
+	grid: 0
+	index: 0
+	labels: 1
+	layer: Media
+	origin: 22 0 -18
+	subtype: Material
+	title: GeoViewer red rotation target xy view
+	x2log: False
+	x2tics: 0
+	xlog: False
+	y2log: False
+	y2tics: 0
+	ylog: False
+	zlog: False
+	ztics: 0
+End
+# Geometry plot "GeoViewer red rotation target zx view"
+Plot: red-rottar-zx
+	Format: .eps
+	Type:   Geometry
+	basisu: 0 0 1
+	basisv: -1 0 0
+	boundaries: 1
+	cbcolors: 0
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	coord: Z-X
+	cpd: 0
+	extends: 30 40
+	grid: 0
+	index: 0
+	labels: 1
+	layer: Media
+	origin: 10 0 -20
+	subtype: Material
+	title: GeoViewer red rotation target zx view
+	x2log: False
+	x2tics: 0
+	xlog: False
+	y2log: False
+	y2tics: 0
+	ylog: False
+	zlog: False
+	ztics: 0
+End
+# USRBIN plot "DoseEQ 1y beam, 100h cool, 380<R<400cm"
+Plot: doseeq-4dproj-R380to400
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bxmax: 400
+	bxmin: 380.
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: False
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set grid
+set ytics format "10^{%T}"
+
+
+#set arrow from -600,100.0E-3 to 1000.0,100.0E-3 nohead 
+#set arrow from -600,20.0E-6 to 1000.0,20.0E-6 nohead 
+set arrow from -600,1.50E-6 to 1000.0,1.5E-6 nohead 
+set arrow from -600,0.20E-6 to 1000.0,0.2E-6 nohead 
+
+set out "figs/doseeq-4dproj-R380to400.png"
+
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 1D Projection
+	index: 0
+	int: 11290992952.543608
+	lw.0: 0
+	max: 1755.37415
+	min: 0.514492631
+	norm: 1E-12*3600
+	proj: Z
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DoseEQ 1y beam, 100h cool, 380<R<400cm
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xmax: 1000
+	xmin: -600
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DOSE-EQ (Sv/hour)
+	ylog: True
+	ymax: 1E-5
+	ymin: 1E-9
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DoseEQ 1y beam, 100h cool, 380<R<1000cm"
+Plot: doseeq-4dproj-R380to800
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bxmax: 800
+	bxmin: 380.
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: False
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set grid
+set ytics format "10^{%T}"
+
+
+#set arrow from -600,100.0E-3 to 1000.0,100.0E-3 nohead 
+#set arrow from -600,20.0E-6 to 1000.0,20.0E-6 nohead 
+set arrow from -600,1.50E-6 to 1000.0,1.5E-6 nohead 
+set arrow from -600,0.20E-6 to 1000.0,0.2E-6 nohead 
+
+set out "figs/doseeq-4dproj-R380to800.png"
+
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 1D Projection
+	index: 0
+	int: 248640873892.90506
+	lw.0: 0
+	max: 578.090454
+	min: 4.15472031
+	norm: 1E-12*3600
+	proj: Z
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DoseEQ 1y beam, 100h cool, 380<R<1000cm
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xmax: 1000
+	xmin: -600
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DOSE-EQ (Sv/hour)
+	ylog: True
+	ymax: 1E-5
+	ymin: 1E-9
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DoseEQ 1y beam, 100h cool, 700<R<800cm"
+Plot: doseeq-4dproj-R700to800
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bxmax: 800
+	bxmin: 700.
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: False
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set grid
+set ytics format "10^{%T}"
+
+
+#set arrow from -600,100.0E-3 to 1000.0,100.0E-3 nohead 
+#set arrow from -600,20.0E-6 to 1000.0,20.0E-6 nohead 
+set arrow from -600,1.50E-6 to 1000.0,1.5E-6 nohead 
+set arrow from -600,0.20E-6 to 1000.0,0.2E-6 nohead 
+
+set out "figs/doseeq-4dproj-R700to800.png"
+
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 1D Projection
+	index: 0
+	int: 62069466766.848763
+	lw.0: 0
+	max: 414.574738
+	min: 2.85234785
+	norm: 1E-12*3600
+	proj: Z
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DoseEQ 1y beam, 100h cool, 700<R<800cm
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xmax: 1000
+	xmin: -600
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DOSE-EQ (Sv/hour)
+	ylog: True
+	ymax: 1E-5
+	ymin: 1E-9
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DoseEQ 1y beam, 100h cool, -50<z<20cm"
+Plot: doseeq-4dproj-m50to20
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 20.3451
+	bzmin: -50.9217
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: False
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set grid
+set ytics format "10^{%T}"
+
+set arrow from 0.0,100.0E-3 to 1000.0,100.0E-3 nohead 
+set arrow from 0.0,20.0E-6 to 1000.0,20.0E-6 nohead 
+set arrow from 0.0,1.50E-6 to 1000.0,1.5E-6 nohead 
+set arrow from 0.0,0.20E-6 to 1000.0,0.2E-6 nohead 
+
+set out "figs/doseeq-4dproj-m50to20.png"
+
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 1D Projection
+	index: 0
+	int: 53872630632786.125
+	lw.0: 0
+	max: 3.29852477E+10
+	min: 2.53658292E-12
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DoseEQ 1y beam, 100h cool, -50<z<20cm
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: R (cm)
+	xlog: False
+	xmax: 1000
+	xmin: 0
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DOSE-EQ (Sv/hour)
+	ylog: True
+	ymax: 1E3
+	ymin: 1E-9
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DoseEQ 1y beam, 100h cool, 22<z<190cm"
+Plot: doseeq-4dproj-z21to190
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 190.4136
+	bzmin: 21.9648
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: False
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set grid
+set ytics format "10^{%T}"
+
+set arrow from 0.0,100.0E-3 to 1000.0,100.0E-3 nohead 
+set arrow from 0.0,20.0E-6 to 1000.0,20.0E-6 nohead 
+set arrow from 0.0,1.50E-6 to 1000.0,1.5E-6 nohead 
+set arrow from 0.0,0.20E-6 to 1000.0,0.2E-6 nohead 
+
+set out "figs/doseeq-4dproj-z21to190.png"
+
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 1D Projection
+	index: 0
+	int: 70802376492883.031
+	lw.0: 0
+	max: 1.67186406E+09
+	min: 1.38265031E-15
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DoseEQ 1y beam, 100h cool, 22<z<190cm
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: R (cm)
+	xlog: False
+	xmax: 1000
+	xmin: 0
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DOSE-EQ (Sv/hour)
+	ylog: True
+	ymax: 1E3
+	ymin: 1E-9
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 day cooling (2625Bx, 5Hz)"
+Plot: doseeq-after-1d-All
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/doseeq-after-1dcooling-All.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 2
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 328480163175552.75
+	lw.0: 0
+	max: 1.20753121E+12
+	min: 1.20789324E-13
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 day cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 hour cooling (2625Bx, 5Hz)"
+Plot: doseeq-after-1h-All
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/doseeq-after-1hcooling-All.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 973766946747752.88
+	lw.0: 0
+	max: 1.69640264E+12
+	min: 1.71575820E-13
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 hour cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 month cooling (2625Bx, 5Hz)"
+Plot: doseeq-after-1m-All
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/doseeq-after-1mcooling-All.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 4
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 117168327881988.22
+	lw.0: 0
+	max: 5.55531960E+11
+	min: 5.56931684E-14
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 month cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 year cooling (2625Bx, 5Hz)"
+Plot: doseeq-after-1y-All
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/doseeq-after-1ycooling-All.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 5
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 13800091896518.811
+	lw.0: 0
+	max: 1.09952786E+11
+	min: 1.10295023E-14
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 year cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ 1y beam (2625Bx, 5Hz), 100h cool"
+Plot: doseeq-after-4d-All
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set origin -0.025,0.0
+
+set out "figs/doseeq-after-4dcooling-All.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 173393072648456.91
+	lw.0: 0
+	max: 7.83728902E+11
+	min: 7.89825629E-14
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ 1y beam (2625Bx, 5Hz), 100h cool
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xmax: 1000
+	xmin: -600
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	ymax: 1000
+	ymin: 0
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 100 hours cooling (2625Bx, 5Hz)"
+Plot: doseeq-after-4d-All_in
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/doseeq-after-4dcooling-All_in.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 172701265901113.88
+	lw.0: 0
+	max: 7.83309668E+11
+	min: 7.84221727E-14
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 100 hours cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	ymax: 130
+	ymin: 0
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 100 hours cooling (2625Bx, 5Hz)"
+Plot: doseeq-after-4d-Allup
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/doseeq-after-4dcooling-Allup.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 172701265901113.88
+	lw.0: 0
+	max: 7.83309668E+11
+	min: 7.84221727E-14
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 100 hours cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xmax: 200
+	xmin: -100
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	ymax: 1000
+	ymin: 0
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 10 years cooling (2625Bx, 5Hz)"
+Plot: doseeq-after-Xy-All
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: DOSE-EQ (Sv/hour)
+	cblog: True
+	cbmax: 1E3
+	cbmin: 1E-9
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/doseeq-after-Xycooling-All.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 6
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 732771439068.69934
+	lw.0: 0
+	max: 444486464.
+	min: 4.46183505E-17
+	norm: 1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 10 years cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "Primary beam does-eq, All (2625Bx, 5Hz)"
+Plot: prim_doseeq_all
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: Dose rate (Sv/hour)
+	cblog: True
+	cbmax: 1E6
+	cbmin: 1E-6
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set origin -0.025,0.0
+set out "figs/primary-doseeq-all.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_81.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 401260.92279062158
+	lw.0: 0
+	max: 2215.22363
+	min: 3.58373022E-22
+	norm: 1.968E14*1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: Primary beam does-eq, All (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xmax: 1000
+	xmin: -600
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	ymax: 1000
+	ymin: 0
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "Primary beam does-eq, middle (2625Bx, 5Hz)"
+Plot: prim_eqdose_mid
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: Dose rate (Sv/hour)
+	cblog: True
+	cbmax: 1E6
+	cbmin: 1E-6
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/primary-doseeq-middle.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_82.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 305220.30361324613
+	lw.0: 0
+	max: 4574.76221
+	min: 6.23912655E-08
+	norm: 1.968E14*1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: Primary beam does-eq, middle (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "Primary beam does-eq, target (2625Bx, 5Hz)"
+Plot: prim_eqdose_tar
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblabel: Dose rate (Sv/hour)
+	cblog: True
+	cbmax: 1E6
+	cbmin: 1E-6
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 1
+	commands:
+set out "figs/primary-doseeq-target.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_83.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 0
+	hist: 2D Projection
+	index: 0
+	int: 112558.06431597966
+	lw.0: 0
+	max: 20544.3281
+	min: 1.81778744E-02
+	norm: 1.968E14*1E-12*3600
+	proj: Y
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: Primary beam does-eq, target (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Z (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: Radius (cm)
+	ylog: False
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 day cooling, R dep. -50<Z<50"
+Plot: projZ0-doseeq-1d-projall01
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 49.4997
+	bzmin: -50.9217
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projZ0-doseeq-after-1dcooling-projall.png"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 2
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 150541482454803.75
+	lw.0: 0
+	max: 3.14328965E+10
+	min: 1.48482368E-14
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 day cooling, R dep. -50<Z<50
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEq (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 hour cooling, R dep. -50<Z<50"
+Plot: projZ0-doseeq-1h-projall01
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 49.4997
+	bzmin: -50.9217
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projZ0-doseeq-after-1hcooling-projall.png"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 436371989034773.06
+	lw.0: 0
+	max: 5.17207204E+10
+	min: 1.31609917E-10
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 hour cooling, R dep. -50<Z<50
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEq (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+
+# USRBIN plot "DOSE-EQ beam 1 year, 1 month cooling, Rdep, -50<Z<50"
+Plot: projZ0-doseeq-1m-projall01
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 49.4997
+	bzmin: -50.9217
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projZ0-doseeq-after-1mcooling-projall.png"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 4
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 40221743342427.430
+	lw.0: 0
+	max: 1.67248630E+10
+	min: 5.23872785E-12
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 month cooling, Rdep, -50<Z<50
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 year cooling, Rdep, -50<Z<50"
+Plot: projZ0-doseeq-1y-projall01
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 49.4997
+	bzmin: -50.9217
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projZ0-doseeq-after-1ycooling-projall.png"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 5
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 5798319628510.1807
+	lw.0: 0
+	max: 2.63121715E+09
+	min: 5.23872785E-12
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 year cooling, Rdep, -50<Z<50
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEq (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 100 hours cooling, Rdep, -50<Z<50"
+Plot: projZ0-doseeq-4d-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 49.4997
+	bzmin: -50.9217
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projZ0-doseeq-after-4dcooling-projall.png"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 58474743194469.930
+	lw.0: 0
+	max: 2.41193677E+10
+	min: 5.23872785E-12
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 100 hours cooling, Rdep, -50<Z<50
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEq (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 10 years cooling, Rdep, -50<Z<50"
+Plot: projZ0-doseeq-Xy-projall01
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 49.4997
+	bzmin: -50.9217
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projZ0-doseeq-after-Xycooling-projall.png"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 6
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 303047279880.94000
+	lw.0: 0
+	max: 20010478.0
+	min: 5.23872785E-12
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 10 years cooling, Rdep, -50<Z<50
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEq (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ primary (2625Bx, 5Hz), R dep. -50<Z<50"
+Plot: projZ0-doseeq-primary-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	bzmax: 50.18562
+	bzmin: -50.10897
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projZ0-doseeq-primary-projall.png"
+set terminal png size 1000,1000
+	cpd: 0
+	datafile: oneyear001_81.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 171152.66159658943
+	lw.0: 0
+	max: 147.914276
+	min: 1.69520593E-13
+	norm: 1.968E14*1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ primary (2625Bx, 5Hz), R dep. -50<Z<50
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xmax: 1100
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 day cooling (2625Bx, 5Hz)"
+Plot: projdoseeq-1d-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projdoseeq-after-1dcooling-projall.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 2
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 302075775311939.88
+	lw.0: 0
+	max: 2.19728256E+09
+	min: 1.51996574E-07
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 day cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 hour cooling (2625Bx, 5Hz)"
+Plot: projdoseeq-1h-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projdoseeq-after-1hcooling-projall.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 878383570504101.75
+	lw.0: 0
+	max: 3.94020890E+09
+	min: 1.59397104E-07
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 hour cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 month cooling (2625Bx, 5Hz)"
+Plot: projdoseeq-1m-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projdoseeq-after-1mcooling-projall.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 4
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 92898344846497.516
+	lw.0: 0
+	max: 1.14111040E+09
+	min: 2.18416272E-08
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 month cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 1 year cooling (2625Bx, 5Hz)"
+Plot: projdoseeq-1y-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projdoseeq-after-1ycooling-projall.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 5
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 14741564568313.025
+	lw.0: 0
+	max: 176983808.
+	min: 2.18416076E-08
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 1 year cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 100 hours cooling (2625Bx, 5Hz)"
+Plot: projdoseeq-4d-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projdoseeq-after-4dcooling-projall.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 3
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 137789303405579.19
+	lw.0: 0
+	max: 1.64815078E+09
+	min: 1.51996574E-07
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 100 hours cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ beam 1 year, 10 years cooling (2625Bx, 5Hz)"
+Plot: projdoseeq-Xy-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projdoseeq-after-Xycooling-projall.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_71.bnn
+	det: 6
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 692446406630.79968
+	lw.0: 0
+	max: 1854788.75
+	min: 2.18414247E-08
+	norm: 1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ beam 1 year, 10 years cooling (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
+# USRBIN plot "DOSE-EQ primary projection (2625Bx, 5Hz)"
+Plot: projdoseeq-primary-projall
+	Format: .eps
+	Type:   USRBIN
+	axes: Auto
+	cbcolors: 30
+	cblog: False
+	cbpalette: FLUKA
+	cbround: 0
+	cbtics: 0
+	commands:
+set origin 0.03,0.0
+set ytics 10
+set grid 
+set ytics format "10^{%T}"
+set out "figs/projdoseeq-primary-projall.png"
+set terminal png size 800,800
+	cpd: 0
+	datafile: oneyear001_81.bnn
+	det: 1
+	errors: 0
+	geo: -Auto-
+	grid: 1
+	hist: 1D Projection
+	index: 0
+	int: 799719.93799752404
+	lw.0: 0
+	max: 38.3409843
+	min: 3.47177799E-12
+	norm: 1.968E14*1E-12*3600
+	proj: X
+	ps.0: 0
+	pt.0: 0
+	swap: 0
+	title: DOSE-EQ primary projection (2625Bx, 5Hz)
+	with.0: errorbars
+	x2log: False
+	x2tics: 0
+	xlabel: Radius (cm)
+	xlog: False
+	xrebin: 1
+	y2log: False
+	y2tics: 0
+	ylabel: DoseEQ (Sv/h) (cm)
+	ylog: True
+	ymax: 1E6
+	ymin: 1E-12
+	yrebin: 1
+	zlog: False
+	zrebin: 1
+	ztics: 0
+End
