@@ -6,6 +6,7 @@ MATERIAL         24.   51.9961      7.18                              CHROMIUM
 MATERIAL         25. 54.938045      7.47                              MANGANES
 MATERIAL         42.     95.96     10.28                              MOLYBDEN
 MATERIAL         75.   186.207     21.04                              RHENIUM
+MATERIAL         63.   151.964     5.264                              EUROPIUM
 MATERIAL                            19.7                              TARMAT
 MATERIAL                            7.98                              STAINLES
 MATERIAL                             6.4                              LIGHTSUS
@@ -21,12 +22,13 @@ MATERIAL         27.                 8.9                              COBALT
 COMPOUND       -0.75  TUNGSTEN     -0.25   RHENIUM    -5E-05    COBALTTARMAT
 COMPOUND          2.  HYDROGEN        1.    OXYGEN                    WATER
 *
-* Concrete
+* Concrete  with Co 100ppm, Eu 10ppm
 *
 COMPOUND     -0.0096  HYDROGEN    -0.029     BORON   -0.0536    CARBONCONCRETE
 COMPOUND      -0.513    OXYGEN   -0.0042  MAGNESIU   -0.0079  ALUMINUMCONCRETE
 COMPOUND      -0.157   SILICON   -0.0042    SULFUR     -0.23   CALCIUMCONCRETE
-COMPOUND      -0.005      IRON    -5E-05    COBALT                    CONCRETE
+COMPOUND      -0.005      IRON    -1E-04    COBALT     -1E-5  EUROPIUMCONCRETE
+*COMPOUND      -0.005      IRON    -5E-05    COBALT                    CONCRETE
 *
 * Stainless-Steel SUS316LN (Same as fluka's Steel316LN )+0.02Mo
 * Fe65%,Cr18%,Ni11%,Mn1.9%,Si0.97%,Mo1.9%,P0.03%,S0.29%,C0.29%
@@ -34,14 +36,14 @@ COMPOUND      -0.005      IRON    -5E-05    COBALT                    CONCRETE
 COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELSTAINLES
 COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOSTAINLES
 COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MOLYBDENSTAINLES
-COMPOUND     -0.0001    COBALT                                        STAINLES 
+COMPOUND     -0.0001    COBALT                                        STAINLES
 *
 * Light SUS for the Target rotator structure
 *
 COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELLIGHTSUS
 COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOLIGHTSUS
 COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MOLYBDENLIGHTSUS
-COMPOUND     -0.0001    COBALT                                        LIGHTSUS 
+COMPOUND     -0.0001    COBALT                                        LIGHTSUS
 *
 * Liquid Seal material
 *
