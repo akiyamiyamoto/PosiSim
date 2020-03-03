@@ -130,7 +130,8 @@ def createGeoParam():
         "FeSh_thick_upstream": 20, # Thickness of Iron shield of upstream.
         "BPrin":1.5, # Beam pipe inner radius 
         "BPthick":0.5} # Beam pipe thickness
-
+#
+    geo["global"]["rcyl1"] = geo["global"]["CShIn_rmin"] + geo["global"]["CShIn_thick"]
 
     glp = geo["global"]
     if "cassuku" in geo:

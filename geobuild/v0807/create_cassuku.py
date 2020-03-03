@@ -113,6 +113,9 @@ def crWorld(geo, fd):
     # Assign material to each region
     upward1 = "%30s%10s%20s" % ("","VACUUM","upward1")
     upward2 = "%30s%10s%20s" % ("","VACUUM","upward2")
+
+    upward1 = "" 
+    upward2 = ""
     assignma += ["*","* Assign material ","*",
        "*********1*********2*********3*********4*********5*********6*********7*********8",
        "*","ASSIGNMA   BLCKHOLE  BlHole",
@@ -518,7 +521,8 @@ def crZone3(geo, fd):
         region += ["Z3inAir3 6 +zbound4 -z3inpln5 +rcylin -rbound1" + " ".join(rexclude[3:]) ]
         region += ["Z3inCSh3 6 +z3inpln5 -z3inpln4 +rcylin -rbound1" ]
 
-    upward2 = "%30s%10s%20s" % ("","VACUUM","upward2")
+    # upward2 = "%30s%10s%20s" % ("","VACUUM","upward2")
+    upward2 = ""
     assignma += [ "ASSIGNMA %10s%10s" % ("AIR", "Z3inAir1") ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "Z3inFeS1") + upward2 ]
     assignma += [ "ASSIGNMA %10s%10s" % ("CASTIRON", "Z3inFeS2") ]
@@ -558,11 +562,12 @@ def crCassuku(geo, fd):
          "CAIron    6 ( +cazpln4 -cazpln1 +carcyl2 -carcyl1 ) | ( +cazpln4 -cazpln3 +carcyl1 ) | ( +cazpln2 -cazpln1 +carcyl1 ) " ,
          "CABlk     6 ( +cazpln3 -cazpln2 +carcyl1 -rcyl1 ) | ( +cazpln3  -zbound3 +rcyl1 ) | ( +zbound2 -cazpln2 +rcyl1 ) " ]
 
+    upward = "%30s%10s%20s" % ("","VACUUM","")
 
     assignma = ["** assignmat for Cassuku  ", 
                 "ASSIGNMA %10s%10s" % ("AIR", "CAAir"),
                 "ASSIGNMA %10s%10s" % ("CASTIRON", "CAIron"),
-                "ASSIGNMA %10s%10s" % ("BLCKHOLE", "CABlk"),
+                "ASSIGNMA %10s%10s" % ("BLCKHOLE", "CABlk") + upward,
                 "** End of Cassuku  " ]
 
     fd.Add(body, region, assignma)

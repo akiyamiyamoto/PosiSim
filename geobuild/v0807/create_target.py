@@ -62,6 +62,8 @@ def crTargetCollimatorZone(geo, fd):
 
     # CastIron outside
     upward2 = "%30s%10s%20s" % ("","VACUUM","upward2")
+    if "cassuku" in geo:
+        upward2 = ""
     zbegin = gworld["zbound2"]
     zend = gworld["zbound3"]
     zlen = zend - zbegin
