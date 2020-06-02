@@ -1,0 +1,86 @@
+# ########################################################
+v0810 created 2020-05-29
+
+  For study of target replacement from upstream.
+  Updated from v0803 code.
+  Material data file is obtained from v0807
+
+# ########################################################
+v0807 created 2020-03-01
+
+  Investigate shield thickness required for traget replacement
+
+# ########################################################
+v0806 created 2020-02-14
+
+  Upward replacement case. Study radiation when upper shield 
+  is removed after irradiation. FC magfield is default OFF 
+
+# ########################################################
+v0805 created 2020-01-31
+
+  Study energy deposit to FC, including FC magnetic field.
+
+v0804 created 2020-01-08
+
+Geometry for vertical replacement scenario
+
+
+# ########################################################
+v0803 created 2019-12-10
+
+Include empty space for RF tube, vacuum pump, etc.
+
+v0802 created 2019-12-03  
+
+Target to FC gap is now 2mm.
+Refine v0801 geometry. Inner radius of CastIRON Shield was 
+enlaged to be same as v0607. X position of rotation target 
+and FC are reverted.i  Included geometry for a study of radiation 
+after beam irradiation ( decay )
+
+# ########################################################
+v0801 created 2019-11-21  
+
+Reduce number of cavities from 36 to 6 for more detail 
+study arround target area.  In addition, trying to make code 
+compatible with python3
+
+# ########################################################
+v0702 created 2019-10-08 
+
+Extend the number of RF section, so as to cover down to Z=60m,
+which is the end of Geant4 data from Fukuda san.
+
+# ########################################################
+v0701 created 2019-10-01 
+
+  For a simulation of Fukuda's Geant4 data, geometry data was updated 
+to be compatible with his geometry.  Downstream surface of W-Re target 
+is taken as Z=0. Other components are shifted and accelerator cavity geometry 
+was modified. The source input was taken from v0607 geometry
+
+# ########################################################
+v0608 created on Fri Jul 12 15:21:50 JST 2019
+
+  For a comparison with a previous results, distnace between rotating disk 
+and vacuum chamber was set to effectively 0 ( actually 10um ) and water 
+inside the roatating disk is changed to Copper.
+
+# ########################################################
+v0607  2019-07-11
+
+  For comparison with a previous estimation of energy deposit 
+arround rotation target, geometry near rotation axis were modified 
+and vaccum is filled by massive material.
+
+# ########################################################
+v0606  2019-06-20 
+
+ This geometry was prepared from v0604, modifying
+the thickness of the axis for target rotation and its
+cooling pipe based on a suggestion by hardware developper.
+create_target.py was changed as well to fix a bug found by 
+the changes of geometry parameters.
+
+ 
