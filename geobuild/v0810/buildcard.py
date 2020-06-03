@@ -159,9 +159,9 @@ def decay_score(geodata):
     #   cards += DCYSCORE_DOSE(decaytimes[ind], "Sout", ind+1, 77, 
     #            par_all[0], par_all[1], par_all[2], par_all[3], par_all[4], rmin=rinshield)
       
-    #for ind in range(0, len(decaytimes)):
-    #   cards += DCYSCORE_ACTIVITY(decaytimes[ind], "All", ind+1, 72, 
-    #            par_all[0], par_all[1], par_all[2], par_all[3], par_all[4])
+    for ind in range(0, len(decaytimes)):
+       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "All", ind+1, 72, 
+                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4])
 
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_DOSE(decaytimes[ind], "Allm", ind+1, 73, 

@@ -14,6 +14,7 @@ MATERIAL                            7.15                              CASTIRON
 MATERIAL         0.0       0.0        1.                              WATER1
 MATERIAL                              1.                              LIQSEAL
 MATERIAL                            2.43                              CONCRETE
+MATERIAL                            2.22                              CONSHLD 
 MATERIAL                            8.94                              Copper
 MATERIAL                            19.7                              WShield
 MATERIAL                            7.87                              LOWCIRON
@@ -29,6 +30,16 @@ COMPOUND      -0.513    OXYGEN   -0.0042  MAGNESIU   -0.0079  ALUMINUMCONCRETE
 COMPOUND      -0.157   SILICON   -0.0042    SULFUR     -0.23   CALCIUMCONCRETE
 COMPOUND      -0.005      IRON    -1E-04    COBALT     -1E-5  EUROPIUMCONCRETE
 *COMPOUND      -0.005      IRON    -5E-05    COBALT                    CONCRETE
+*
+* Shield Concrete by Morikawa, Density 0.22(?)g/cm3
+* Wt%, H=0.19, O=46.3, Na=1.66, Mg=0.50, Al=8.95, Si=25.6, K=1.06
+*     Ca=9.18, Fe=6.12, Co=0.01, Eu=0.001
+*    Standard Concrete would be Co=0.002, Eu=0.0002
+*
+COMPOUND       -0.19  HYDROGEN     -46.3    OXYGEN     -1.66  NATORIUMCONSHLD 
+COMPOUND       -0.50  MAGNESIU     -8.95  ALUMINUM     -25.6   SILICONCONSHLD 
+COMPOUND       -1.06    KARIUM     -9.18   CALCIUM     -6.12      IRONCONSHLD 
+COMPOUND      -0.002    COBALT   -0.0002  EUROPIUM     -1E-5  EUROPIUMCONSHLD 
 *
 * Stainless-Steel SUS316LN (Same as fluka's Steel316LN )+0.02Mo
 * Fe65%,Cr18%,Ni11%,Mn1.9%,Si0.97%,Mo1.9%,P0.03%,S0.29%,C0.29%
