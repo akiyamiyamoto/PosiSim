@@ -7,6 +7,7 @@ MATERIAL         25. 54.938045      7.47                              MANGANES
 MATERIAL         42.     95.96     10.28                              MOLYBDEN
 MATERIAL         75.   186.207     21.04                              RHENIUM
 MATERIAL         63.   151.964     5.264                              EUROPIUM
+MATERIAL         19.   39.0983     0.862                              POTASSIU
 MATERIAL                            19.7                              TARMAT
 MATERIAL                            7.98                              STAINLES
 MATERIAL                             6.4                              LIGHTSUS
@@ -36,9 +37,10 @@ COMPOUND      -0.005      IRON    -1E-04    COBALT     -1E-5  EUROPIUMCONCRETE
 *     Ca=9.18, Fe=6.12, Co=0.01, Eu=0.001
 *    Standard Concrete would be Co=0.002, Eu=0.0002
 *
-COMPOUND       -0.19  HYDROGEN     -46.3    OXYGEN     -1.66  NATORIUMCONSHLD 
+* potassium
+COMPOUND       -0.19  HYDROGEN     -46.3    OXYGEN     -1.66    SODIUMCONSHLD 
 COMPOUND       -0.50  MAGNESIU     -8.95  ALUMINUM     -25.6   SILICONCONSHLD 
-COMPOUND       -1.06    KARIUM     -9.18   CALCIUM     -6.12      IRONCONSHLD 
+COMPOUND       -1.06  POTASSIU     -9.18   CALCIUM     -6.12      IRONCONSHLD 
 COMPOUND      -0.002    COBALT   -0.0002  EUROPIUM     -1E-5  EUROPIUMCONSHLD 
 *
 * Stainless-Steel SUS316LN (Same as fluka's Steel316LN )+0.02Mo
