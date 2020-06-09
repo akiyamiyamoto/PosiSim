@@ -36,7 +36,8 @@ def DCYSCORE_ACTIVITY(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, 
     xoffset=0.0, phibin=1.0, particle_score="ALL-PART" ):
 
     stype = "ACTIVITY"
-    name = "Bq"+dcyname+postname
+    stype = "ACTOMASS"
+    name = "Bm"+dcyname+postname
     zero = 0.0
     blank = " "
     usrbin = "USRBIN"
@@ -204,6 +205,16 @@ def decay_score(geodata):
                 par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
                 particle_score=str(pcode))
 
+# H3(Z=1, A=3)
+    z=1 
+    a=3
+    pcode=-(z*100+a*100000)
+    for ind in range(0, len(decaytimes)):
+       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "H3", ind+1, 95, 
+                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                particle_score=str(pcode))
+
+
 
     #for ind in range(0, len(decaytimes)):
     #   cards += DCYSCORE_ACTIVITY(decaytimes[ind], "Allm", ind+1, 74, 
@@ -216,11 +227,11 @@ def decay_score(geodata):
 
      # Decay score of region upstream of target
     # def DCYSCORE_DOSE(dcyname, postname, dcyind, unit, rmax, zmax, zmin, nbinR, nbinZ, rmin=0.0, scoretype="DOSE-EQ" ):
-    for ind in range(0, len(decaytimes)):
-       cards += DCYSCORE_DOSE(decaytimes[ind], "Fhim", ind+1, 76,
-                120.0, -107.0, -137.0,  120.0, 4.0, nphi=500.0 )
-       cards += DCYSCORE_DOSE(decaytimes[ind], "Almz", ind+1, 77,
-                120.0, 20.0, -600.0, 120.0, 720.0)
+    #for ind in range(0, len(decaytimes)):
+    #   cards += DCYSCORE_DOSE(decaytimes[ind], "Fhim", ind+1, 76,
+    #            120.0, -107.0, -137.0,  120.0, 4.0, nphi=500.0 )
+    #   cards += DCYSCORE_DOSE(decaytimes[ind], "Almz", ind+1, 77,
+    #            120.0, 20.0, -600.0, 120.0, 720.0)
 
     # for ind in range(0, len(decaytimes)):
     #    cards += DCYSCORE_DOSE(decaytimes[ind], "edep", ind+1, 78, 
@@ -337,6 +348,36 @@ def set_geodata(geo):
     return ret
 
 # ====================================================================================
+def resnucle_card(version, decaytimes):
+#
+#  RESNUCLE card
+#
+    res_fmt = "%-10s%10.1f%10.1f%10.1f%10.1f%10s%10.1f%s"
+    dcyscore_fmt = "%-10s%10.1f%10s%10s%10s%10s%10.1f%s"
+    res = ["*", "* Residual nuclei","*"]
+    reg_volume = 1.0  # region volume in cm^3
+    regname = ["InShld", "InShldo", "MidAir", "OutShld", "RockW"]
+    for ind in range(0, len(decaytimes)): 
+        iu0 = 30
+        res.append("* for decay time of %s" % decaytimes[ind])
+        for ir in range(0, len(regname)):
+           sname= decaytimes[ind] + regname[ir]
+           unit = iu0 + ir
+           res.append(res_fmt % ("RESNUCLE", 3.0, -unit, 0.0, 0.0, regname[ir], 0.0, sname))
+
+        sname_bgn = decaytimes[ind] + regname[0]
+        sname_end = decaytimes[ind] + regname[-1]
+        res.append(dcyscore_fmt % ("DCYSCORE", float(ind+1), " ", " ", sname_bgn, sname_end, 1.0, "RESNUCLEI")) 
+
+    fout = open("resnucle%s.inc" % version ,"w")
+    fout.write("\n".join(res))
+    fout.close()
+
+
+
+
+
+# ====================================================================================
 if __name__ == "__main__":
 
     if sys.version_info.major == 2:  
@@ -359,3 +400,6 @@ if __name__ == "__main__":
     fout=open("scoring%s.inc" % _VERSION ,"w")
     fout.write("\n".join(cards))
     fout.close()
+
+    decaytimes = ["1h","1d", "4d", "1m","1y","Xy"]
+    resnucle_card(_VERSION, decaytimes)

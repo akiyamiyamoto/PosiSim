@@ -94,7 +94,7 @@ def createGeoParam():
     print( "zbound3="+str(zbound3) )
 
     #@ front
-    geo["front"] = {"CSh_up_pos":-76} # Z position of concrete sheild closest to the target 
+    geo["front"] = {"CSh_up_pos":-75} # Z position of concrete sheild closest to the target 
 
     #@ global
     # zmax is determined as the end of RF + 1.0 cm
@@ -103,14 +103,16 @@ def createGeoParam():
     #     "zmax":1.3E3, # zmax of whole area
         "rmax":810.0,  # rmax of whole area
         "Mount_water_thickness":10.0, # Thickness of water layer out side of outer concrete tunnel
-        "CShOut_thick":200.0, # Thickness of tunnel concrete, outer
-        "CShIn_thick":200, # Thickness of tunnel concrete, inner
-        "CShIn_rmin":120.0,  # inner radius of smaller concrete sheild
+        "CWall_thick":10.0, # Thickness of tunnel wall concrete, 
+        "SA_thick":200.0, # Servie Area thickness
+        "CShin_thick2":100.0, # Thickness of 2nd inner shield
+        "CShIn_thick":200, # Thickness of inner Shield 
+        "CShIn_rmin":100.0,  # inner radius of smaller concrete sheild
         "CSh_up_thick":30.0, # Thickness of upstream concrete shield covering target area
         "CSh_up0_thick":70.0, # Thickness of first upstream concrete
         "CSh_up_distance":200.0, # Distance between first and second concrete sheild in the upstream
         "CSh_down_thick":150.0, # Thickness of downsream concrete sheield coverging target area
-        "FeSh_thick": 30.0, # Thickness of Iron sheild inside of concrete sheild
+        "FeSh_thick": 20.0, # Thickness of Iron sheild inside of concrete sheild
         "FeSh_thick_upstream": 20, # Thickness of Iron shield of upstream.
         "BPrin":3.2, # Beam pipe inner radius 
         "BPthick":0.5} # Beam pipe thickness
@@ -244,12 +246,10 @@ def createGeoParam():
     # Parameters for various holes; wave guide, cabling, cooling pipe
     geo["Holes"] = { "wave_guides":{}, "cables":{}, "water_lines":{}}
     geo["Holes"]["wave_guides"] = {
-                     "width": 8.50, # longer side
-                     "height": 4.25, # shorter side
-#                     "width": 17.0, # longer side
-#                     "height": 8.5, # shorter side
+                     "width": 8.255, # longer side
+                     "height":16.51, # shorter side
                      "wall_thickness": 0.5,   # wall thickness
-                     "xcenter": 78.0, # X center position, which runs in Z direction.
+                     "xcenter": 71.0, # X center position, which runs in Z direction.
                      "zcenter": 98.02 } # Z center position, which runs in X direction
     # Adjust Z position when width is changed.
     geo["Holes"]["wave_guides"]["zcenter"] += (geo["Holes"]["wave_guides"]["width"] - 8.50)*0.5

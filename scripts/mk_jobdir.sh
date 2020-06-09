@@ -13,7 +13,7 @@ job_queue="l"
 nrun_begin=0
 nrun_end=2
 opts=""
-sourcedir="${FLUKA}/init_fluka92.sh"
+sourcedir="${FLUKA}/init_fluka83.sh"
 fluka_inp=""
 jobname_key=""
 
