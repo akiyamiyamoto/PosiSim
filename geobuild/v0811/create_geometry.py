@@ -46,11 +46,12 @@ def crWorld(geo, fd):
     body.append("ZCC %s 0.0 0.0 %f" % ( "rbound1", geop["rbound1"]))
     body.append("ZCC %s 0.0 0.0 %f" % ( "rbound2", geop["rbound2"]))
     body.append("ZCC %s 0.0 0.0 %f" % ( "rbound3", geop["rbound3"]))
+    body.append("ZCC %s 0.0 0.0 %f" % ( "rmaxall", geop["rmax"]))
 
     # Concrete sheild radius common to Zone1 to 4.
     rcylout=geop["rbound2"] - glp["CWall_thick"]
     rcylmed=glp["CShIn_rmin"] + glp["CShIn_thick"]
-    rcylmed2=rcylmed + glp["CShin_thick2"]
+    rcylmed2=rcylmed + glp["CShIn_thick2"]
     rcylairo=rcylmed2 + glp["SA_thick"]
 
     rcylfein = glp["CShIn_rmin"] - glp["FeSh_thick"]
@@ -73,8 +74,9 @@ def crWorld(geo, fd):
 
     # create  region data
     region += ["*", "* black hole", 
-       "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rbound3 ) ",
-       "Mountain  6 +rbound3 -rbound2 +zbound5 -zbound1 ", 
+       "BlHole  6 +blkRPP1 - ( zbound5 - zbound1 + rmaxall ) ",
+       "MontRock 6 +rmaxall -rbound3 +zbound5 -zbound1 ", 
+       "RockW  6 +rbound3 -rbound2 +zbound5 -zbound1 ", 
        "OutShld 6 +zbound5 -zbound1 +rbound2 -rcylout ", 
        "MidAir  6 +zbound5 -zbound1 +rcylout -rcylmed2 ",
        "InShldo 6 +zbound5 -zbound1 +rcylmed2 -rcylmed ", 
@@ -84,8 +86,8 @@ def crWorld(geo, fd):
     assignma += ["*","* Assign material ","*",
        "*********1*********2*********3*********4*********5*********6*********7*********8",
        "*","ASSIGNMA   BLCKHOLE  BlHole",
-       "*","*** ASSIGNMA      WATER   RockW",
-       "*","ASSIGNMA %10s%10s" % ("ROCKMEAS", "Mountain"),
+       "*","ASSIGNMA %10s%10s" % ("WATER", "RockW"),
+       "*","ASSIGNMA %10s%10s" % ("ROCKMEAS", "MontRock"),
            "ASSIGNMA %10s%10s" % ("CONSHLD", "OutShld"), 
            "ASSIGNMA %10s%10s" % ("AIR", "MidAir"), 
            "ASSIGNMA %10s%10s" % ("CONCRETE", "InShldo"), 

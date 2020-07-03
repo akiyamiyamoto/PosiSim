@@ -82,8 +82,8 @@ def createGeoParam():
                  "Collimator_thickness" : 12.0, # Thickness(z length) of Collimator in front of cavity
                  "FC_to_Collimator_gap" : 11.4, #  Distance from the FC to the start of collimator
                  "zmin":-600.0, # zmin of whole area
-                 "zmax":1000.0, # zmax of whole area
-                 "rmax":810.0 } # rmax of whole area
+                 "zmax":1000.0} # zmax of whole area
+#                  "rmax":810.0 } # rmax of whole area
     
 #                 "shield_rin": 120.0 } # Inner radius of inner concrete shield
 
@@ -101,32 +101,38 @@ def createGeoParam():
     geo["global"] = {
         "zmin":geo["bases"]["zmin"],  # zmin of whole area
     #     "zmax":1.3E3, # zmax of whole area
-        "rmax":1100.0,  # rmax of whole area
-        "Mount_water_thickness":300.0, # Thickness of water layer out side of outer concrete tunnel
+    #    "rmax":1100.0,  # rmax of whole area
+        "Mount_rock_thickness":300.0, # Thickness of water layer out side of outer concrete tunnel
+        "Mount_water_thickness":10.0, # Thickness of water layer out side of outer concrete tunnel
         "CWall_thick":10.0, # Thickness of tunnel wall concrete, 
         "SA_thick":200.0, # Servie Area thickness
-        "CShin_thick2":100.0, # Thickness of 2nd inner shield
+        "CShIn_thick2":100.0, # Thickness of 2nd inner shield
         "CShIn_thick":100, # Thickness of inner Shield 
         "CShIn_rmin":100.0,  # inner radius of smaller concrete sheild
         "CSh_up_thick":30.0, # Thickness of upstream concrete shield covering target area
         "CSh_up0_thick":70.0, # Thickness of first upstream concrete
         "CSh_up_distance":200.0, # Distance between first and second concrete sheild in the upstream
-        "CSh_down_thick":150.0, # Thickness of downsream concrete sheield coverging target area
+        "CSh_down_thick":30.0, # Thickness of downsream concrete sheield coverging target area
         "FeSh_thick": 20.0, # Thickness of Iron sheild inside of concrete sheild
         "FeSh_thick_upstream": 20, # Thickness of Iron shield of upstream.
         "BPrin":3.2, # Beam pipe inner radius 
         "BPthick":0.5} # Beam pipe thickness
 
-
     glp = geo["global"]
+                            
+
     #@ world
     geo["world"] = {"zbound1":glp["zmin"], 
 		     "zbound2":-55.0, # Boundary between front(upstream) part and target & RF area
                      "zbound3":zbound3, # First RF cavity Z begin coordinate
-                     "rbound2":glp["rmax"] - glp["Mount_water_thickness"], 
-                     "rbound3":glp["rmax"],
                      "blkRPP1":5000000.0}
     gwp = geo["world"]
+    gwp["rbound2"] =  glp["CShIn_rmin"] + glp["CShIn_thick"] + glp["CShIn_thick2"] + \
+                      glp["SA_thick"] + glp["CWall_thick"]  
+    gwp["rbound3"] = gwp["rbound2"] + glp["Mount_water_thickness"]
+    gwp["rmax"] = gwp["rbound3"] + glp["Mount_rock_thickness"]
+    geo["bases"]["rmax"] = gwp["rmax"]
+    geo["global"]["rmax"] = gwp["rmax"]
 
     #@ RF
     geo["RF"] = {"z_rf_begin": zbound3 + geo["bases"]["Collimator_thickness"], # Z_begin of 1st cavity

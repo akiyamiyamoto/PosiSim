@@ -210,10 +210,45 @@ def decay_score(geodata):
     a=3
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
-       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "H3", ind+1, 95, 
+       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AH3", ind+1, 95, 
                 par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
                 particle_score=str(pcode))
 
+# Fe55(Z=26, A=55)
+    z=26
+    a=55
+    pcode=-(z*100+a*100000)
+    for ind in range(0, len(decaytimes)):
+       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AFE55", ind+1, 95, 
+                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                particle_score=str(pcode))
+
+# Mn54(Z=25, A=54)
+    z=25
+    a=54
+    pcode=-(z*100+a*100000)
+    for ind in range(0, len(decaytimes)):
+       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AMN54", ind+1, 95, 
+                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                particle_score=str(pcode))
+
+# Ca45(Z=20, A=45)
+    z=20
+    a=45
+    pcode=-(z*100+a*100000)
+    for ind in range(0, len(decaytimes)):
+       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "ACA45", ind+1, 95, 
+                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                particle_score=str(pcode))
+
+# Sc46(Z=21, A=46)
+    z=21
+    a=46
+    pcode=-(z*100+a*100000)
+    for ind in range(0, len(decaytimes)):
+       cards += DCYSCORE_ACTIVITY(decaytimes[ind], "ASC46", ind+1, 95, 
+                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                particle_score=str(pcode))
 
 
     #for ind in range(0, len(decaytimes)):
@@ -284,10 +319,10 @@ def primary_score(geodata):
     cards += Primary_Score("priAll", "DOSE-EQ", 81, 
                 par_all[0], par_all[1], par_all[2], par_all[3], 1.0, 1405.0)
 
-    cards += Primary_Score("pEdep", "ENERGY", 81, 
+    cards += Primary_Score("pDose", "DOSE", 81, 
                 par_all[0], par_all[1], par_all[2], par_all[3], 1.0, 1405.0)
 
-    cards += Primary_Score("pEMEdep", "EM-ENERGY", 81, 
+    cards += Primary_Score("pEMDose", "DOSE-EM", 81, 
                 par_all[0], par_all[1], par_all[2], par_all[3], 1.0, 1405.0)
 
 #    cards += Primary_Score("primid", "DOSE-EQ", 82, 
@@ -339,7 +374,7 @@ def primary_score(geodata):
 # ===================================================================================
 def set_geodata(geo):
 
-    rmax_all = geo["world"]["rbound3"]
+    rmax_all = geo["world"]["rmax"]
     zmin_all = geo["world"]["zbound1"]
     zmax_all = geo["world"]["zbound5"]
     nbinZ = 1000.0
@@ -362,7 +397,7 @@ def resnucle_card(version, decaytimes):
     dcyscore_fmt = "%-10s%10.1f%10s%10s%10s%10s%10.1f%s"
     res = ["*", "* Residual nuclei","*"]
     reg_volume = 1.0  # region volume in cm^3
-    regname = ["InShld", "InShldo", "MidAir", "OutShld", "Mountain"]
+    regname = ["InShld", "InShldo", "MidAir", "OutShld", "MontRock", "RockW"]
     for ind in range(0, len(decaytimes)): 
         iu0 = 30
         res.append("* for decay time of %s" % decaytimes[ind])
