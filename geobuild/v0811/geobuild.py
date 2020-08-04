@@ -102,11 +102,11 @@ def createGeoParam():
         "zmin":geo["bases"]["zmin"],  # zmin of whole area
     #     "zmax":1.3E3, # zmax of whole area
     #    "rmax":1100.0,  # rmax of whole area
-        "Mount_rock_thickness":300.0, # Thickness of water layer out side of outer concrete tunnel
-        "Mount_water_thickness":10.0, # Thickness of water layer out side of outer concrete tunnel
+        "Mount_rock_thickness":310.0, # Thickness of water layer out side of outer concrete tunnel
+        "Mount_water_thickness":-10.0, # Thickness of water layer out side of outer concrete tunnel( negative to no water)
         "CWall_thick":10.0, # Thickness of tunnel wall concrete, 
         "SA_thick":200.0, # Servie Area thickness
-        "CShIn_thick2":100.0, # Thickness of 2nd inner shield
+        "CShIn_thick2":150.0, # Thickness of 2nd inner shield
         "CShIn_thick":100, # Thickness of inner Shield 
         "CShIn_rmin":100.0,  # inner radius of smaller concrete sheild
         "CSh_up_thick":30.0, # Thickness of upstream concrete shield covering target area
@@ -129,7 +129,7 @@ def createGeoParam():
     gwp = geo["world"]
     gwp["rbound2"] =  glp["CShIn_rmin"] + glp["CShIn_thick"] + glp["CShIn_thick2"] + \
                       glp["SA_thick"] + glp["CWall_thick"]  
-    gwp["rbound3"] = gwp["rbound2"] + glp["Mount_water_thickness"]
+    gwp["rbound3"] = gwp["rbound2"] + glp["Mount_water_thickness"] if glp["Mount_water_thickness"] > 0.0 else gwp["rbound2"]
     gwp["rmax"] = gwp["rbound3"] + glp["Mount_rock_thickness"]
     geo["bases"]["rmax"] = gwp["rmax"]
     geo["global"]["rmax"] = gwp["rmax"]

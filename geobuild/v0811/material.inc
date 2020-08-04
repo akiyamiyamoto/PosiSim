@@ -41,15 +41,17 @@ COMPOUND          2.  HYDROGEN        1.    OXYGEN                    WATER
 *
 *
 * ROCKMEAS
-*
+*  
 * --+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 COMPOUND    -.495361    OXYGEN -.2907554   SILICON  -.001615  HYDROGENROCKMEAS
 COMPOUND    -.001185   PHOSPHO     -.082  ALUMINUM     -.033      IRONROCKMEAS
 COMPOUND       -.032   CALCIUM     -.025    SODIUM     -.025  POTASSIUROCKMEAS
 COMPOUND       -.011  MAGNESIU    -.0023  TITANIUM   -6.5E-4  MANGANESROCKMEAS
-COMPOUND     -7.7E-5  VANADIUM   -2.1E-5      ZINC   -1.3E-5    COBALTROCKMEAS
 COMPOUND   -1.000E-5  SCANDIUM   -8.5E-6  CHROMIUM   -3.5E-6    CESIUMROCKMEAS
-COMPOUND   -7.000E-7  EUROPIUM                                        ROCKMEAS
+COMPOUND     -7.7E-5  VANADIUM   -2.1E-5      ZINC   -1.0E-4    COBALTROCKMEAS
+COMPOUND    -10.0E-6  EUROPIUM                                        ROCKMEAS
+*COMPOUND     -7.7E-5  VANADIUM   -2.1E-5      ZINC   -1.3E-5    COBALTROCKMEAS
+*COMPOUND   -7.000E-7  EUROPIUM                                        ROCKMEAS
 *
 * ROCKKITA
 *
@@ -95,6 +97,7 @@ COMPOUND       -0.19  HYDROGEN     -46.3    OXYGEN     -1.66    SODIUMCONSHLD
 COMPOUND       -0.50  MAGNESIU     -8.95  ALUMINUM     -25.6   SILICONCONSHLD
 COMPOUND       -1.06  POTASSIU     -9.18   CALCIUM     -6.12      IRONCONSHLD
 COMPOUND      -0.002    COBALT   -0.0002  EUROPIUM     -1E-5  EUROPIUMCONSHLD
+*COMPOUND      -0.002    COBALT   -0.0002  EUROPIUM     -1E-5  EUROPIUMCONSHLD
 *
 * Stainless-Steel SUS316LN (Same as fluka's Steel316LN )+0.02Mo
 * Fe65%,Cr18%,Ni11%,Mn1.9%,Si0.97%,Mo1.9%,P0.03%,S0.29%,C0.29%
@@ -104,7 +107,7 @@ COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOSTAINLES
 COMPOUND     -0.0003    SULFUR   -0.0003    CARBON    -0.020  MOLYBDENSTAINLES
 COMPOUND     -0.0001    COBALT                                        STAINLES
 *
-* Light SUS for the Target rotator structure
+* Light SUS for1 the Target rotator structure
 *
 COMPOUND    -0.67145      IRON    -0.185  CHROMIUM   -0.1125    NICKELLIGHTSUS
 COMPOUND       -0.02  MANGANES     -0.01   SILICON  -0.00045   PHOSPHOLIGHTSUS

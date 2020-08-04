@@ -146,7 +146,8 @@ def decay_score(geodata):
     # decaytimes = ["1s", "1M", "1h","1d","1w","1m","3m","1y","4y","Xy","Zy"]
     # decaytimes = ["1s", "1h","1d","1m","3m","1y","4y","Xy","Zy"]
     # decaytimes = ["1h","1m","1y","Xy","Zy"]
-    decaytimes = ["1h","1d", "4d", "1m","1y","Xy"]
+    # decaytimes = ["1h","1d", "4d", "1m","1y","Xy"]
+    decaytimes = ["1h","1d", "4d", "1m","1y","5y"]
 
     par_all = geodata["par_all"]
     par_mid = geodata["par_mid"]
@@ -397,7 +398,8 @@ def resnucle_card(version, decaytimes):
     dcyscore_fmt = "%-10s%10.1f%10s%10s%10s%10s%10.1f%s"
     res = ["*", "* Residual nuclei","*"]
     reg_volume = 1.0  # region volume in cm^3
-    regname = ["InShld", "InShldo", "MidAir", "OutShld", "MontRock", "RockW"]
+    # regname = ["InShld", "InShldo", "MidAir", "OutShld", "MontRock", "RockW"]
+    regname = ["InShld", "InShldo", "MidAir", "OutShld", "MontRock"]
     for ind in range(0, len(decaytimes)): 
         iu0 = 30
         res.append("* for decay time of %s" % decaytimes[ind])
@@ -442,5 +444,6 @@ if __name__ == "__main__":
     fout.write("\n".join(cards))
     fout.close()
 
-    decaytimes = ["1h","1d", "4d", "1m","1y","Xy"]
+    # decaytimes = ["1h","1d", "4d", "1m","1y","Xy"]
+    decaytimes = ["1h","1d", "4d", "1m","1y","5y"]
     resnucle_card(_VERSION, decaytimes)
