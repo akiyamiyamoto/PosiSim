@@ -41,7 +41,7 @@ COMPOUND          2.  HYDROGEN        1.    OXYGEN                    WATER
 *
 *
 * ROCKMEAS
-*  
+*
 * --+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----8
 COMPOUND    -.495361    OXYGEN -.2907554   SILICON  -.001615  HYDROGENROCKMEAS
 COMPOUND    -.001185   PHOSPHO     -.082  ALUMINUM     -.033      IRONROCKMEAS

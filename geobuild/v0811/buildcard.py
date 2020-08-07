@@ -170,14 +170,16 @@ def decay_score(geodata):
        cards += DCYSCORE_DOSE(decaytimes[ind], "Allm", ind+1, 73, 
                 par_mid[0], par_mid[1], par_mid[2], par_mid[3], par_mid[4])
 
-# Na22, Co60, Eu152, Eu154       
+# Na22, Co60, Eu152, Eu154 
+    nbinr = par_all[3]/5
+    nbinz = par_all[4]/5      
 # Na22(Z=11, A=22
     z=11    
     a=22
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "ANa22", ind+1, 91, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz,
                 particle_score=str(pcode))
 # Co60(Z=27, A=60)
     z=27    
@@ -185,7 +187,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "ACo60", ind+1, 92, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz, 
                 particle_score=str(pcode))
 
 # Eu152(Z=63, A=152)
@@ -194,7 +196,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AEu152", ind+1, 93, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz, 
                 particle_score=str(pcode))
 
 # Eu154(Z=63, A=154)
@@ -203,7 +205,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AEu154", ind+1, 94, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz,
                 particle_score=str(pcode))
 
 # H3(Z=1, A=3)
@@ -212,7 +214,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AH3", ind+1, 95, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz,
                 particle_score=str(pcode))
 
 # Fe55(Z=26, A=55)
@@ -221,7 +223,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AFE55", ind+1, 95, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz,
                 particle_score=str(pcode))
 
 # Mn54(Z=25, A=54)
@@ -230,7 +232,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "AMN54", ind+1, 95, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz,
                 particle_score=str(pcode))
 
 # Ca45(Z=20, A=45)
@@ -239,7 +241,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "ACA45", ind+1, 95, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz,
                 particle_score=str(pcode))
 
 # Sc46(Z=21, A=46)
@@ -248,7 +250,7 @@ def decay_score(geodata):
     pcode=-(z*100+a*100000)
     for ind in range(0, len(decaytimes)):
        cards += DCYSCORE_ACTIVITY(decaytimes[ind], "ASC46", ind+1, 95, 
-                par_all[0], par_all[1], par_all[2], par_all[3], par_all[4],
+                par_all[0], par_all[1], par_all[2], nbinr, nbinz,
                 particle_score=str(pcode))
 
 

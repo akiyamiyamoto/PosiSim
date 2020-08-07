@@ -81,7 +81,7 @@ def createGeoParam():
                  "FC_thickness" : 10.0, # Thickness(z length) of FC(AMD)
                  "Collimator_thickness" : 12.0, # Thickness(z length) of Collimator in front of cavity
                  "FC_to_Collimator_gap" : 11.4, #  Distance from the FC to the start of collimator
-                 "zmin":-600.0, # zmin of whole area
+                 "zmin":-800.0, # zmin of  whole area
                  "zmax":1000.0} # zmax of whole area
 #                  "rmax":810.0 } # rmax of whole area
     
@@ -110,8 +110,8 @@ def createGeoParam():
         "CShIn_thick":100, # Thickness of inner Shield 
         "CShIn_rmin":100.0,  # inner radius of smaller concrete sheild
         "CSh_up_thick":30.0, # Thickness of upstream concrete shield covering target area
-        "CSh_up0_thick":70.0, # Thickness of first upstream concrete
-        "CSh_up_distance":200.0, # Distance between first and second concrete sheild in the upstream
+        "CSh_up0_thick":150.0, # Thickness of first upstream concrete
+        "CSh_up_distance":350.0, # Distance between first and second concrete sheild in the upstream
         "CSh_down_thick":30.0, # Thickness of downsream concrete sheield coverging target area
         "FeSh_thick": 20.0, # Thickness of Iron sheild inside of concrete sheild
         "FeSh_thick_upstream": 20, # Thickness of Iron shield of upstream.
