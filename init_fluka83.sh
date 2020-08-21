@@ -2,7 +2,7 @@
 # Setup fluka built with gcc83
 
 
-. ${HOME}/soft/gcc830/init_gcc830.sh 
+. ${HOME}/soft/gcc/8.3.0/init_gcc830.sh 
 
 export FLUKA=${HOME}/fluka
 export FLUPRO=${FLUKA}/gcc83

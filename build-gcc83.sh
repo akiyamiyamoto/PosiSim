@@ -13,7 +13,9 @@ which ${FLUFOR}
 
 cd ${FLUPRO}
 
-tar -zxf ../orig/fluka2011.2x-linux-gfor64bitAA.tar.gz
+
+# tar -zxf ../orig/fluka2011.2x-linux-gfor64bitAA.tar.gz
+tar -zxf ../orig/fluka2020.0-linux-gfor64bit-8.3-AA.tar.gz
 
 make -j20
 
