@@ -1,7 +1,8 @@
 #!/bin/bash 
 
 
-. /cvmfs/sft.cern.ch/lcg/contrib/gcc/8.3.0/x86_64-slc6/setup.sh
+# . /cvmfs/sft.cern.ch/lcg/contrib/gcc/8.3.0/x86_64-slc6/setup.sh
+. ~/soft/gcc/8.3.0/init_gcc830.sh
 
 export FLUPRO=${HOME}/fluka/gcc83
 if [ ! -e ${FLUPRO} ] ; then 

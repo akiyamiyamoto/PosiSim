@@ -312,6 +312,7 @@ def primary_score(geodata):
 #    zmin_all = geo["world"]["zbound1"]
 #    zmax_all = geo["world"]["zbound5"]
 #    nbinZ = 1000.0
+    nbinZ = 520
 #    nbinR = rmax_all
 #    par_all = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
 
@@ -320,13 +321,13 @@ def primary_score(geodata):
 
     cards = []
     cards += Primary_Score("priAll", "DOSE-EQ", 81, 
-                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, 1405.0)
+                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, nbinZ)
 
     cards += Primary_Score("pDose", "DOSE", 81, 
-                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, 1405.0)
+                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, nbinZ)
 
     cards += Primary_Score("pEMDose", "DOSE-EM", 81, 
-                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, 1405.0)
+                par_all[0], par_all[1], par_all[2], par_all[3], 1.0, nbinZ)
 
 #    cards += Primary_Score("primid", "DOSE-EQ", 82, 
 #                par_mid[0], par_mid[1], par_mid[2], par_mid[3], 1.0, par_mid[4])
@@ -380,12 +381,14 @@ def set_geodata(geo):
     rmax_all = geo["world"]["rmax"]
     zmin_all = geo["world"]["zbound1"]
     zmax_all = geo["world"]["zbound5"]
-    nbinZ = 1000.0
-    nbinR = rmax_all
+    nbinZ = 520
+    nbinR = int(rmax_all)
     par_all = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
 
-    par_mid = [120.0, 200.0, -200.0, 200.0, 300.0]
-    par_tar = [30.0, 25.0, -15.0, 150.0, 200.0]
+    par_mid = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
+    par_tar = [rmax_all, zmax_all, zmin_all, nbinR, nbinZ]
+#    par_mid = [120.0, 200.0, -200.0, 200.0, 300.0]
+#    par_tar = [30.0, 25.0, -15.0, 150.0, 200.0]
 
     ret = {"geo":geo, "par_all":par_all, "par_mid":par_mid, "par_tar":par_tar}
 
@@ -439,7 +442,6 @@ if __name__ == "__main__":
     cards = primary_score(geodata)
 
     cards += decay_score(geodata)
-#     cards += usrbdx_for_liquidseal()
 
 
     fout=open("scoring%s.inc" % _VERSION ,"w")
@@ -448,4 +450,4 @@ if __name__ == "__main__":
 
     # decaytimes = ["1h","1d", "4d", "1m","1y","Xy"]
     decaytimes = ["1h","1d", "4d", "1m","1y","5y"]
-    resnucle_card(_VERSION, decaytimes)
+#    resnucle_card(_VERSION, decaytimes)
