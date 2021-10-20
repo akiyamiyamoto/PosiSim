@@ -37,8 +37,9 @@ ${nphibin}
 ${nzbin}
 
 EOF
+which gplevbin
 
-${FLUPRO}/flutil/gplevbin < temp.$$.txt | tee ${logfile}
+gplevbin < temp.$$.txt | tee ${logfile}
 
 detname=`grep " NB " ${logfile} | grep " ${detno}  " | sed -e "s/  */ /g" | cut -d" " -f4`
 echo "detname=${detname}"
@@ -54,38 +55,38 @@ do_doseplot(){
 
     for detid in `seq 0 ${#RUN_TIME[@]}` ; do
       detno=$[${detid}+1]
-      do_gplevbin ${fluka_prefix}001-f71.bnn ${detno} 800 1000 f71
-      do_gplevbin ${fluka_prefix}001-f73.bnn ${detno} 400 500  f73
-      do_gplevbin ${fluka_prefix}001-f75.bnn ${detno} 400 500  f75
-      do_gplevbin ${fluka_prefix}001-f71.bnn ${detno} 800 1    f71-proj
+      do_gplevbin ${fluka_prefix}001_71.bnn ${detno} 800 1000 f71
+      do_gplevbin ${fluka_prefix}001_73.bnn ${detno} 400 500  f73
+      do_gplevbin ${fluka_prefix}001_75.bnn ${detno} 400 500  f75
+      do_gplevbin ${fluka_prefix}001_71.bnn ${detno} 800 1    f71-proj
     done
     
     detno=1
-    do_gplevbin ${fluka_prefix}001-f81.bnn ${detno} 800 1000 f81
-    do_gplevbin ${fluka_prefix}001-f82.bnn ${detno} 400 500 f82
-    do_gplevbin ${fluka_prefix}001-f83.bnn ${detno} 400 500 f83
-    do_gplevbin ${fluka_prefix}001-f81.bnn ${detno} 800 1 f81-proj
+    do_gplevbin ${fluka_prefix}001_81.bnn ${detno} 800 1000 f81
+    do_gplevbin ${fluka_prefix}001_82.bnn ${detno} 400 500 f82
+    do_gplevbin ${fluka_prefix}001_83.bnn ${detno} 400 500 f83
+    do_gplevbin ${fluka_prefix}001_81.bnn ${detno} 800 1 f81-proj
 }
 
 do_activityplot(){
     for detno in `seq 1 ${#RUN_TIME[@]}` ; do
-      do_gplevbin ${fluka_prefix}001-f72.bnn ${detno} 800 1000 f72
-      do_gplevbin ${fluka_prefix}001-f74.bnn ${detno} 400 500  f74
-      do_gplevbin ${fluka_prefix}001-f76.bnn ${detno} 400 500  f76
+      do_gplevbin ${fluka_prefix}001_72.bnn ${detno} 800 1000 f72
+      do_gplevbin ${fluka_prefix}001_74.bnn ${detno} 400 500  f74
+      do_gplevbin ${fluka_prefix}001_76.bnn ${detno} 400 500  f76
     done
     detno=1
-    do_gplevbin ${fluka_prefix}001-f84.bnn ${detno} 400 500 f84
-    do_gplevbin ${fluka_prefix}001-f90.bnn ${detno} 400 500 f90
+    do_gplevbin ${fluka_prefix}001_84.bnn ${detno} 400 500 f84
+    do_gplevbin ${fluka_prefix}001_90.bnn ${detno} 400 500 f90
     if [ ${VERSION_NUMBER} -lt 607 ] ; then 
-      do_gplevbin ${fluka_prefix}001-f85.bnn ${detno} 400 500 f85
-      do_gplevbin ${fluka_prefix}001-f91.bnn ${detno} 400 500 f91
-      do_gplevbin ${fluka_prefix}001-f92.bnn ${detno} 400 500 f92
+      do_gplevbin ${fluka_prefix}001_85.bnn ${detno} 400 500 f85
+      do_gplevbin ${fluka_prefix}001_91.bnn ${detno} 400 500 f91
+      do_gplevbin ${fluka_prefix}001_92.bnn ${detno} 400 500 f92
     else
       for detno in `seq 1 ${#RUN_TIME[@]}` ; do
-        do_gplevbin ${fluka_prefix}001-f94.bnn ${detno} 400 500 f94
+        do_gplevbin ${fluka_prefix}001_94.bnn ${detno} 400 500 f94
       done
       for detno in `seq 2 4` ; do
-        do_gplevbin ${fluka_prefix}001-f90.bnn ${detno} 400 500 f90
+        do_gplevbin ${fluka_prefix}001_90.bnn ${detno} 400 500 f90
       done
     fi
 }

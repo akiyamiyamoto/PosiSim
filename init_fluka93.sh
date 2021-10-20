@@ -12,6 +12,7 @@ export PATH=${lcg}/Python/3.8.6/x86_64-centos7-gcc9-opt/bin:${PATH}
 export PATH=${lcg}/CMake/3.20.0/x86_64-centos7-gcc9-opt/bin:${PATH}
 
 export FLUKA=${HOME}/fluka
+export FLUKA_SCRIPTS=${FLUKA}/scripts
 
 
 # PYTHON PIP install directory
