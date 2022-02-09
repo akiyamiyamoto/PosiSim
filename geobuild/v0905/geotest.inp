@@ -1,0 +1,33 @@
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+*
+*
+GLOBAL                                                                OLDFLAIR
+TITLE
+EDriven Source v0905:
+*
+DEFAULTS                                                              PRECISIO
+*
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
+BEAM              3.       0.0       0.0    -0.471    -0.471          ELECTRON
+BEAMPOS          0.0       0.0     -220.
+*
+GEOBEGIN                                                              COMBNAME
+    0    0                  W25Re target
+*
+#include body-v0905.inc
+*
+*
+END
+*
+#include region-v0905.inc
+
+*
+END
+GEOEND
+*
+#include material.inc
+
+** #include assignmat-v0905.inc
+#include assignmat-nodecay.inc
+** #include assignmat-decaygeo.inc
+
