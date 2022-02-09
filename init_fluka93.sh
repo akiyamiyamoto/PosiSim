@@ -27,7 +27,7 @@ export PYTHONUSERBASE=${HOME}/fluka/python
 #export FLUKA_SCRIPTS=${FLUKA}/scripts
 
 # Fluka binary
-export PATH=${FLUKA}/scripts:${FLUKA}/fluka4-1.1/bin:${FLUKA}/flair-3.1:${FLUKA}/python/bin:${PATH}
+export PATH=${FLUKA}/scripts:${FLUKA}/fluka4-2.0/bin:${FLUKA}/flair-3.1:${FLUKA}/python/bin:${PATH}
 
 # export PATH=${FLUKA_SCRIPTS}:${FLUPRO}:${FLUPRO}/flutil:${FLUKA}/flair-2.3:${PATH}
 export PYTHONPATH=${FLUKA}/scripts:${FLUKA}/python:${PYTHONPATH}

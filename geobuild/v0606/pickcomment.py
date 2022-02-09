@@ -30,7 +30,7 @@ if __name__ == "__main__":
             continue
         (varfield, comment) = line[:-1].split("#",1)
         var = varfield.strip()
-        print category+" | "+ var + " | "+comment
+        print( category+" | "+ var + " | "+comment )
         if len(var) == 0:
             comments[-1][3] += comment
         elif ":" in var:

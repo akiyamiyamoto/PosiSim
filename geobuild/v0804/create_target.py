@@ -156,7 +156,8 @@ def crRotationTarget(geo, fd):
     body += ["XYP tfcubgn %s" % zfcu_bgn ]
 
     fcu_vz = zfcc_bgn
-    offset_sign = cmp(gtar["Wdisk_axis_offset"], 0.0)
+    # offset_sign = cmp(gtar["Wdisk_axis_offset"], 0.0)
+    offset_sign = (gtar["Wdisk_axis_offset"] > 0.0) - (gtar["Wdisk_axis_offset"] < 0.0)
     fcu_vx = gtar["Wdisk_axis_offset"] - \
              offset_sign*(gtar["Wdisk_rmax"] + gtar["FCC_Wdisk_gap"] + gtar["FCU_rspace"])
     fcu_hx = math.cos(-1.0*offset_sign*gtar["FCU_slope"]/180.0*math.pi )

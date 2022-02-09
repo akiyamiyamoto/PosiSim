@@ -72,10 +72,10 @@ if __name__ == "__main__":
     volregion = {}
 
     for tr in tregions:
-        print ""
-        print "# Region " + tr
+        print( "" )
+        print( "# Region " + tr )
         region_card=" ".join(region_data[tr])
-        print "  region card="+region_card
+        print( "  region card="+region_card )
         volregion[tr] = 0.0
 
         subregions = []
@@ -84,42 +84,42 @@ if __name__ == "__main__":
         else:
             for sub in region_card.split("|"):
                sub2 = sub.replace("(","").replace(")","")
-               print sub2
+               print( sub2 )
                if "rf" in sub2 and "cent" in sub2:
                    sub2 = " ".join(sub2.split()[0:2])
-                   print "Special treatment (neglect) for RF*cent body" 
+                   print( "Special treatment (neglect) for RF*cent body" )
                if sub2 not in subregions:
                    subregions.append(sub2)
                else:
-                   print "??? WARNING ??? zone " + sub + " duplicates. ?????????????????????"
+                   print( "??? WARNING ??? zone " + sub + " duplicates. ?????????????????????" )
 
         volsum = 0
         for isub in range(0, len(subregions)):
-            print "### "+subregions[isub]+"  ##################"
+            print( "### "+subregions[isub]+"  ##################" )
             vols = subregions[isub].split()
             volnow = 0.0
-            print vols
+            print( vols )
             if len(vols) == 0:
                bname = vols.replace("+")
                volsum += body_data[bname]["volume"]
                volnow += body_data[bname]["volume"]
-               print body_data[bname]["shape"] + ":"+" ".join(body_data[bname]["geom"])+" Vol.="+str(olnow)
+               print( body_data[bname]["shape"] + ":"+" ".join(body_data[bname]["geom"])+" Vol.="+str(olnow) )
             else:               
                for v in vols:
                   bname=v[1:]
                   vol = body_data[bname]["volume"]
-                  print v+" "+body_data[bname]["shape"]+":"+" ".join(body_data[bname]["geom"]) + " Vol.="+str(vol),
+                  print( v+" "+body_data[bname]["shape"]+":"+" ".join(body_data[bname]["geom"]) + " Vol.="+str(vol), end="")
                   if v[0:1] == "+":
                      volsum += vol
                   elif v[0:1] == "-":
                      volsum -= vol
                   else:
-                    print 
-                    print "Undefined sign word v="+v
-                  print "  volsum="+str(volsum)
-               print "Volsum="+str(volsum)
+                    print() 
+                    print( "Undefined sign word v="+v )
+                  print( "  volsum="+str(volsum) )
+               print( "Volsum="+str(volsum) )
         volregion[tr] = volsum 
-        print "Region: "+tr+" Volume="+str(volregion[tr])+" cm^3"
+        print( "Region: "+tr+" Volume="+str(volregion[tr])+" cm^3" )
         
 
         #subregions = " ".join(region_data[tr]).split("|")

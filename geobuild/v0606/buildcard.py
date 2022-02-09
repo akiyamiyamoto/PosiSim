@@ -81,7 +81,7 @@ def Primary_Score(name, stype, unit, rmax, zmax, zmin, nbinR, nbinF, nbinZ):
 # ====================================================================================
 if __name__ == "__main__":
   
-    execfile("version.py")
+    exec(open("version.py").read())
 
 
     decaytimes = ["1s", "1M", "1h","1d","1w","1m","3m","1y","4y","Xy","Zy"]

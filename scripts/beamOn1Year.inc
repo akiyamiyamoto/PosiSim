@@ -6,7 +6,7 @@
 *                0 means no beam in this period
 * ****
 *
-* Definition of irradiation pattern for 1312 bunches per pulse
+* Definition of irradiation pattern for 1312/2625 bunches per pulse
 * ..+....1....+....2....+....3....+....4....+....5....+....6....+....7....+....8
 *      1C = 6.24153E18 electrons
 *     2.4 nC/bunch
@@ -23,4 +23,3 @@
 *   2625 bunches/pulse
 *
 IRRPROFI   18000000.  1.968E14
-*

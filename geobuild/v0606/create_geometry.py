@@ -74,7 +74,7 @@ def crOneRFStructure(geo, fd, nrf, zbegin):
                 "RF%dsoli 6 +rf%dBscpi -rf%dBsoli" % (nrf, nrf, nrf)]
 
     matdata = {"solo":"Copper", "solc":"WATER", "soli":"Copper"}
-    for reg, mat in matdata.iteritems():
+    for reg, mat in matdata.items():
         regname = "RF%d%s" % (nrf, reg)
         _assignma += [ "ASSIGNMA %10s%10s" % (mat, regname)]
 

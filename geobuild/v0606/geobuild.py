@@ -145,7 +145,7 @@ def createGeoParam():
 # ========================================
 if __name__ == "__main__":
    
-    execfile("version.py")
+    exec(open("version.py").read())
 
     geo = createGeoParam()
 

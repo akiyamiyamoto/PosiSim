@@ -97,8 +97,8 @@ SCORE         ENERGY  BEAMPART
 *
 #include geobuild/scoring-v0606.inc
 *
-*** RANDOMIZ          1.
-#include random.inc
+* RANDOMIZ          1.
+* #include random.inc
 *
 START         $event
 STOP

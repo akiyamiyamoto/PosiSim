@@ -27,6 +27,7 @@ GEOEND
 *
 #include material.inc
 
-#include assignmat-v0807.inc
+#include assignmat-nodecay.inc
+*  #include assignmat-v0807.inc
 *  #include assignmat-decay1.inc
 

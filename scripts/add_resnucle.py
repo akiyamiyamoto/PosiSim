@@ -1,5 +1,7 @@
 #!/usr/bin/env python 
 
+from __future__ import print_function
+
 import os
 import glob
 import json
@@ -67,9 +69,9 @@ def add_resnucle(out_prefix, fid):
         tfiles = glob.glob("../%s/*_fort.%s" % ( _INPUT_DATA_DIR, str(fu) )) 
         # print tfiles
         if len(tfiles) <= 1:
-           print "Target files not found. "
-           print "_INPUT_DATA_DIR="+_INPUT_DATA_DIR
-           print "fu="+str(fu)
+           print( "Target files not found. " )
+           print( "_INPUT_DATA_DIR="+_INPUT_DATA_DIR )
+           print( "fu="+str(fu) )
            continue
 
 
